@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The game</title>
+    <meta charset="UTF-8">
+    <meta lang="se-SV">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Comic+Neue&display=swap" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+  </head>
+
+  <body>
+  <main>
+    <div class="game"></div>
+    <div class="game-questions"></div>
+  </main>
+  </body>
+
+  <script type="module">
+  
+  // The questions
+  import {questions} from './modules/questions.js';
+  console.log('questions', questions);
+
+  // HTML structure for the questions
+  import {createQuestionForm} from './modules/template.js';
+  createQuestionForm(questions.question1);
+
+  // Countdown, clock that ticks down
+  import {createQuestionForm} from './modules/countdown.js';
+
+
+
+
+
+
+    window.onload = gameEngine();
+    
+    function gameEngine(currentRound = 1, currentQuestion = 1) {
+      console.log(`currentRound ${currentRound}, currentQuestion ${currentQuestion}`);
+      
+    if (currentRound <= 3) {
+      
+    switch (currentQuestion) {
+    case 1:
+    console.log(questions.question1.question);
+   
+      break;
+    case 2:
+    console.log(questions.question2.question);
+  
+      break;
+    case 3: 
+    console.log(questions.question3.question);
+      break;
+    default:
+      console.log('Nothing');
+    };
+    
+    currentRound++
+    currentQuestion++
+        
+    if (roundEnd == false){
+      gameEngine(currentRound, currentQuestion);
+    }
+        
+    }
+
+    
+
+      
+    };
+  </script>
+
+</html>

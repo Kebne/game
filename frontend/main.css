@@ -1,0 +1,122 @@
+body {
+  font-style: normal;
+  font-family: 'Comic Neue', sans-serif;
+  color: #333;
+}
+.grid-table {
+  display: grid;
+  grid-template-columns: 100px 100px;
+  grid-template-rows: 100px 200px 100px;
+  grid-template-areas: 
+    "chair1 chair2"
+    "table table"
+    "chair3 chair4";
+}
+.player1 {
+  grid-area: chair1;
+  background-color:antiquewhite;
+  width: 100%;
+  min-height: 45px;
+}
+.player2 {
+  grid-area: chair2;
+  background-color:rgb(100, 69, 29);
+  width: 100%;
+  min-height: 45px;
+}
+.player3 {
+  grid-area: chair3;
+  background-color:brown;
+  width: 100%;
+  min-height: 45px;
+}
+.player4 {
+  grid-area: chair4;
+  background-color:rgb(73, 49, 49);
+  width: 100%;
+  min-height: 45px;
+}
+.table {
+  grid-area: table;
+  background-color:cyan;
+  width: 100%;
+  height: 100%;
+}
+
+
+.game-question-wrapper {
+  border: 1px solid pink;
+}
+
+.game-question > div {
+  background-color: gainsboro;
+}
+
+.game-question-input {
+  width: 3rem;
+  height: 3rem;
+}
+
+.game-choice {
+ box-sizing: border-box;
+ padding: 1rem;
+  background-color: white;
+  color:rgb(73, 49, 49);
+}
+fieldset {
+  box-sizing: border-box;
+  border: 1px transparent solid;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+.game-score {
+ box-sizing: border-box;
+ position: absolute;
+ top: 0;
+ right: 0;
+ padding: 1rem;
+ background-color:rgb(73, 49, 49);
+ color: white;
+}
+
+.game-questions {
+  position: relative;
+  margin-top: 8rem;
+  display: block;
+}
+
+.game-countdown {
+  min-height: 50px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.game-correct-answer {
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.game-start-button {
+  box-sizing: border-box;
+  font-family: 'Comic Neue', sans-serif;
+  letter-spacing: 1px;
+  font-size: 1.8rem;
+  padding: 1.5rem;
+  background-color: salmon;
+  color: #111;
+  border: 1px solid transparent;
+  border-radius: 0.2rem;
+}
+
+button:hover {
+  cursor: pointer
+}
+
+
+.game-start-button-wrapper {
+  display: flex;
+  justify-content: center;
+
+}
