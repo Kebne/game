@@ -1,15 +1,13 @@
   // Countdown function
-  export function countDown(currentQuestion) {
-    let timeleft = 2;
+  export function countDown(timeLimit) {
+    let timeleft = timeLimit;
     let downloadTimer = setInterval( ()=> {
       if(timeleft <= 0) {
         clearInterval(downloadTimer);
-        document.querySelector('.game-countdown').innerHTML = 'Time is up';
+        document.querySelector('.game-countdown').innerHTML = 'Tiden är slut';
         document.querySelector('fieldset').setAttribute('disabled', true);
-        document.querySelector('.game-correct-answer').innerHTML = `The correct answer ${questions.question1.correctAnswer}`;
-        checkIfPlayerIsCorrect(currentQuestion);
       } else {
-      document.querySelector('.game-countdown').innerHTML = `${timeleft} seconds left`;
+      document.querySelector('.game-countdown').innerHTML = `${timeleft} sekunder kvar`;
       }
       timeleft -= 1;
     }, 1100);

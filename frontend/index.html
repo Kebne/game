@@ -1,20 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>The game</title>
     <meta charset="UTF-8">
     <meta lang="se-SV">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Comic+Neue&display=swap" rel="stylesheet">
     <link href="main.css" rel="stylesheet">
-  </head>
+</head>
 
-  <body>
+<body>
   <main>
-    <div class="game"></div>
+    <div class="game">
+      <div class="game-countdown"></div>
+      <div class="game-correct-answer"></div>
+    </div>
     <div class="game-questions"></div>
+
+    <section data-id="game-board">
+      <div class="grid-table">
+        <div class="player1">A</div>
+        <div class="player2">B</div>
+        <div class="player3">C</div>
+        <div class="player4">D</div>
+        <div class="table">Board</div>
+      </div>
+    </section>
+
   </main>
-  </body>
+</body>
 
   <script type="module">
   
@@ -24,10 +38,11 @@
 
   // HTML structure for the questions
   import {createQuestionForm} from './modules/template.js';
-  createQuestionForm(questions.question1);
+ 
 
-  // Countdown, clock that ticks down
-  import {createQuestionForm} from './modules/countdown.js';
+  // Countdown, clock that ticks down, set parameter for time to countdown in seconds
+  import {countDown} from './modules/countdown.js';
+  
 
 
 
@@ -36,35 +51,16 @@
 
     window.onload = gameEngine();
     
+
+    // Main gameloop
     function gameEngine(currentRound = 1, currentQuestion = 1) {
       console.log(`currentRound ${currentRound}, currentQuestion ${currentQuestion}`);
       
-    if (currentRound <= 3) {
+      let theQuestion = questions[`question${currentQuestion}`];
+      createQuestionForm(theQuestion);
+      countDown(4);
       
-    switch (currentQuestion) {
-    case 1:
-    console.log(questions.question1.question);
-   
-      break;
-    case 2:
-    console.log(questions.question2.question);
-  
-      break;
-    case 3: 
-    console.log(questions.question3.question);
-      break;
-    default:
-      console.log('Nothing');
-    };
-    
-    currentRound++
-    currentQuestion++
-        
-    if (roundEnd == false){
-      gameEngine(currentRound, currentQuestion);
-    }
-        
-    }
+      
 
     
 
