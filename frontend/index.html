@@ -152,6 +152,10 @@ var player = {
   };
   gameRoundNr();
 
+
+
+
+
 </script>
 
 <script type="module">
@@ -162,7 +166,8 @@ var player = {
   import {countDown} from './modules/countdown.js';
   import {playerChoice} from './modules/playerchoice.js';
   import {players} from './modules/players.js';
-  const gamePlayers = players;
+  import {seatPlayer} from './modules/seatplayer.js'
+  const seats = [];
   
   window.onload = gameEngine();
     
@@ -178,6 +183,12 @@ var player = {
     let form = document.forms[0];
     let radios = form.elements['questions'];
     form.addEventListener('change', function() {playerChoice(radios)});
+
+    // Exemple of how to seat players
+    seatPlayer(seats, 'myName');
+    seatPlayer(seats, 'myYourname');
+    console.log(`Spelare ${seats}`);
+    
     
 
   };
