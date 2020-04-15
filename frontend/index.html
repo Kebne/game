@@ -14,10 +14,55 @@
     <div class="game">
       <div class="game-countdown"></div>
       <div class="game-correct-answer"></div>
+      <div class="game-choice"></div>
+      <div class="game-correct-answer"></div>
     </div>
     <div class="game-questions"></div>
 
-    <section data-id="game-board">
+    <section>
+      <style>
+        .player-input {
+      display: flex;
+      box-sizing: border-box;
+      gap: 0.4rem;
+    }
+      button {
+        box-sizing: border-box;
+        font-style: normal;
+        font-family: 'Comic Neue', sans-serif;
+        font-size: 14px;
+        padding: 1rem;
+        color: #eee;
+        background-color: #333;
+        border: 1px solid #444;
+        border-radius: 4px;
+      }
+      button:hover {
+        cursor: pointer;
+        filter: brightness(150%);
+      }
+      .player-status {
+          display: flex;
+          box-sizing: border-box;
+          gap: 0.4rem;
+          margin-bottom: 1rem;
+      }
+      .player-marks {
+        margin-bottom: 1rem;
+      }
+      </style>
+      <div class="game-round"></div>
+      <div class="player-status"></div>
+      <div class="player-marks">Dina marker</div>
+    
+      <div class="player-input">
+        <div><button onclick="betta(10)">Betta</button></div>
+        <div><button onclick="pass()">Passa</button></div>
+        <div><button onclick="fold()">Lägga sig</button></div>
+      </div>
+    </section>
+
+    <section data-id="game-board" style="display: none">
       <div class="grid-table">
         <div class="player1">A</div>
         <div class="player2">B</div>
@@ -29,43 +74,82 @@
 
   </main>
 </body>
+<script>
+// Players input //
 
-  <script type="module">
+var player = {
+    marks: 1000,
+    pass: false,
+    fold: false,
+  }
+
+  var statusOutput = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`
   
-  // The questions
+  let playerMarks = document.querySelector('.player-marks');
+  playerMarks.innerHTML = `Du har ${player.marks} marker`;
+
+  let playerStatus = document.querySelector('.player-status');
+  playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
+
+  function betta(betSum) {
+    console.log('betting');
+    player.marks = player.marks - betSum;
+    let playerMarks = document.querySelector('.player-marks');
+    playerMarks.innerHTML = `Du har ${player.marks} marker`;
+  };
+
+  function pass() {
+    player.pass = true;
+    let playerStatus = document.querySelector('.player-status');
+    playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
+  };
+
+  function fold() {
+    player.fold = true;
+    let playerStatus = document.querySelector('.player-status');
+    playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
+  };
+
+  function gameRoundNr() {
+    let gameRoundNrOutput = document.querySelector('.game-round');
+    let gameRoundNr = 1;
+    gameRoundNrOutput.innerHTML = `Runda ${gameRoundNr}`
+  };
+  gameRoundNr();
+
+</script>
+
+<script type="module">
+  
+  
   import {questions} from './modules/questions.js';
-  console.log('questions', questions);
-
-  // HTML structure for the questions
   import {createQuestionForm} from './modules/template.js';
- 
-
-  // Countdown, clock that ticks down, set parameter for time to countdown in seconds
   import {countDown} from './modules/countdown.js';
+  import {playerChoice} from './modules/playerchoice.js';
+  import {players} from './modules/players.js';
+  const gamePlayers = players;
   
+  window.onload = gameEngine();
+    
+  function gameEngine(currentRound = 1, questionNumber = 1) {
+    console.log(`currentRound ${currentRound}, currentQuestion ${questionNumber}`);
+    let currentQuestion = questions[`question${questionNumber}`];
+    createQuestionForm(currentQuestion);
+    countDown(4, currentQuestion);
+    /*playerChoice(currentQuestion);
+    const testar = playerChoice(currentQuestion);
+    console.log('test i Index:', testar);*/
 
-
-
-
-
-
-    window.onload = gameEngine();
+    let form = document.forms[0];
+    let radios = form.elements['questions'];
+    form.addEventListener('change', function() {playerChoice(radios)});
     
 
-    // Main gameloop
-    function gameEngine(currentRound = 1, currentQuestion = 1) {
-      console.log(`currentRound ${currentRound}, currentQuestion ${currentQuestion}`);
-      
-      let theQuestion = questions[`question${currentQuestion}`];
-      createQuestionForm(theQuestion);
-      countDown(4);
-      
-      
+  };
 
-    
 
-      
-    };
-  </script>
+
+  
+</script>
 
 </html>
