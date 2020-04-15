@@ -15,11 +15,11 @@
       <div class="game-countdown"></div>
       <div class="game-correct-answer"></div>
       <div class="game-choice"></div>
-      <div class="game-correct-answer"></div>
+     
     </div>
     <div class="game-questions"></div>
 
-    <section>
+    <section style="background-color: #999; padding: var(--standard-padding)">
       <style>
         .player-input {
       display: flex;
@@ -50,15 +50,49 @@
       .player-marks {
         margin-bottom: 1rem;
       }
+      .game-slider {
+        margin-bottom: 0.5rem;
+      }
       </style>
       <div class="game-round"></div>
       <div class="player-status"></div>
       <div class="player-marks">Dina marker</div>
     
-      <div class="player-input">
-        <div><button onclick="betta(10)">Betta</button></div>
+      <div class="player-input-wrapper">
+        <div class="game-slider">
+          <input type="range" min="10" max="100" value="10" step="10" class="bet-slider">
+          <output class="bet-slider-output"></output>
+          <script>
+            const slider = document.querySelector('.bet-slider');
+            const output = document.querySelector('.bet-slider-output');
+            output.innerHTML = slider.value;
+            slider.addEventListener('change', sliderOutput);
+            function sliderOutput() {
+              
+              output.innerHTML = slider.value;
+            };
+           
+          </script>
+        </div>
+
+      <div class="player-input">  
+        <div><button onclick="betta()">Betta</button></div>
         <div><button onclick="pass()">Passa</button></div>
         <div><button onclick="fold()">Lägga sig</button></div>
+      </div>
+
+    </div>
+
+    </section>
+
+    <section>
+      <div class="game-descript" style="background-color: #444; padding: var(--standard-padding); line-height: 1.7; margin-top: 6rem; font-weight: 700">
+        <ul>
+          <li style="color: #DCF7F3">- Countdown-timer. Css-class: .game-countdown.</li>
+          <li style="color: #FFFCDD">- Correct answer. Css-class: .game-correct-answer.</li>
+          <li style="color: #FFD8D8">- Player choice, Css-class: .game-choice.</li>
+          <li style="color: #e3ffdd">- Questions. Css-class: .game-questions.</li>
+        </ul>
       </div>
     </section>
 
@@ -91,8 +125,9 @@ var player = {
   let playerStatus = document.querySelector('.player-status');
   playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
 
-  function betta(betSum) {
-    console.log('betting');
+  function betta() {
+    const slider = document.querySelector('.bet-slider');
+    let betSum = slider.value;
     player.marks = player.marks - betSum;
     let playerMarks = document.querySelector('.player-marks');
     playerMarks.innerHTML = `Du har ${player.marks} marker`;

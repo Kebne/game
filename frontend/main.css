@@ -1,3 +1,8 @@
+:root {
+  --min-height: 50px; 
+  --standard-padding: 1rem;
+}
+
 body {
   font-style: normal;
   font-family: 'Comic Neue', sans-serif;
@@ -75,14 +80,15 @@ body {
 
 .game-choice {
  box-sizing: border-box;
- padding: 1rem;
-  background-color: white;
+ padding: var(--standard-padding);
+ min-height: var(--min-height);
+  background-color: #FFD8D8;
   color:rgb(73, 49, 49);
 }
 fieldset {
   box-sizing: border-box;
   border: 1px transparent solid;
-  padding: 1rem;
+  padding: var(--standard-padding);
   display: flex;
   justify-content: space-around;
 }
@@ -99,19 +105,28 @@ fieldset {
 
 .game-questions {
   position: relative;
+  padding: var(--standard-padding);
   margin-top: 1rem;
+  margin-bottom: 1rem;
   display: block;
+  background-color: #e3ffdd;
 }
 
 .game-countdown {
-  min-height: 50px;
+  min-height: var(--min-height);
+  box-sizing: border-box;
   font-size: 1.2rem;
   font-weight: 700;
+  background-color: #DCF7F3;
+  text-align: center;
+  padding-top: 15px;
 }
 
 .game-correct-answer {
   padding: 1rem;
   box-sizing: border-box;
+  min-height: var(--min-height);
+  background-color: #FFFCDD;
 }
 
 .game-start-button {
