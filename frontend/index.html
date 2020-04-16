@@ -9,113 +9,100 @@
     <link href="main.css" rel="stylesheet">
 </head>
 
-<body>
+<body id="kebne-game">
+  
   <main>
-    <div class="game">
+    <div class="game-grid">
       <div class="game-countdown"></div>
       <div class="game-correct-answer"></div>
       <div class="game-choice"></div>
-     
+      <div class="game-questions"></div>
     </div>
-    <div class="game-questions"></div>
+    
 
-    <section style="background-color: #999; padding: var(--standard-padding)">
-      <style>
-        .player-input {
-      display: flex;
-      box-sizing: border-box;
-      gap: 0.4rem;
-    }
-      button {
-        box-sizing: border-box;
-        font-style: normal;
-        font-family: 'Comic Neue', sans-serif;
-        font-size: 14px;
-        padding: 1rem;
-        color: #eee;
-        background-color: #333;
-        border: 1px solid #444;
-        border-radius: 4px;
-      }
-      button:hover {
-        cursor: pointer;
-        filter: brightness(150%);
-      }
-      .player-status {
-          display: flex;
-          box-sizing: border-box;
-          gap: 0.4rem;
-          margin-bottom: 1rem;
-      }
-      .player-marks {
-        margin-bottom: 1rem;
-      }
-      .game-slider {
-        margin-bottom: 0.5rem;
-      }
-      </style>
+  <section data-id="player-input" style="background-color: #999; padding: var(--standard-padding)">
+      
       <div class="game-round"></div>
       <div class="player-status"></div>
-      <div class="player-marks">Dina marker</div>
+      <div class="player-marks"></div>
     
       <div class="player-input-wrapper">
-        <div class="game-slider">
-          <input type="range" min="10" max="100" value="10" step="10" class="bet-slider">
-          <output class="bet-slider-output"></output>
-          <script>
-            const slider = document.querySelector('.bet-slider');
-            const output = document.querySelector('.bet-slider-output');
-            output.innerHTML = slider.value;
-            slider.addEventListener('change', sliderOutput);
-            function sliderOutput() {
-              
-              output.innerHTML = slider.value;
-            };
-           
-          </script>
-        </div>
+        
+        <game-betting-slider></game-betting-slider>
+        
 
       <div class="player-input">  
-        <div><button onclick="betta()">Betta</button></div>
+        <div><button onclick="bet()">Betta</button></div>
         <div><button onclick="pass()">Passa</button></div>
         <div><button onclick="fold()">Lägga sig</button></div>
       </div>
 
     </div>
 
-    </section>
+  </section>
 
-    <section>
-      <div class="game-descript" style="background-color: #444; padding: var(--standard-padding); line-height: 1.7; margin-top: 6rem; font-weight: 700">
-        <ul>
-          <li style="color: #DCF7F3">- Countdown-timer. Css-class: .game-countdown.</li>
-          <li style="color: #FFFCDD">- Correct answer. Css-class: .game-correct-answer.</li>
-          <li style="color: #FFD8D8">- Player choice, Css-class: .game-choice.</li>
-          <li style="color: #e3ffdd">- Questions. Css-class: .game-questions.</li>
-        </ul>
-      </div>
-    </section>
 
-    <section data-id="game-board" style="display: none">
-      <div class="grid-table">
-        <div class="player1">A</div>
-        <div class="player2">B</div>
-        <div class="player3">C</div>
-        <div class="player4">D</div>
-        <div class="table">Board</div>
-      </div>
-    </section>
+<!-- this only for development to easier see were things are. Remove at production -->
+<section>
+  <div class="game-descript" style="background-color: #444; padding: var(--standard-padding); line-height: 1.7; margin-top: 6rem; font-weight: 700">
+    <ul>
+      <li style="color: #DCF7F3">- Countdown-timer. Css-class: .game-countdown.</li>
+      <li style="color: #FFFCDD">- Correct answer. Css-class: .game-correct-answer.</li>
+      <li style="color: #FFD8D8">- Player choice, Css-class: .game-choice.</li>
+      <li style="color: #e3ffdd">- Questions. Css-class: .game-questions.</li>
+    </ul>
+  </div>
+</section>
 
   </main>
 </body>
-<script>
-// Players input //
 
+<script>
 var player = {
     marks: 1000,
     pass: false,
     fold: false,
   }
+
+
+  // Slider 
+ 
+class bettingSlider extends HTMLElement {
+  constructor() {
+    super();
+    const shadow = this.attachShadow({mode: 'open'});
+    
+    
+    let playerInputStyle = document.createElement('style');
+    playerInputStyle.innerHTML = `
+      :host {display: block;} 
+    `;
+
+    let templateElement = document.createElement('template');
+    templateElement.innerHTML = `
+      <div class="game-slider">
+        <input type="range" min="10" max="100" value="10" step="10" class="bet-slider">
+        <output class="bet-slider-output"></output>
+      </div>
+    `;
+    shadow.append(playerInputStyle);
+    shadow.appendChild(templateElement.content.cloneNode(true));
+
+    const slider = shadow.querySelector('.bet-slider');
+    const output = shadow.querySelector('.bet-slider-output');
+    output.innerHTML = slider.value;
+    slider.addEventListener('change', sliderOutput);
+    function sliderOutput() {
+      output.innerHTML = slider.value;
+    };
+  }
+};
+window.customElements.define('game-betting-slider', bettingSlider);
+
+
+
+  
+  // Other player input
 
   var statusOutput = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`
   
@@ -125,10 +112,10 @@ var player = {
   let playerStatus = document.querySelector('.player-status');
   playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
 
-  function betta() {
-    const slider = document.querySelector('.bet-slider');
-    let betSum = slider.value;
-    player.marks = player.marks - betSum;
+  function bet() {
+    let slider = document.querySelector("game-betting-slider");
+    let sliderValue = slider.shadowRoot.querySelector(".bet-slider-output").value;
+    player.marks = player.marks - sliderValue;
     let playerMarks = document.querySelector('.player-marks');
     playerMarks.innerHTML = `Du har ${player.marks} marker`;
   };
@@ -176,9 +163,6 @@ var player = {
     let currentQuestion = questions[`question${questionNumber}`];
     createQuestionForm(currentQuestion);
     countDown(4, currentQuestion);
-    /*playerChoice(currentQuestion);
-    const testar = playerChoice(currentQuestion);
-    console.log('test i Index:', testar);*/
 
     let form = document.forms[0];
     let radios = form.elements['questions'];
@@ -188,14 +172,8 @@ var player = {
     seatPlayer(seats, 'myName');
     seatPlayer(seats, 'myYourname');
     console.log(`Spelare ${seats}`);
-    
-    
-
   };
 
-
-
-  
 </script>
 
 </html>

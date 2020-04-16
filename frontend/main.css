@@ -9,82 +9,62 @@ body {
   color: #333;
 }
 
-/* The game table */
-.grid-table {
+#game-grid {
   display: grid;
   max-width: 800px;
   margin: 40px auto;
   color: #efefef;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1r 2fr 1r;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
   grid-template-areas: 
-    "chair1 chair2"
-    "table table"
-    "chair3 chair4";
-}
-.player1 {
-  grid-area: chair1;
-  background-color: #C10361;
-  width: 100%;
-  min-height: 45px;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-.player2 {
-  grid-area: chair2;
-  background-color: #FA7B67;
-  width: 100%;
-  min-height: 45px;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-.player3 {
-  grid-area: chair3;
-  background-color: #FEF5A8;
-  width: 100%;
-  min-height: 45px;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-.player4 {
-  grid-area: chair4;
-  background-color: #6FE4D4;
-  width: 100%;
-  min-height: 45px;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-.table {
-  grid-area: table;
-  background-color: #005B7B;
-  width: 100%;
-  height: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
+    "countdown"
+    "correct"
+    "player-choice"
+    "questions"
+    ;
 }
 
-
-
-.game-question-wrapper {
-  border: 1px solid pink;
+.game-countdown {
+  grid-area: countdown;
+  min-height: var(--min-height);
+  box-sizing: border-box;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background-color: #DCF7F3;
+  text-align: center;
+  padding-top: 15px;
 }
 
-.game-question > div {
-  background-color: gainsboro;
-}
-
-.game-question-input {
-  width: 3rem;
-  height: 3rem;
+.game-correct-answer {
+  grid-area: correct;
+  padding: 1rem;
+  box-sizing: border-box;
+  min-height: var(--min-height);
+  background-color: #FFFCDD;
 }
 
 .game-choice {
- box-sizing: border-box;
- padding: var(--standard-padding);
- min-height: var(--min-height);
+  grid-area: player-choice;
+  box-sizing: border-box;
+  padding: var(--standard-padding);
+  min-height: var(--min-height);
   background-color: #FFD8D8;
   color:rgb(73, 49, 49);
 }
+
+.game-questions {
+  grid-area: questions;
+  position: relative;
+  padding: var(--standard-padding);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: block;
+  background-color: #e3ffdd;
+}
+
+
+
+
 fieldset {
   box-sizing: border-box;
   border: 1px transparent solid;
@@ -103,31 +83,11 @@ fieldset {
  color: white;
 }
 
-.game-questions {
-  position: relative;
-  padding: var(--standard-padding);
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  display: block;
-  background-color: #e3ffdd;
-}
 
-.game-countdown {
-  min-height: var(--min-height);
-  box-sizing: border-box;
-  font-size: 1.2rem;
-  font-weight: 700;
-  background-color: #DCF7F3;
-  text-align: center;
-  padding-top: 15px;
-}
 
-.game-correct-answer {
-  padding: 1rem;
-  box-sizing: border-box;
-  min-height: var(--min-height);
-  background-color: #FFFCDD;
-}
+
+
+
 
 .game-start-button {
   box-sizing: border-box;
@@ -151,3 +111,37 @@ button:hover {
   justify-content: center;
 
 }
+
+/* Player input */
+.player-input {
+  display: flex;
+  box-sizing: border-box;
+  gap: 0.4rem;
+}
+  button {
+    box-sizing: border-box;
+    font-style: normal;
+    font-family: 'Comic Neue', sans-serif;
+    font-size: 14px;
+    padding: 1rem;
+    color: #eee;
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 4px;
+  }
+  button:hover {
+    cursor: pointer;
+    filter: brightness(150%);
+  }
+  .player-status {
+      display: flex;
+      box-sizing: border-box;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+  }
+  .player-marks {
+    margin-bottom: 1rem;
+  }
+  .game-slider {
+    margin-bottom: 0.5rem;
+  }

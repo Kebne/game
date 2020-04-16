@@ -1,9 +1,8 @@
-// Create game form, e.g questions
 export function createQuestionForm(currentQuestion) {
   const templateElement = document.createElement('template');
   templateElement.innerHTML = `
     <h2>${currentQuestion.question}</h2>
-    <form id="game-form" name="demo">
+    <form id="game-form">
       <fieldset>
         <div>
         <label>
