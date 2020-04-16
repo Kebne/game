@@ -12,33 +12,27 @@
 <body id="kebne-game">
   
   <main>
-    <div class="game-grid">
-      <div class="game-countdown"></div>
-      <div class="game-correct-answer"></div>
-      <div class="game-choice"></div>
-      <div class="game-questions"></div>
-    </div>
-    
-
-  <section data-id="player-input" style="background-color: #999; padding: var(--standard-padding)">
-      
-      <div class="game-round"></div>
-      <div class="player-status"></div>
-      <div class="player-marks"></div>
-    
-      <div class="player-input-wrapper">
-        
-        <game-betting-slider></game-betting-slider>
-        
-
-      <div class="player-input">  
-        <div><button onclick="bet()">Betta</button></div>
-        <div><button onclick="pass()">Passa</button></div>
-        <div><button onclick="fold()">Lägga sig</button></div>
+    <section>
+      <div class="game-grid">
+        <div class="game-countdown"></div>
+        <div class="game-correct-answer"></div>
+        <div class="game-choice"></div>
+        <div class="game-questions"></div>
       </div>
+  </section>
 
-    </div>
-
+  <section>
+    <div class="player-input-wrapper">   
+        <div class="game-round"></div>
+        <div class="player-status"></div>
+        <div class="player-marks"></div>
+        <game-betting-slider></game-betting-slider>
+        <div class="player-input">  
+            <div><button onclick="bet()">Betta</button></div>
+            <div><button onclick="pass()">Passa</button></div>
+            <div><button onclick="fold()">Lägga sig</button></div>
+        </div>
+      </div> 
   </section>
 
 
@@ -57,6 +51,37 @@
   </main>
 </body>
 
+
+<script type="module">
+  import {questions} from './modules/questions.js';
+  import {createQuestionForm} from './modules/template.js';
+  import {countDown} from './modules/countdown.js';
+  import {playerChoice} from './modules/playerchoice.js';
+  import {players} from './modules/players.js';
+  import {seatPlayer} from './modules/seatplayer.js';
+  import {bettingSlider} from './modules/bettingslider.js'
+  const seats = [];
+  
+  window.onload = gameEngine();
+    
+  function gameEngine(currentRound = 1, questionNumber = 1) {
+    let currentQuestion = questions[`question${questionNumber}`];
+    createQuestionForm(currentQuestion);
+    countDown(4, currentQuestion);
+
+    let form = document.querySelector('#game-form');
+    let radios = form.elements['questions'];
+    form.addEventListener('change', function() {playerChoice(radios)});
+
+    // Exemple of how to seat players
+    seatPlayer(seats, 'myName');
+    seatPlayer(seats, 'myYourname');
+    console.log(`Spelare ${seats}`);
+  };
+
+</script>
+
+
 <script>
 var player = {
     marks: 1000,
@@ -64,51 +89,10 @@ var player = {
     fold: false,
   }
 
-
-  // Slider 
- 
-class bettingSlider extends HTMLElement {
-  constructor() {
-    super();
-    const shadow = this.attachShadow({mode: 'open'});
-    
-    
-    let playerInputStyle = document.createElement('style');
-    playerInputStyle.innerHTML = `
-      :host {display: block;} 
-    `;
-
-    let templateElement = document.createElement('template');
-    templateElement.innerHTML = `
-      <div class="game-slider">
-        <input type="range" min="10" max="100" value="10" step="10" class="bet-slider">
-        <output class="bet-slider-output"></output>
-      </div>
-    `;
-    shadow.append(playerInputStyle);
-    shadow.appendChild(templateElement.content.cloneNode(true));
-
-    const slider = shadow.querySelector('.bet-slider');
-    const output = shadow.querySelector('.bet-slider-output');
-    output.innerHTML = slider.value;
-    slider.addEventListener('change', sliderOutput);
-    function sliderOutput() {
-      output.innerHTML = slider.value;
-    };
-  }
-};
-window.customElements.define('game-betting-slider', bettingSlider);
-
-
-
   
-  // Other player input
-
   var statusOutput = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`
-  
   let playerMarks = document.querySelector('.player-marks');
   playerMarks.innerHTML = `Du har ${player.marks} marker`;
-
   let playerStatus = document.querySelector('.player-status');
   playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
 
@@ -140,40 +124,7 @@ window.customElements.define('game-betting-slider', bettingSlider);
   gameRoundNr();
 
 
-
-
-
 </script>
 
-<script type="module">
-  
-  
-  import {questions} from './modules/questions.js';
-  import {createQuestionForm} from './modules/template.js';
-  import {countDown} from './modules/countdown.js';
-  import {playerChoice} from './modules/playerchoice.js';
-  import {players} from './modules/players.js';
-  import {seatPlayer} from './modules/seatplayer.js'
-  const seats = [];
-  
-  window.onload = gameEngine();
-    
-  function gameEngine(currentRound = 1, questionNumber = 1) {
-    console.log(`currentRound ${currentRound}, currentQuestion ${questionNumber}`);
-    let currentQuestion = questions[`question${questionNumber}`];
-    createQuestionForm(currentQuestion);
-    countDown(4, currentQuestion);
-
-    let form = document.forms[0];
-    let radios = form.elements['questions'];
-    form.addEventListener('change', function() {playerChoice(radios)});
-
-    // Exemple of how to seat players
-    seatPlayer(seats, 'myName');
-    seatPlayer(seats, 'myYourname');
-    console.log(`Spelare ${seats}`);
-  };
-
-</script>
 
 </html>

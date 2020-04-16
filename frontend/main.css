@@ -113,6 +113,11 @@ button:hover {
 }
 
 /* Player input */
+.player-input-wrapper {
+  background-color: #999; 
+  padding: var(--standard-padding);
+}
+
 .player-input {
   display: flex;
   box-sizing: border-box;
