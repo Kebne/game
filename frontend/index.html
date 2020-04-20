@@ -13,6 +13,12 @@
   
   <main>
     <section>
+      <div class="game-board">
+        <game-board></game-board>
+      </div>
+    </section>
+
+    <section>
       <div class="game-grid">
         <div class="game-countdown"></div>
         <div class="game-correct-answer"></div>
@@ -59,7 +65,8 @@
   import {playerChoice} from './modules/playerchoice.js';
   import {players} from './modules/players.js';
   import {seatPlayer} from './modules/seatplayer.js';
-  import {bettingSlider} from './modules/bettingslider.js'
+  import {bettingSlider} from './modules/bettingslider.js';
+  import {createGameBoard} from './modules/gameboard.js'
   const seats = [];
   
   window.onload = gameEngine();
@@ -74,9 +81,15 @@
     form.addEventListener('change', function() {playerChoice(radios)});
 
     // Exemple of how to seat players
-    seatPlayer(seats, 'myName');
-    seatPlayer(seats, 'myYourname');
+    seatPlayer(seats, 'Hans-solo');
+    seatPlayer(seats, 'B8');
+    seatPlayer(seats, 'R2D');
+    seatPlayer(seats, 'Hon');
     console.log(`Spelare ${seats}`);
+
+    createGameBoard(seats);
+
+    
   };
 
 </script>
