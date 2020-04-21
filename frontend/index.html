@@ -29,14 +29,14 @@
 
   <section>
     <div class="player-input-wrapper">   
-        <div class="game-round"></div>
+        
         <div class="player-status"></div>
         <div class="player-marks"></div>
         <game-betting-slider></game-betting-slider>
         <div class="player-input">  
-            <div><button onclick="bet()">Betta</button></div>
-            <div><button onclick="pass()">Passa</button></div>
-            <div><button onclick="fold()">Lägga sig</button></div>
+            <div><button class="js-player-bet">Betta</button></div>
+            <div><button class="js-player-pass">Passa</button></div>
+            <div><button class="js-player-fold">Lägga sig</button></div>
         </div>
       </div> 
   </section>
@@ -66,28 +66,71 @@
   import {players} from './modules/players.js';
   import {seatPlayer} from './modules/seatplayer.js';
   import {bettingSlider} from './modules/bettingslider.js';
-  import {createGameBoard} from './modules/gameboard.js'
-  const seats = [];
+  import {createGameBoard} from './modules/gameboard.js';
+  
+  
+  var currentPlayer = players.player1;
+  var player = currentPlayer; // remove this, only for see if old code works (bet, fold etc)
   
   window.onload = gameEngine();
     
   function gameEngine(currentRound = 1, questionNumber = 1) {
     let currentQuestion = questions[`question${questionNumber}`];
+   
+
     createQuestionForm(currentQuestion);
     countDown(4, currentQuestion);
+    createGameBoard(players);
 
     let form = document.querySelector('#game-form');
     let radios = form.elements['questions'];
     form.addEventListener('change', function() {playerChoice(radios)});
 
-    // Exemple of how to seat players
-    seatPlayer(seats, 'Hans-solo');
-    seatPlayer(seats, 'B8');
-    seatPlayer(seats, 'R2D');
-    seatPlayer(seats, 'Hon');
-    console.log(`Spelare ${seats}`);
+    let elementBet = document.querySelector('.js-player-bet');
+    elementBet.addEventListener('click', bet);
 
-    createGameBoard(seats);
+    let elementPass = document.querySelector('.js-player-pass');
+    elementPass.addEventListener('click', pass);
+
+    let elementFold = document.querySelector('.js-player-fold');
+    elementFold.addEventListener('click', fold);
+
+    function bet() {
+      console.log('bet running');
+      let slider = document.querySelector("game-betting-slider");
+      let sliderValue = slider.shadowRoot.querySelector(".bet-slider-output").value;
+      player.marks = player.marks - sliderValue;
+      let playerMarks = document.querySelector('.player-marks');
+      playerMarks.innerHTML = `Du har ${player.marks} marker`;
+  };
+
+  function pass() {
+    console.log('pass running');
+    player.pass = true;
+    let playerStatus = document.querySelector('.player-status');
+    playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
+  };
+
+  function fold() {
+    console.log('fold running');
+    player.fold = true;
+    let playerStatus = document.querySelector('.player-status');
+    playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
+  };
+
+
+    function currentPlayerInfo(currentPlayer) {
+      let player = currentPlayer;
+      var statusOutput = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`
+      let playerMarks = document.querySelector('.player-marks');
+      playerMarks.innerHTML = `Du har ${player.marks} marker`;
+      let playerStatus = document.querySelector('.player-status');
+      playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
+      console.log('current player', player);
+    };
+    currentPlayerInfo(currentPlayer);
+
+    
 
     
   };
@@ -96,18 +139,11 @@
 
 
 <script>
-var player = {
-    marks: 1000,
-    pass: false,
-    fold: false,
-  }
+
+//Old code, remove later
 
   
-  var statusOutput = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`
-  let playerMarks = document.querySelector('.player-marks');
-  playerMarks.innerHTML = `Du har ${player.marks} marker`;
-  let playerStatus = document.querySelector('.player-status');
-  playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
+  
 
   function bet() {
     let slider = document.querySelector("game-betting-slider");
@@ -129,12 +165,7 @@ var player = {
     playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
   };
 
-  function gameRoundNr() {
-    let gameRoundNrOutput = document.querySelector('.game-round');
-    let gameRoundNr = 1;
-    gameRoundNrOutput.innerHTML = `Runda ${gameRoundNr}`
-  };
-  gameRoundNr();
+  
 
 
 </script>

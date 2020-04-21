@@ -7,6 +7,8 @@ body {
   font-style: normal;
   font-family: 'Roboto Slab','Comic Neue', sans-serif;
   color: #333;
+  margin: 0;
+  padding: 0;
 }
 
 #game-grid {
