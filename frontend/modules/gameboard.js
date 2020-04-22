@@ -3,17 +3,17 @@ export function createGameBoard(players, gamePot) {
 class gameBoard extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({mode: 'open'});
     
     
     function showSeating(playerNumber = 1) {
       let data = Object.values(players);
       //this need to be updated
-      shadow.querySelector('.board').insertAdjacentHTML('afterbegin', `Potten är: ${gamePot}`);
+      document.querySelector('.board').insertAdjacentHTML('afterbegin', `Potten är: ${gamePot}`);
       data.forEach((element) => {
-        shadow.querySelector(`.player${playerNumber}`).insertAdjacentHTML('afterbegin', `Namn: ${element.name}<br>`);
-        shadow.querySelector(`.player${playerNumber}`).insertAdjacentHTML('beforeend', `Marker: ${element.marks}<br>`);
-        shadow.querySelector(`.player${playerNumber}`).insertAdjacentHTML('beforeend', `Stolnr: ${element.seat}`);
+        document.querySelector(`.player${playerNumber}`).insertAdjacentHTML('afterbegin', `Namn: ${element.name}<br>`);
+        document.querySelector(`.player${playerNumber}`).insertAdjacentHTML('beforeend', `Marker: ${element.marks}<br>`);
+        document.querySelector(`.player${playerNumber}`).insertAdjacentHTML('beforeend', `Stolnr: ${element.seat}`);
+        document.querySelector(`.player${playerNumber} .player-mark-meter`).insertAdjacentHTML('beforeend', `<progress value="${element.marks}" max="1000"></progress>`);
         
         playerNumber++;
       });
@@ -26,7 +26,7 @@ class gameBoard extends HTMLElement {
     
     let templateStyle = document.createElement('style');
     templateStyle.innerHTML = `
-      :host {display: block;} 
+      
       .game-board {
         display: grid;
         grid-template-columns: 1fr 2fr 1fr;
@@ -82,23 +82,24 @@ class gameBoard extends HTMLElement {
         <div class="dealer">Dealer</div>
 
         <div class="player1 player">
-          <progress value="900" max="1000"></progress>
+        <div class="player-mark-meter"></div>
+          
         </div>
         <div class="board"></div>
         <div class="player4 player">
-          <progress value="900" max="1000">70 %</progress>
+          <div class="player-mark-meter"></div> 
         </div>
 
         <div class="player2 player">
-          <progress value="900" max="1000">70 %</progress>
+        <div class="player-mark-meter"></div>
         </div>
         <div class="player3 player">
-          <progress value="900" max="1000">70 %</progress>
+          <div class="player-mark-meter"></div>
         </div>
       </div>
     `;
-    shadow.append(templateStyle);
-    shadow.appendChild(templateElement.content.cloneNode(true));
+    this.append(templateStyle);
+    this.appendChild(templateElement.content.cloneNode(true));
     
    
     showSeating();

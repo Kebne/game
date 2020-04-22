@@ -1,7 +1,7 @@
 export const players = {
  player1: {
    score: 0,
-   marks: 1000,
+   marks: 900,
    name: 'Han Solo',
    seat: 1,
    pass: false,

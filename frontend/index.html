@@ -9,11 +9,17 @@
     <link href="main.css" rel="stylesheet">
 </head>
 
+
 <body id="sheriff-game">
   
   <main>
     <section>
       <div class="game-questions"></div>
+    </section>
+
+    <section>
+      <div class="game-countdown">Tid</div>
+      <div class="game-correct-answer">Svar</div>
     </section>
 
     <section>
@@ -24,7 +30,7 @@
 
     <section>
       <div class="player-input-wrapper">   
-          <div class="player-status">Spelare Ns tur</div>
+          <div class="player-status"></div>
           <div class="player-marks"></div>
           <game-betting-slider></game-betting-slider>
           <div class="player-input">  
@@ -35,13 +41,10 @@
         </div> 
     </section>
 
+    <!-- this is only for showing to floe o the game -->
     <section>
       <div class="game-output"></div>
     </section>
-
- 
-
-
 
   </main>
 </body>
@@ -60,18 +63,18 @@
   
   window.onload = game();
   
-  // The new gameloop
+  // This so we can halt funtions until they are done beore proceeding with the next step
   async function game() {
   var gamePot = 0;
   var currentPlayer = 'player1';
+  var currentQuestion = 'question1';
+  var data = Object.values(players);
 
   createGameBoard(players, gamePot);
-  await seating();
-  console.log('player data1', players);
-  await firstBet();
-  console.log('player data2', players);
-  await firstQuestion(currentPlayer);
-  console.log('player data3', players);
+
+  await seating(data);
+  await firstBet(data);
+  await firstQuestion(currentPlayer, currentQuestion);
   await betting(0);
   await secondQuestion();
   await betting(1);
@@ -82,9 +85,9 @@
 
 
 
-async function seating() {
+async function seating(data) {
   return new Promise((resolve) => {
-    let data = Object.values(players);
+    //let data = Object.values(players);
     data.forEach((item) => {
         console.log('item players', item);
         item.seated = true;
@@ -93,24 +96,31 @@ async function seating() {
   });
 };
 
-async function firstBet() {
+async function firstBet(data) {
   return new Promise((resolve) => {
     let outputDiv = document.querySelector('.game-output');
     outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Satsar auto</p>');
-    let data = Object.values(players);
+    //let data = Object.values(players);
     data.forEach((item) => {
         item.marks -= 10;
         item.bet.push(10);
       });
     outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 marker: ${players.player1.marks}, spelare 2 marker ${players.player2.marks}<br><br><br>`);
+
+    let myTest = document.querySelector('.player1 progress');
+    myTest.value = players.player1.marks;
+    console.log('mytest',myTest);
+
     resolve();
   });
 };
 
-async function firstQuestion(currentPlayer) {
+async function firstQuestion(currentPlayer, currentQuestion) {
   return new Promise((resolve) => {
+   
     let questionNumber = 1;
     let currentQuestion = questions[`question${questionNumber}`];
+    countDown(3, currentQuestion)
     createQuestionForm(currentQuestion);
     document.querySelector('.player-status').innerHTML = `Spelare ${currentPlayer}s tur`;
    
@@ -168,16 +178,6 @@ async function endGame() {
 
 
 
-  
-
- 
-
 </script>
-
-
-
-
-
-
 
 </html>
