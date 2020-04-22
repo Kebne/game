@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>The game</title>
+    <title>The sheriff</title>
     <meta charset="UTF-8">
     <meta lang="se-SV">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Manrope&display=swap" rel="stylesheet">
     <link href="main.css" rel="stylesheet">
 </head>
 
-<body id="kebne-game">
+<body id="sheriff-game">
   
   <main>
+    <section>
+      <div class="game-questions"></div>
+    </section>
+
     <section>
       <div class="game-board">
         <game-board></game-board>
@@ -19,40 +23,25 @@
     </section>
 
     <section>
-      <div class="game-grid">
-        <div class="game-countdown"></div>
-        <div class="game-correct-answer"></div>
-        <div class="game-choice"></div>
-        <div class="game-questions"></div>
-      </div>
-  </section>
+      <div class="player-input-wrapper">   
+          <div class="player-status">Spelare Ns tur</div>
+          <div class="player-marks"></div>
+          <game-betting-slider></game-betting-slider>
+          <div class="player-input">  
+              <div><button class="js-player-bet">Betta</button></div>
+              <div><button class="js-player-pass">Passa</button></div>
+              <div><button class="js-player-fold">Lägga sig</button></div>
+          </div>
+        </div> 
+    </section>
 
-  <section>
-    <div class="player-input-wrapper">   
-        
-        <div class="player-status"></div>
-        <div class="player-marks"></div>
-        <game-betting-slider></game-betting-slider>
-        <div class="player-input">  
-            <div><button class="js-player-bet">Betta</button></div>
-            <div><button class="js-player-pass">Passa</button></div>
-            <div><button class="js-player-fold">Lägga sig</button></div>
-        </div>
-      </div> 
-  </section>
+    <section>
+      <div class="game-output"></div>
+    </section>
+
+ 
 
 
-<!-- this only for development to easier see were things are. Remove at production -->
-<section>
-  <div class="game-descript" style="background-color: #444; padding: var(--standard-padding); line-height: 1.7; margin-top: 6rem; font-weight: 700">
-    <ul>
-      <li style="color: #DCF7F3">- Countdown-timer. Css-class: .game-countdown.</li>
-      <li style="color: #FFFCDD">- Correct answer. Css-class: .game-correct-answer.</li>
-      <li style="color: #FFD8D8">- Player choice, Css-class: .game-choice.</li>
-      <li style="color: #e3ffdd">- Questions. Css-class: .game-questions.</li>
-    </ul>
-  </div>
-</section>
 
   </main>
 </body>
@@ -64,111 +53,131 @@
   import {countDown} from './modules/countdown.js';
   import {playerChoice} from './modules/playerchoice.js';
   import {players} from './modules/players.js';
-  import {seatPlayer} from './modules/seatplayer.js';
   import {bettingSlider} from './modules/bettingslider.js';
   import {createGameBoard} from './modules/gameboard.js';
   
+ 
   
-  var currentPlayer = players.player1;
-  var player = currentPlayer; // remove this, only for see if old code works (bet, fold etc)
+  window.onload = game();
   
-  window.onload = gameEngine();
-    
-  function gameEngine(currentRound = 1, questionNumber = 1) {
+  // The new gameloop
+  async function game() {
+  var gamePot = 0;
+  var currentPlayer = 'player1';
+
+  createGameBoard(players, gamePot);
+  await seating();
+  console.log('player data1', players);
+  await firstBet();
+  console.log('player data2', players);
+  await firstQuestion(currentPlayer);
+  console.log('player data3', players);
+  await betting(0);
+  await secondQuestion();
+  await betting(1);
+  await endGame();
+  
+};
+
+
+
+
+async function seating() {
+  return new Promise((resolve) => {
+    let data = Object.values(players);
+    data.forEach((item) => {
+        console.log('item players', item);
+        item.seated = true;
+      });
+    resolve();
+  });
+};
+
+async function firstBet() {
+  return new Promise((resolve) => {
+    let outputDiv = document.querySelector('.game-output');
+    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Satsar auto</p>');
+    let data = Object.values(players);
+    data.forEach((item) => {
+        item.marks -= 10;
+        item.bet.push(10);
+      });
+    outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 marker: ${players.player1.marks}, spelare 2 marker ${players.player2.marks}<br><br><br>`);
+    resolve();
+  });
+};
+
+async function firstQuestion(currentPlayer) {
+  return new Promise((resolve) => {
+    let questionNumber = 1;
     let currentQuestion = questions[`question${questionNumber}`];
-   
-
     createQuestionForm(currentQuestion);
-    countDown(4, currentQuestion);
-    createGameBoard(players);
-
-    let form = document.querySelector('#game-form');
-    let radios = form.elements['questions'];
-    form.addEventListener('change', function() {playerChoice(radios)});
-
-    let elementBet = document.querySelector('.js-player-bet');
-    elementBet.addEventListener('click', bet);
-
-    let elementPass = document.querySelector('.js-player-pass');
-    elementPass.addEventListener('click', pass);
-
-    let elementFold = document.querySelector('.js-player-fold');
-    elementFold.addEventListener('click', fold);
-
-    function bet() {
-      console.log('bet running');
-      let slider = document.querySelector("game-betting-slider");
-      let sliderValue = slider.shadowRoot.querySelector(".bet-slider-output").value;
-      player.marks = player.marks - sliderValue;
-      let playerMarks = document.querySelector('.player-marks');
-      playerMarks.innerHTML = `Du har ${player.marks} marker`;
-  };
-
-  function pass() {
-    console.log('pass running');
-    player.pass = true;
-    let playerStatus = document.querySelector('.player-status');
-    playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
-  };
-
-  function fold() {
-    console.log('fold running');
-    player.fold = true;
-    let playerStatus = document.querySelector('.player-status');
-    playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
-  };
-
-
-    function currentPlayerInfo(currentPlayer) {
-      let player = currentPlayer;
-      var statusOutput = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`
-      let playerMarks = document.querySelector('.player-marks');
-      playerMarks.innerHTML = `Du har ${player.marks} marker`;
-      let playerStatus = document.querySelector('.player-status');
-      playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
-      console.log('current player', player);
-    };
-    currentPlayerInfo(currentPlayer);
-
+    document.querySelector('.player-status').innerHTML = `Spelare ${currentPlayer}s tur`;
+   
+    let outputDiv = document.querySelector('.game-output');
+    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Fråga1</p>');
+    setTimeout( function() { 
+      let p1 = players.player1.answer;
+      let p2 = players.player2.answer;
+      outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 svar: <b>${p1}</b>, spelare 2 svar: <b>${p2}</b><br><br><br>`);
+    resolve();
+     }, 2000);
     
+  });
+};
 
+async function betting(turn) {
+  return new Promise((resolve) => {
+    let outputDiv = document.querySelector('.game-output');
+    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Satsar</p>');
+ 
+    let p1 = 100;
+    let p2 = 200;
+    outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 satsade: <b>${p1}</b>, spelare 2 satsade: <b>${p2}</b><br><br><br>`);
+    resolve();
+  });
+};
+
+async function secondQuestion() {
+  return new Promise((resolve) => {
+    let outputDiv = document.querySelector('.game-output');
+    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Fråga2</p>');
+    setTimeout(function(){
+    let p1 = players.player1.answer;
+    let p2 = players.player2.answer;
+    outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 svar: <b>${p1}</b>, spelare 2 svar: <b>${p2}</b><br><br><br>`);
+    resolve();
+    }, 2000)
     
-  };
+  });
+};
+
+async function endGame() {
+  return new Promise((resolve) => {
+    let outputDiv = document.querySelector('.game-output');
+    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Summerar resultat</p>');
+    let p1 = [600, 400];
+    let p1b = p1.reduce((a,b)=>a+b);
+    let p2 = [400, 200];
+    let p2b = p2.reduce((a,b)=>a+b);
+    outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 summa: <b>${p1b}</b>, spelare 2 summa: <b>${p2b}</b><br><br><br>`);
+    resolve();
+  });
+};
+
+
+
+
+  
+
+ 
 
 </script>
 
 
-<script>
-
-//Old code, remove later
-
-  
-  
-
-  function bet() {
-    let slider = document.querySelector("game-betting-slider");
-    let sliderValue = slider.shadowRoot.querySelector(".bet-slider-output").value;
-    player.marks = player.marks - sliderValue;
-    let playerMarks = document.querySelector('.player-marks');
-    playerMarks.innerHTML = `Du har ${player.marks} marker`;
-  };
-
-  function pass() {
-    player.pass = true;
-    let playerStatus = document.querySelector('.player-status');
-    playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
-  };
-
-  function fold() {
-    player.fold = true;
-    let playerStatus = document.querySelector('.player-status');
-    playerStatus.innerHTML = `Passat är: <i>${player.pass}</i>. Lagt är: <i>${player.fold}</i>.`;
-  };
-
-  
 
 
-</script>
+
 
 
 </html>
