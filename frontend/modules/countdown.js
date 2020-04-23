@@ -8,9 +8,9 @@ export function countDown(timeLimit, currentQuestion) {
         document.querySelector('.game-correct-answer').innerHTML = `Rätt svar är: ${currentQuestion.correctAnswer}`;
         
       } else {
-      document.querySelector('.game-countdown').innerHTML = `${timeleft} sekunder kvar`;
+      document.querySelector('.game-countdown').innerHTML = `0:${timeleft} sekunder kvar`;
       }
       timeleft -= 1;
-    }, 1100);
+    }, 1000);
   };
   

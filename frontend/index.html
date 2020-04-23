@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta lang="se-SV">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Manrope&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Bungee|Manrope&display=swap" rel="stylesheet">
     <link href="main.css" rel="stylesheet">
 </head>
 
@@ -13,6 +13,17 @@
 <body id="sheriff-game">
   
   <main>
+    <div>
+      <section>
+      <div class="game-overlay-wrapper">
+        <div class="game-overlay">
+          <div class="game-overlay-flex">
+            <div class="game-overlay-button-wrapper"><button class="game-start-button">Start</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section>
       <div class="game-questions"></div>
     </section>
@@ -30,54 +41,102 @@
 
     <section>
       <div class="player-input-wrapper">   
-          <div class="player-status"></div>
           <div class="player-marks"></div>
-          <game-betting-slider></game-betting-slider>
+          <div class="player-status"></div>
+          
+          <div class="game-slider">
+            <label for="playerslider">Att satsa:</label>
+            <input id="playerslider" type="range" min="10" max="100" value="10" step="10" class="bet-slider">
+            <output class="bet-slider-output"></output>
+          </div>
           <div class="player-input">  
-              <div><button class="js-player-bet">Betta</button></div>
-              <div><button class="js-player-pass">Passa</button></div>
-              <div><button class="js-player-fold">Lägga sig</button></div>
+              <div><button class="js-player-bet player-input-button">Betta</button></div>
+              <div><button class="js-player-pass player-input-button">Passa</button></div>
+              <div><button class="js-player-fold player-input-button">Lägga sig</button></div>
           </div>
         </div> 
     </section>
 
-    <!-- this is only for showing to floe o the game -->
-    <section>
-      <div class="game-output"></div>
-    </section>
-
+    
+  </div>
   </main>
 </body>
 
 
 <script type="module">
   import {questions} from './modules/questions.js';
-  import {createQuestionForm} from './modules/template.js';
+  import {createQuestionForm} from './modules/createquestionform.js';
   import {countDown} from './modules/countdown.js';
   import {playerChoice} from './modules/playerchoice.js';
   import {players} from './modules/players.js';
-  import {bettingSlider} from './modules/bettingslider.js';
   import {createGameBoard} from './modules/gameboard.js';
   
  
   
-  window.onload = game();
+  //window.onload = game();
+
+  document.querySelector('.game-overlay-button-wrapper').addEventListener('click', function () {
+    document.querySelector('.game-overlay-wrapper').innerHTML ="";
+    game();
+  });
+
+
   
   // This so we can halt funtions until they are done beore proceeding with the next step
   async function game() {
   var gamePot = 0;
   var currentPlayer = 'player1';
   var currentQuestion = 'question1';
-  var data = Object.values(players);
-
+  var data = Object.values(players); 
+  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`;
+  document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
+  /*var audio = new Audio('sound/background-sound.mp3');
+  audio.volume = 0.1;
+  audio.loop = true;
+  audio.play();*/
+  
   createGameBoard(players, gamePot);
+
+  document.querySelector('.js-player-bet').addEventListener('click', function () {
+    let audioBetting = new Audio('sound/betting.mp3');
+    audioBetting.play();
+    data[0].marks -= slider.value;
+    console.log('data', data);
+    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`;
+    
+  });
+  document.querySelector('.js-player-pass').addEventListener('click', function () {
+    let audioPass = new Audio('sound/pass.mp3');
+    audioPass.play();
+    data[0].pass = true;
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
+  });
+  document.querySelector('.js-player-fold').addEventListener('click', function () {
+    let audioFold = new Audio('sound/fold.mp3');
+    audioFold.play();
+    data[0].fold = true;
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
+  });
+
+  const slider = document.querySelector('.bet-slider');
+    const output = document.querySelector('.bet-slider-output');
+    output.innerHTML = slider.value;
+    slider.addEventListener('change', sliderOutput);
+    function sliderOutput() {
+      output.innerHTML = slider.value;
+      
+      
+    };
+
+ 
 
   await seating(data);
   await firstBet(data);
   await firstQuestion(currentPlayer, currentQuestion);
   await betting(0);
-  await secondQuestion();
+  await secondQuestion(currentQuestion);
   await betting(1);
+  await thirdQuestion(currentQuestion);
   await endGame();
   
 };
@@ -98,14 +157,12 @@ async function seating(data) {
 
 async function firstBet(data) {
   return new Promise((resolve) => {
-    let outputDiv = document.querySelector('.game-output');
-    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Satsar auto</p>');
     //let data = Object.values(players);
     data.forEach((item) => {
         item.marks -= 10;
         item.bet.push(10);
       });
-    outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 marker: ${players.player1.marks}, spelare 2 marker ${players.player2.marks}<br><br><br>`);
+  
 
     let myTest = document.querySelector('.player1 progress');
     myTest.value = players.player1.marks;
@@ -117,60 +174,71 @@ async function firstBet(data) {
 
 async function firstQuestion(currentPlayer, currentQuestion) {
   return new Promise((resolve) => {
-   
     let questionNumber = 1;
     let currentQuestion = questions[`question${questionNumber}`];
-    countDown(3, currentQuestion)
+    countDown(3, currentQuestion); 
     createQuestionForm(currentQuestion);
-    document.querySelector('.player-status').innerHTML = `Spelare ${currentPlayer}s tur`;
-   
-    let outputDiv = document.querySelector('.game-output');
-    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Fråga1</p>');
-    setTimeout( function() { 
-      let p1 = players.player1.answer;
-      let p2 = players.player2.answer;
-      outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 svar: <b>${p1}</b>, spelare 2 svar: <b>${p2}</b><br><br><br>`);
+    let audioQ = new Audio('sound/question.mp3');
+    audioQ.volume = 0.5;
+    //audioQ.play();
+    setTimeout(function(){
+    let p1 = players.player1.answer;
+    let p2 = players.player2.answer;
     resolve();
-     }, 2000);
+    }, 3000);
     
   });
 };
 
 async function betting(turn) {
   return new Promise((resolve) => {
-    let outputDiv = document.querySelector('.game-output');
-    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Satsar</p>');
- 
     let p1 = 100;
     let p2 = 200;
-    outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 satsade: <b>${p1}</b>, spelare 2 satsade: <b>${p2}</b><br><br><br>`);
     resolve();
   });
 };
 
-async function secondQuestion() {
+async function secondQuestion(currentQuestion) {
   return new Promise((resolve) => {
-    let outputDiv = document.querySelector('.game-output');
-    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Fråga2</p>');
+    let questionNumber = 2;
+    let currentQuestion = questions[`question${questionNumber}`];
+    countDown(3, currentQuestion); 
+    createQuestionForm(currentQuestion);
+    let audioQ = new Audio('sound/question.mp3');
+    audioQ.volume = 0.5;
+    //audioQ.play();
     setTimeout(function(){
     let p1 = players.player1.answer;
     let p2 = players.player2.answer;
-    outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 svar: <b>${p1}</b>, spelare 2 svar: <b>${p2}</b><br><br><br>`);
     resolve();
-    }, 2000)
+    }, 3000);
+    
+  });
+};
+
+async function thirdQuestion(currentQuestion) {
+  return new Promise((resolve) => {
+    let questionNumber = 3;
+    let currentQuestion = questions[`question${questionNumber}`];
+    countDown(3, currentQuestion); 
+    createQuestionForm(currentQuestion);
+    let audioQ = new Audio('sound/question.mp3');
+    audioQ.volume = 0.5;
+    //audioQ.play();
+    resolve();
+    
     
   });
 };
 
 async function endGame() {
   return new Promise((resolve) => {
-    let outputDiv = document.querySelector('.game-output');
-    outputDiv.insertAdjacentHTML('beforeend', '<p class="game-events">Summerar resultat</p>');
+
     let p1 = [600, 400];
     let p1b = p1.reduce((a,b)=>a+b);
     let p2 = [400, 200];
     let p2b = p2.reduce((a,b)=>a+b);
-    outputDiv.insertAdjacentHTML('beforeend', `Spelare 1 summa: <b>${p1b}</b>, spelare 2 summa: <b>${p2b}</b><br><br><br>`);
+  
     resolve();
   });
 };

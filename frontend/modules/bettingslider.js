@@ -1,7 +1,8 @@
 export class bettingSlider extends HTMLElement {
+  // remove this file
   constructor() {
     super();
-    const shadow = this.attachShadow({mode: 'open'});
+    //const shadow = this.attachShadow({mode: 'open'});
     
     
     let playerInputStyle = document.createElement('style');
@@ -16,8 +17,8 @@ export class bettingSlider extends HTMLElement {
         <output class="bet-slider-output"></output>
       </div>
     `;
-    shadow.append(playerInputStyle);
-    shadow.appendChild(templateElement.content.cloneNode(true));
+    this.append(playerInputStyle);
+    this.appendChild(templateElement.content.cloneNode(true));
 
     const slider = shadow.querySelector('.bet-slider');
     const output = shadow.querySelector('.bet-slider-output');

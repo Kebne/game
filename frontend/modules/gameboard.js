@@ -10,14 +10,14 @@ class gameBoard extends HTMLElement {
       //this need to be updated
       document.querySelector('.board').insertAdjacentHTML('afterbegin', `Potten är: ${gamePot}`);
       data.forEach((element) => {
-        document.querySelector(`.player${playerNumber}`).insertAdjacentHTML('afterbegin', `Namn: ${element.name}<br>`);
-        document.querySelector(`.player${playerNumber}`).insertAdjacentHTML('beforeend', `Marker: ${element.marks}<br>`);
-        document.querySelector(`.player${playerNumber}`).insertAdjacentHTML('beforeend', `Stolnr: ${element.seat}`);
-        document.querySelector(`.player${playerNumber} .player-mark-meter`).insertAdjacentHTML('beforeend', `<progress value="${element.marks}" max="1000"></progress>`);
+        document.querySelector(`.player${playerNumber}-info`).insertAdjacentHTML('afterbegin', `Namn: ${element.name}<br>`);
+        document.querySelector(`.player${playerNumber}-info`).insertAdjacentHTML('beforeend', `Marker: ${element.marks}<br>`);
+        document.querySelector(`.player${playerNumber}-info`).insertAdjacentHTML('beforeend', `Stolnr: ${element.seat}`);
+        document.querySelector(`.player${playerNumber} .player-mark-meter`).insertAdjacentHTML('beforeend', `<progress value="${element.marks}" max="1000" class="player${playerNumber}-progress"></progress>`);
         
         playerNumber++;
       });
-      console.log('Alla spelare sitter');
+      
     };
 
    
@@ -29,6 +29,7 @@ class gameBoard extends HTMLElement {
       
       .game-board {
         display: grid;
+        min-width: 1100px;
         grid-template-columns: 1fr 2fr 1fr;
         grid-template-rows: 150px 150px;
         grid-template-areas: 
@@ -37,6 +38,7 @@ class gameBoard extends HTMLElement {
         "player2 board player3";
         margin-bottom: 1rem;
         color: #eee;
+        
       }
       .dealer {
         grid-area: dealer; 
@@ -48,30 +50,41 @@ class gameBoard extends HTMLElement {
         grid-area: board; 
         background-color: #3e7f38;
         padding: 1rem;
+        /*background: url(images/game-board.jpg) no-repeat center center fixed; 
+        background-size: contain;*/
       }
       .player1 {
         grid-area: player1; 
         background-color: #153244; 
         box-sizing: border-box; 
         padding: 1rem;
+        display: flex;
+        gap: 8px;
       }
+
       .player2 {
         grid-area: player2; 
         background-color: #4D4940; 
         box-sizing: border-box;
         padding: 1rem;
+        display: flex;
+        gap: 8px;
       }
       .player3 {
         grid-area: player3; 
         background-color: #805238; 
         box-sizing: border-box;
         padding: 1rem;
+        display: flex;
+        gap: 8px;
       }
       .player4 {
         grid-area: player4; 
         background-color: #94855A; 
         box-sizing: border-box;
         padding: 1rem;
+        display: flex;
+        gap: 8px;
       }
       
     `;
@@ -82,20 +95,36 @@ class gameBoard extends HTMLElement {
         <div class="dealer">Dealer</div>
 
         <div class="player1 player">
-        <div class="player-mark-meter"></div>
-          
+          <div class="player1-info">
+            <div class="player-mark-meter"></div>
+          </div>
+          <div class="player1-avatar"><img style="width: 100%;" src="images/player1-avatar.png" alt="player1 avatar"></div>
         </div>
+
         <div class="board"></div>
+        
         <div class="player4 player">
-          <div class="player-mark-meter"></div> 
+          <div class="player4-info">
+            <div class="player-mark-meter"></div>
+          </div>
+          <div class="player4-avatar"><img style="width: 100%;" src="images/player2-avatar.png" alt="player4 avatar"></div>
         </div>
 
         <div class="player2 player">
-        <div class="player-mark-meter"></div>
-        </div>
-        <div class="player3 player">
+        <div class="player2-info">
           <div class="player-mark-meter"></div>
         </div>
+        <div class="player2-avatar"><img style="width: 100%;" src="images/player3-avatar.png" alt="player2 avatar"></div>
+      </div>
+
+      <div class="player3 player">
+      <div class="player3-info">
+        <div class="player-mark-meter"></div>
+      </div>
+        <div class="player3-avatar"><img style="width: 100%;" src="images/player4-avatar.png" alt="player3 avatar"></div>
+      </div>
+
+
       </div>
     `;
     this.append(templateStyle);

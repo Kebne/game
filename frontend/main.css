@@ -7,38 +7,61 @@ body {
   font-style: normal;
   font-family: 'Manrope','Roboto Slab','Comic Neue', sans-serif;
   color: #333;
+  background-color: #F0EEE1;
   margin: 0;
   padding: 0;
 }
 
-#game-grid {
-  display: grid;
-  max-width: 800px;
-  margin: 40px auto;
-  color: #efefef;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto;
-  grid-template-areas: 
-    "countdown"
-    "correct"
-    "player-choice"
-    "questions"
-    ;
+
+.game-overlay {
+  position: absolute;
+  z-index: 11;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background-color: rgba(200,200,200,0.5);
+  background: url(images/start-bg.jpg) no-repeat center center fixed; 
+  background-size: cover;
+}
+
+.game-overlay-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.game-overlay-flex button {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  animation: startButtonFx 1.5s infinite;
+
+}
+
+@keyframes startButtonFx {
+  0%, 100% {
+    padding: 1rem;
+    filter: drop-shadow(0 0 30px #111);
+  }
+  50% {
+    padding: 1.5rem;
+    filter: drop-shadow(0 0 60px #111);
+  }
 }
 
 .game-countdown {
-  grid-area: countdown;
+  font-family: 'Bungee', sans-serif;
   min-height: var(--min-height);
   box-sizing: border-box;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  background-color: #DCF7F3;
+  /*background-color: #DCF7F3;*/
+  color: #121;
   text-align: center;
   padding-top: 15px;
 }
 
 .game-correct-answer {
-  grid-area: correct;
   padding: 1rem;
   box-sizing: border-box;
   min-height: var(--min-height);
@@ -46,7 +69,6 @@ body {
 }
 
 .game-choice {
-  grid-area: player-choice;
   box-sizing: border-box;
   padding: var(--standard-padding);
   min-height: var(--min-height);
@@ -55,11 +77,8 @@ body {
 }
 
 .game-questions {
-  grid-area: questions;
   position: relative;
   padding: var(--standard-padding);
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   display: block;
   background-color: #d3ae50;
 }
@@ -93,19 +112,21 @@ fieldset {
 
 .game-start-button {
   box-sizing: border-box;
+  font-style: normal;
   font-family: 'Comic Neue', sans-serif;
-  letter-spacing: 1px;
-  font-size: 1.8rem;
-  padding: 1.5rem;
-  background-color: salmon;
-  color: #111;
-  border: 1px solid transparent;
-  border-radius: 0.2rem;
+  font-size: 14px;
+  padding: 1rem;
+  color: #eee;
+  background-color: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
 }
 
-button:hover {
-  cursor: pointer
+.game-start-button:hover {
+  cursor: pointer;
+  filter: brightness(150%);
 }
+
 
 
 .game-start-button-wrapper {
@@ -125,7 +146,7 @@ button:hover {
   box-sizing: border-box;
   gap: 0.4rem;
 }
-  button {
+  .player-input-button {
     box-sizing: border-box;
     font-style: normal;
     font-family: 'Comic Neue', sans-serif;
@@ -136,10 +157,17 @@ button:hover {
     border: 1px solid #444;
     border-radius: 4px;
   }
-  button:hover {
+  .player-input-button:hover {
     cursor: pointer;
     filter: brightness(150%);
   }
+
+  .player-input-button:active {
+    cursor: pointer;
+    transform: scale(0.9);
+  }
+
+  
   .player-status {
       display: flex;
       box-sizing: border-box;
