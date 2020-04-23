@@ -30,8 +30,10 @@ export function createQuestionForm(currentQuestion) {
 
     
   // Put template into DOM (web page)
-  let el = document.querySelector('.game-questions');
+  let element = document.querySelector('.game-questions');
+  // This is only for refeshing display of game questions, otherwise we show the question under each other.
+  element.innerHTML = "";
   let myTemplate = templateElement.content.cloneNode(true);
-  el.appendChild(myTemplate);
+  element.appendChild(myTemplate);
 
 };
