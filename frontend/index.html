@@ -100,6 +100,7 @@
   audio.play();*/
   
   createGameBoard(players, gamePot);
+
   let highlight = document.querySelector('.player1');
   highlight.classList.add('current-player-highlight');
   console.log('highlight ',highlight);
@@ -136,7 +137,7 @@
  
 
   await seating(data);
-  await firstBet(data);
+  await firstBet(data, gamePot);
   await askQuestion(1);
   await wait();
   await betting(0);
@@ -163,14 +164,16 @@ async function seating(data) {
   });
 };
 
-async function firstBet(data) {
+async function firstBet(data, gamePot) {
   return new Promise((resolve) => {
     //let data = Object.values(players);
     data.forEach((item) => {
         item.marks -= 10;
+        gamePot += 10;
         item.bet.push(10);
       });
-  
+      console.log('gamePot', gamePot);
+    
 
     let myTest = document.querySelector('.player1 progress');
     myTest.value = players.player1.marks;
