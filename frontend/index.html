@@ -126,14 +126,12 @@
   });
 
   const slider = document.querySelector('.bet-slider');
-    const output = document.querySelector('.bet-slider-output');
+  const output = document.querySelector('.bet-slider-output');
+  output.innerHTML = slider.value;
+  slider.addEventListener('change', sliderOutput);
+  function sliderOutput() {
     output.innerHTML = slider.value;
-    slider.addEventListener('change', sliderOutput);
-    function sliderOutput() {
-      output.innerHTML = slider.value;
-      
-      
-    };
+  };
 
  
 

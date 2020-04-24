@@ -30,7 +30,7 @@ class gameBoard extends HTMLElement {
       .game-board {
         display: grid;
         width: 100%;
-        grid-template-columns: 1fr 2fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 150px 150px;
         grid-template-areas: 
         "player1 board player4"
