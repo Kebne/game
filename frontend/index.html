@@ -14,7 +14,8 @@
   
   <main>
     <div>
-      <section>
+
+    <section>
       <div class="game-overlay-wrapper">
         <div class="game-overlay">
           <div class="game-overlay-flex">
@@ -76,22 +77,24 @@
 
   window.onload = game();
 
+  //for start screen
   /* document.querySelector('.game-overlay-button-wrapper').addEventListener('click', function () {
     document.querySelector('.game-overlay-wrapper').innerHTML ="";
     game();
    }); */
 
   
-  // This so we can halt funtions until they are done beore proceeding with the next step
+  
   async function game() {
   var gamePot = 0;
   var currentPlayer = 'player1';
   var data = Object.values(players); 
+  
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
 
   
-  /*var audio = new Audio('sound/background-sound.mp3');
+  /*let audio = new Audio('sound/background-sound.mp3');
   audio.volume = 0.1;
   audio.loop = true;
   audio.play();*/
@@ -184,6 +187,9 @@ async function askQuestion(nr) {
   return new Promise((resolve) => {
    console.log('currentQuestion', currentQuestion);
     countDown(3, currentQuestion, () => resolve()); 
+    let questionSound = new Audio('sound/question.mp3');
+    questionSound.volume = 0.1;
+    questionSound.play();
     createQuestionForm(currentQuestion);
     
   });

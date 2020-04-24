@@ -29,7 +29,6 @@ class gameBoard extends HTMLElement {
       
       .game-board {
         display: grid;
-        min-width: 1100px;
         width: 100%;
         grid-template-columns: 1fr 2fr 1fr;
         grid-template-rows: 150px 150px;
@@ -42,7 +41,7 @@ class gameBoard extends HTMLElement {
       }
       .img-player-avatar {
         max-height: 120px;
-        width: 100%;
+        min-height: 70px;
       }
       .dealer {
         grid-area: dealer; 

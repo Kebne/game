@@ -12,9 +12,11 @@ body {
   padding: 0;
 }
 
-.game-overlay-wrapper{
+/*Startscreen, set ths to display block and uncomment code in index.html for reable startscreen */
+.game-overlay-wrapper {
 display: none;
 }
+
 .game-overlay {
   position: absolute;
   z-index: 11;
