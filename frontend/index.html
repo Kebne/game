@@ -30,11 +30,12 @@
 
     <section>
       <div class="game-countdown">Tid</div>
+      <div class="game-wait"></div>
       <div class="game-correct-answer">Svar</div>
     </section>
 
     <section>
-      <div class="game-board">
+      <div class="game-board-wrapper">
         <game-board></game-board>
       </div>
     </section>
@@ -72,30 +73,33 @@
   import {createGameBoard} from './modules/gameboard.js';
   
  
-  
-  //window.onload = game();
 
-  document.querySelector('.game-overlay-button-wrapper').addEventListener('click', function () {
+  window.onload = game();
+
+  /* document.querySelector('.game-overlay-button-wrapper').addEventListener('click', function () {
     document.querySelector('.game-overlay-wrapper').innerHTML ="";
     game();
-  });
-
+   }); */
 
   
   // This so we can halt funtions until they are done beore proceeding with the next step
   async function game() {
   var gamePot = 0;
   var currentPlayer = 'player1';
-  var currentQuestion = 'question1';
   var data = Object.values(players); 
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
+
+  
   /*var audio = new Audio('sound/background-sound.mp3');
   audio.volume = 0.1;
   audio.loop = true;
   audio.play();*/
   
   createGameBoard(players, gamePot);
+  let highlight = document.querySelector('.player1');
+  highlight.classList.add('current-player-highlight');
+  console.log('highlight ',highlight);
 
   document.querySelector('.js-player-bet').addEventListener('click', function () {
     let audioBetting = new Audio('sound/betting.mp3');
@@ -132,11 +136,14 @@
 
   await seating(data);
   await firstBet(data);
-  await firstQuestion(currentPlayer, currentQuestion);
+  await askQuestion(1);
+  await wait();
   await betting(0);
-  await secondQuestion(currentQuestion);
+  await askQuestion(2);
+  await wait();
   await betting(1);
-  await thirdQuestion(currentQuestion);
+  await askQuestion(3);
+  console.log('END');
   await endGame();
   
 };
@@ -169,26 +176,31 @@ async function firstBet(data) {
     console.log('mytest',myTest);
 
     resolve();
-  });
+  }); 
 };
 
-async function firstQuestion(currentPlayer, currentQuestion) {
+async function askQuestion(nr) {
+  let currentQuestion = questions[`question${nr}`];
   return new Promise((resolve) => {
-    let questionNumber = 1;
-    let currentQuestion = questions[`question${questionNumber}`];
-    countDown(3, currentQuestion); 
+   console.log('currentQuestion', currentQuestion);
+    countDown(3, currentQuestion, () => resolve()); 
     createQuestionForm(currentQuestion);
-    let audioQ = new Audio('sound/question.mp3');
-    audioQ.volume = 0.5;
-    //audioQ.play();
-    setTimeout(function(){
-    let p1 = players.player1.answer;
-    let p2 = players.player2.answer;
-    resolve();
-    }, 3000);
     
   });
 };
+
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function wait()
+{
+    document.querySelector('.game-wait').innerHTML = 'Snart kommer en ny fråga ...';
+    await timeout(3000);
+    document.querySelector('.game-wait').innerHTML = '';
+}
+
+
+
 
 async function betting(turn) {
   return new Promise((resolve) => {
@@ -198,38 +210,6 @@ async function betting(turn) {
   });
 };
 
-async function secondQuestion(currentQuestion) {
-  return new Promise((resolve) => {
-    let questionNumber = 2;
-    let currentQuestion = questions[`question${questionNumber}`];
-    countDown(3, currentQuestion); 
-    createQuestionForm(currentQuestion);
-    let audioQ = new Audio('sound/question.mp3');
-    audioQ.volume = 0.5;
-    //audioQ.play();
-    setTimeout(function(){
-    let p1 = players.player1.answer;
-    let p2 = players.player2.answer;
-    resolve();
-    }, 3000);
-    
-  });
-};
-
-async function thirdQuestion(currentQuestion) {
-  return new Promise((resolve) => {
-    let questionNumber = 3;
-    let currentQuestion = questions[`question${questionNumber}`];
-    countDown(3, currentQuestion); 
-    createQuestionForm(currentQuestion);
-    let audioQ = new Audio('sound/question.mp3');
-    audioQ.volume = 0.5;
-    //audioQ.play();
-    resolve();
-    
-    
-  });
-};
 
 async function endGame() {
   return new Promise((resolve) => {

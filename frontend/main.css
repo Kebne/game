@@ -12,7 +12,9 @@ body {
   padding: 0;
 }
 
-
+.game-overlay-wrapper{
+display: none;
+}
 .game-overlay {
   position: absolute;
   z-index: 11;
@@ -49,7 +51,7 @@ body {
   }
 }
 
-.game-countdown {
+.game-countdown, .game-wait {
   font-family: 'Bungee', sans-serif;
   min-height: var(--min-height);
   box-sizing: border-box;
@@ -139,6 +141,12 @@ fieldset {
 .player-input-wrapper {
   background-color: #999; 
   padding: var(--standard-padding);
+}
+
+.current-player-highlight {
+  border-bottom: 3px solid #999;
+  box-sizing: border-box;
+  
 }
 
 .player-input {

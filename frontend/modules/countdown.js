@@ -1,4 +1,4 @@
-export function countDown(timeLimit, currentQuestion) {
+export function countDown(timeLimit, currentQuestion, done) {
     let timeleft = timeLimit;
     let downloadTimer = setInterval( ()=> {
       if(timeleft <= 0) {
@@ -6,7 +6,7 @@ export function countDown(timeLimit, currentQuestion) {
         document.querySelector('.game-countdown').innerHTML = 'Tiden är slut';
         document.querySelector('fieldset').setAttribute('disabled', true);
         document.querySelector('.game-correct-answer').innerHTML = `Rätt svar är: ${currentQuestion.correctAnswer}`;
-        
+        done();        
       } else {
       document.querySelector('.game-countdown').innerHTML = `0:${timeleft} sekunder kvar`;
       }

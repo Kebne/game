@@ -30,15 +30,19 @@ class gameBoard extends HTMLElement {
       .game-board {
         display: grid;
         min-width: 1100px;
+        width: 100%;
         grid-template-columns: 1fr 2fr 1fr;
         grid-template-rows: 150px 150px;
         grid-template-areas: 
-       
         "player1 board player4"
         "player2 board player3";
         margin-bottom: 1rem;
         color: #eee;
         
+      }
+      .img-player-avatar {
+        max-height: 120px;
+        width: 100%;
       }
       .dealer {
         grid-area: dealer; 
@@ -98,7 +102,7 @@ class gameBoard extends HTMLElement {
           <div class="player1-info">
             <div class="player-mark-meter"></div>
           </div>
-          <div class="player1-avatar"><img style="width: 100%;" src="images/player1-avatar.png" alt="player1 avatar"></div>
+          <div class="player1-avatar"><img class="img-player-avatar" src="images/player1-avatar.png" alt="player1 avatar"></div>
         </div>
 
         <div class="board"></div>
@@ -107,21 +111,21 @@ class gameBoard extends HTMLElement {
           <div class="player4-info">
             <div class="player-mark-meter"></div>
           </div>
-          <div class="player4-avatar"><img style="width: 100%;" src="images/player2-avatar.png" alt="player4 avatar"></div>
+          <div class="player4-avatar"><img class="img-player-avatar"  src="images/player2-avatar.png" alt="player4 avatar"></div>
         </div>
 
         <div class="player2 player">
         <div class="player2-info">
           <div class="player-mark-meter"></div>
         </div>
-        <div class="player2-avatar"><img style="width: 100%;" src="images/player3-avatar.png" alt="player2 avatar"></div>
+        <div class="player2-avatar"><img class="img-player-avatar" src="images/player3-avatar.png" alt="player2 avatar"></div>
       </div>
 
       <div class="player3 player">
       <div class="player3-info">
         <div class="player-mark-meter"></div>
       </div>
-        <div class="player3-avatar"><img style="width: 100%;" src="images/player4-avatar.png" alt="player3 avatar"></div>
+        <div class="player3-avatar"><img class="img-player-avatar" src="images/player4-avatar.png" alt="player3 avatar"></div>
       </div>
 
 
