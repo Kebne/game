@@ -1,4 +1,4 @@
-export function createGameBoard(players, gamePot) {
+export function createGameBoard(players) {
 
 class gameBoard extends HTMLElement {
   constructor() {
@@ -8,7 +8,7 @@ class gameBoard extends HTMLElement {
     function showSeating(playerNumber = 1) {
       let data = Object.values(players);
       //this need to be updated
-      document.querySelector('.board').insertAdjacentHTML('afterbegin', `Potten är: ${gamePot}`);
+      
       data.forEach((element) => {
         document.querySelector(`.player${playerNumber}-info`).insertAdjacentHTML('afterbegin', `Namn: ${element.name}<br>`);
         document.querySelector(`.player${playerNumber}-info`).insertAdjacentHTML('beforeend', `Marker: ${element.marks}<br>`);

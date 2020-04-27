@@ -92,33 +92,41 @@
   
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
-
+ 
   
   /*let audio = new Audio('sound/background-sound.mp3');
   audio.volume = 0.1;
   audio.loop = true;
   audio.play();*/
   
-  createGameBoard(players, gamePot);
-
+  createGameBoard(players);
+  document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+  
+  //To highlight current player
   let highlight = document.querySelector('.player1');
   highlight.classList.add('current-player-highlight');
-  console.log('highlight ',highlight);
+  
 
+  // Player Betting
   document.querySelector('.js-player-bet').addEventListener('click', function () {
     let audioBetting = new Audio('sound/betting.mp3');
     audioBetting.play();
+    data[0].bet.unshift(Number(slider.value));
     data[0].marks -= slider.value;
-    console.log('data', data);
-    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`;
-    
+    gamePot = data[0].bet[0];
+    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`; 
+    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
   });
+
+  // Player Passing
   document.querySelector('.js-player-pass').addEventListener('click', function () {
     let audioPass = new Audio('sound/pass.mp3');
     audioPass.play();
     data[0].pass = true;
     document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
   });
+
+  // Player Fold
   document.querySelector('.js-player-fold').addEventListener('click', function () {
     let audioFold = new Audio('sound/fold.mp3');
     audioFold.play();
@@ -129,9 +137,14 @@
   const slider = document.querySelector('.bet-slider');
   const output = document.querySelector('.bet-slider-output');
   output.innerHTML = slider.value;
-  slider.addEventListener('change', sliderOutput);
+
+  console.log('output', output);
+  
+  slider.addEventListener('input', sliderOutput);
   function sliderOutput() {
+    console.log('slideroutput running');
     output.innerHTML = slider.value;
+    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`; 
   };
 
  
