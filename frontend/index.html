@@ -66,34 +66,34 @@
 
 
 <script type="module">
-  import {questions} from './modules/questions.js';
-  import {createQuestionForm} from './modules/createquestionform.js';
-  import {countDown} from './modules/countdown.js';
-  import {playerChoice} from './modules/playerchoice.js';
-  import {players} from './modules/players.js';
-  import {createGameBoard} from './modules/gameboard.js';
+
+import {questions} from './modules/questions.js';
+import {createQuestionForm} from './modules/createquestionform.js';
+import {countDown} from './modules/countdown.js';
+import {playerChoice} from './modules/playerchoice.js';
+import {players} from './modules/players.js';
+import {createGameBoard} from './modules/gameboard.js';
   
  
+window.onload = game();
 
-  window.onload = game();
-
-  //for start screen
-  /* document.querySelector('.game-overlay-button-wrapper').addEventListener('click', function () {
-    document.querySelector('.game-overlay-wrapper').innerHTML ="";
-    game();
-   }); */
+//for start screen
+/* document.querySelector('.game-overlay-button-wrapper').addEventListener('click', function () {
+  document.querySelector('.game-overlay-wrapper').innerHTML ="";
+  game();
+  }); */
 
   
-  
-  async function game() {
+async function game() {
+  var data = Object.values(players); 
   var gamePot = 0;
   var currentPlayer = 'player1';
-  var data = Object.values(players); 
+  var currentPlayerNr = 1;
+  var currentPlayerPath = data[0];
   
-  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`;
-  document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
+  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
+  document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
  
-  
   /*let audio = new Audio('sound/background-sound.mp3');
   audio.volume = 0.1;
   audio.loop = true;
@@ -103,7 +103,7 @@
   document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
   
   //To highlight current player
-  let highlight = document.querySelector('.player1');
+  let highlight = document.querySelector(`.${currentPlayer}`);
   highlight.classList.add('current-player-highlight');
   
 
@@ -111,10 +111,10 @@
   document.querySelector('.js-player-bet').addEventListener('click', function () {
     let audioBetting = new Audio('sound/betting.mp3');
     audioBetting.play();
-    data[0].bet.unshift(Number(slider.value));
-    data[0].marks -= slider.value;
-    gamePot = data[0].bet[0];
-    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`; 
+    currentPlayerPath.bet.unshift(Number(slider.value));
+    currentPlayerPath.marks -= slider.value;
+    gamePot = currentPlayerPath.bet[0];
+    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
     document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
   });
 
@@ -123,28 +123,27 @@
     let audioPass = new Audio('sound/pass.mp3');
     audioPass.play();
     data[0].pass = true;
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
   });
 
   // Player Fold
   document.querySelector('.js-player-fold').addEventListener('click', function () {
     let audioFold = new Audio('sound/fold.mp3');
     audioFold.play();
-    data[0].fold = true;
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${data[0].pass}</i>, Lägga sig <i>${data[0].fold}</i>`;
+    currentPlayerPath.fold = true;
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
   });
 
+  // Player betting slider
   const slider = document.querySelector('.bet-slider');
   const output = document.querySelector('.bet-slider-output');
   output.innerHTML = slider.value;
-
-  console.log('output', output);
-  
   slider.addEventListener('input', sliderOutput);
+  
   function sliderOutput() {
     console.log('slideroutput running');
     output.innerHTML = slider.value;
-    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${data[0].marks}`; 
+    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
   };
 
  
@@ -158,56 +157,46 @@
   await wait();
   await betting(1);
   await askQuestion(3);
-  console.log('END');
+  console.log('game ends');
   await endGame();
   
 };
 
 
-
-
 async function seating(data) {
   return new Promise((resolve) => {
-    //let data = Object.values(players);
     data.forEach((item) => {
-        console.log('item players', item);
         item.seated = true;
       });
     resolve();
   });
 };
 
+
 async function firstBet(data, gamePot) {
   return new Promise((resolve) => {
-    //let data = Object.values(players);
     data.forEach((item) => {
         item.marks -= 10;
         gamePot += 10;
         item.bet.push(10);
       });
-      console.log('gamePot', gamePot);
-    
-
-    let myTest = document.querySelector('.player1 progress');
-    myTest.value = players.player1.marks;
-    console.log('mytest',myTest);
-
     resolve();
   }); 
 };
 
+
 async function askQuestion(nr) {
   let currentQuestion = questions[`question${nr}`];
   return new Promise((resolve) => {
-   console.log('currentQuestion', currentQuestion);
+    console.log('currentQuestion', currentQuestion);
     countDown(3, currentQuestion, () => resolve()); 
     let questionSound = new Audio('sound/question.mp3');
     questionSound.volume = 0.1;
     questionSound.play();
     createQuestionForm(currentQuestion);
-    
   });
 };
+
 
 function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -218,8 +207,6 @@ async function wait()
     await timeout(3000);
     document.querySelector('.game-wait').innerHTML = '';
 }
-
-
 
 
 async function betting(turn) {
@@ -234,7 +221,7 @@ async function betting(turn) {
 async function endGame() {
   return new Promise((resolve) => {
 
-    let p1 = [600, 400];
+    let p1 = currentPlayerPath.bet; 
     let p1b = p1.reduce((a,b)=>a+b);
     let p2 = [400, 200];
     let p2b = p2.reduce((a,b)=>a+b);
