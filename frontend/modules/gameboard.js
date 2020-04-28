@@ -1,4 +1,4 @@
-export function createGameBoard(players) {
+export function createGameBoard(data) {
 
 class gameBoard extends HTMLElement {
   constructor() {
@@ -6,14 +6,13 @@ class gameBoard extends HTMLElement {
     
     
     function showSeating(playerNumber = 1) {
-      let data = Object.values(players);
-      //this need to be updated
+      
       
       data.forEach((element) => {
-        document.querySelector(`.player${playerNumber}-info`).insertAdjacentHTML('afterbegin', `Namn: ${element.name}<br>`);
-        document.querySelector(`.player${playerNumber}-info`).insertAdjacentHTML('beforeend', `Marker: ${element.marks}<br>`);
-        document.querySelector(`.player${playerNumber}-info`).insertAdjacentHTML('beforeend', `Stolnr: ${element.seat}`);
-        document.querySelector(`.player${playerNumber} .player-mark-meter`).insertAdjacentHTML('beforeend', `<progress value="${element.marks}" max="1000" class="player${playerNumber}-progress"></progress>`);
+        document.querySelector(`.player${playerNumber}-info-name`).innerHTML =  `Namn: ${element.name}<br>`;
+        document.querySelector(`.player${playerNumber}-info-marks`).innerHTML = `Marker: ${element.marks}<br>`;
+        document.querySelector(`.player${playerNumber}-info-chair`).innerHTML = `Stolnr: ${element.seat}`;
+        document.querySelector(`.player${playerNumber} .player-mark-meter`).innerHTML = `<progress value="${element.marks}" max="1000" class="player${playerNumber}-progress"></progress>`;
         
         playerNumber++;
       });
@@ -99,6 +98,9 @@ class gameBoard extends HTMLElement {
 
         <div class="player1 player">
           <div class="player1-info">
+            <span class="player1-info-name"></span>
+            <span class="player1-info-marks"></span>
+            <span class="player1-info-chair"></span>
             <div class="player-mark-meter"></div>
           </div>
           <div class="player1-avatar"><img class="img-player-avatar" src="images/player1-avatar.png" alt="player1 avatar"></div>
@@ -108,6 +110,9 @@ class gameBoard extends HTMLElement {
         
         <div class="player4 player">
           <div class="player4-info">
+          <span class="player4-info-name"></span>
+          <span class="player4-info-marks"></span>
+          <span class="player4-info-chair"></span>
             <div class="player-mark-meter"></div>
           </div>
           <div class="player4-avatar"><img class="img-player-avatar"  src="images/player2-avatar.png" alt="player4 avatar"></div>
@@ -115,6 +120,9 @@ class gameBoard extends HTMLElement {
 
         <div class="player2 player">
         <div class="player2-info">
+          <span class="player2-info-name"></span>
+          <span class="player2-info-marks"></span>
+          <span class="player2-info-chair"></span>
           <div class="player-mark-meter"></div>
         </div>
         <div class="player2-avatar"><img class="img-player-avatar" src="images/player3-avatar.png" alt="player2 avatar"></div>
@@ -122,6 +130,9 @@ class gameBoard extends HTMLElement {
 
       <div class="player3 player">
       <div class="player3-info">
+        <span class="player3-info-name"></span>
+        <span class="player3-info-marks"></span>
+        <span class="player3-info-chair"></span>
         <div class="player-mark-meter"></div>
       </div>
         <div class="player3-avatar"><img class="img-player-avatar" src="images/player4-avatar.png" alt="player3 avatar"></div>
