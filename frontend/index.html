@@ -42,7 +42,8 @@
     </section>
 
     <section>
-      <div class="player-input-wrapper">   
+      <div class="player-input-wrapper">  
+        <div>
           <div class="player-marks"></div>
           <div class="player-status"></div>
           
@@ -57,6 +58,18 @@
               <div><button class="js-player-fold player-input-button">Lägga sig</button></div>
           </div>
         </div> 
+        
+          <div>
+            <div class="player-switch">
+              <i>Detta är endast till för testning, detta är inte en del av spelet</i><br>
+              <label for="player-switch-select">Välj spelare:</label>
+              <select class="player-switch-select">
+                <!--options in here dynamical -->
+              </select>
+            </div>
+          </div>
+        
+      </div> 
     </section>
 
     
@@ -100,11 +113,41 @@ async function game() {
   audio.play();*/
   
   createGameBoard(data);
+  togglingCurrentPlayer(players);
   document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
   
-  //To highlight current player
+  //To highlight current player 
   let highlight = document.querySelector(`.${currentPlayer}`);
   highlight.classList.add('current-player-highlight');
+
+
+  // Remove this function in production, used for testing diffrent players actions.
+  function togglingCurrentPlayer(data) {
+    console.log('t data', data)
+    var selectElement = document.querySelector('.player-switch-select');
+    const dataToSelect = Object.keys(data);
+    console.log('obj',dataToSelect);
+    
+    dataToSelect.forEach((item) => {
+        console.log('item', item);
+        const optionElement = document.createElement('option');
+        optionElement.value = item;
+        optionElement.text = item;
+        selectElement.appendChild(optionElement);
+    });
+   
+    selectElement.addEventListener('change', function() {
+      let choosenPlayer = selectElement.options[selectElement.selectedIndex].value;
+      let highlight = document.querySelector(`.${currentPlayer}`);
+      highlight.classList.remove('current-player-highlight');
+      currentPlayer = choosenPlayer;
+      console.log('current player after chose',currentPlayer);
+      let highlight2 = document.querySelector(`.${currentPlayer}`);
+      highlight2.classList.add('current-player-highlight');
+      console.log('currentPlayer', currentPlayer);
+    });
+   
+  };
   
 
   // Player Betting
