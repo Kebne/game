@@ -98,7 +98,7 @@ window.onload = game();
 
   
 async function game() {
-  var data = Object.values(players); 
+  var data = Object.values(players);
   var gamePot = 0;
   var currentPlayer = 'player1';
   var currentPlayerNr = 1;
@@ -148,7 +148,7 @@ async function game() {
     });
    
   };
-  
+  //
 
   // Player Betting
   document.querySelector('.js-player-bet').addEventListener('click', function () {
@@ -161,6 +161,7 @@ async function game() {
     document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
     document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${currentPlayerPath.marks}<br>`
   });
+  //
 
   // Player Passing
   document.querySelector('.js-player-pass').addEventListener('click', function () {
@@ -169,6 +170,7 @@ async function game() {
     data[0].pass = true;
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
   });
+  //
 
   // Player Fold
   document.querySelector('.js-player-fold').addEventListener('click', function () {
@@ -177,6 +179,7 @@ async function game() {
     currentPlayerPath.fold = true;
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
   });
+  //
 
   // Player betting slider
   const slider = document.querySelector('.bet-slider');
@@ -189,9 +192,9 @@ async function game() {
     output.innerHTML = slider.value;
     document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
   };
-
+  //
  
-
+  // Main game logick
   await seating(data);
   await firstBet(data, gamePot);
   await askQuestion(1);
@@ -203,6 +206,7 @@ async function game() {
   await askQuestion(3);
   console.log('game ends');
   await endGame(currentPlayerPath);
+  //
   
 };
 
@@ -219,11 +223,22 @@ async function seating(data) {
 
 async function firstBet(data, gamePot) {
   return new Promise((resolve) => {
+    
     data.forEach((item) => {
+      
         item.marks -= 10;
         gamePot += 10;
+        console.log('gamePot', gamePot);
         item.bet.push(10);
+        console.log('item is55', item);
+        
+      
       });
+      document.querySelector(`.player1-info-marks`).innerHTML = `Marker: ${data[0].marks}<br>`;
+      document.querySelector(`.player2-info-marks`).innerHTML = `Marker: ${data[1].marks}<br>`;
+      document.querySelector(`.player3-info-marks`).innerHTML = `Marker: ${data[2].marks}<br>`;
+      document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[3].marks}<br>`;
+      document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
     resolve();
   }); 
 };
