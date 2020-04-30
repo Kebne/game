@@ -30,10 +30,12 @@ class gameBoard extends HTMLElement {
         display: grid;
         width: 100%;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 150px 150px;
+        grid-template-rows: 150px 150px 150px;
         grid-template-areas: 
         "player1 board player4"
-        "player2 board player3";
+        "player2 board player3"
+        ". player5 ."
+        ;
         margin-bottom: 1rem;
         color: #eee;
         
@@ -88,6 +90,14 @@ class gameBoard extends HTMLElement {
         display: flex;
         gap: 8px;
       }
+      .player5 {
+        grid-area: player5; 
+        background-color: #5a8f93; 
+        box-sizing: border-box;
+        padding: 1rem;
+        display: flex;
+        gap: 8px;
+      }
       
     `;
 
@@ -119,23 +129,33 @@ class gameBoard extends HTMLElement {
         </div>
 
         <div class="player2 player">
-        <div class="player2-info">
-          <span class="player2-info-name"></span>
-          <span class="player2-info-marks"></span>
-          <span class="player2-info-chair"></span>
-          <div class="player-mark-meter"></div>
-        </div>
-        <div class="player2-avatar"><img class="img-player-avatar" src="images/player3-avatar.png" alt="player2 avatar"></div>
+          <div class="player2-info">
+            <span class="player2-info-name"></span>
+            <span class="player2-info-marks"></span>
+            <span class="player2-info-chair"></span>
+            <div class="player-mark-meter"></div>
+          </div>
+          <div class="player2-avatar"><img class="img-player-avatar" src="images/player3-avatar.png" alt="player2 avatar"></div>
       </div>
 
       <div class="player3 player">
-      <div class="player3-info">
-        <span class="player3-info-name"></span>
-        <span class="player3-info-marks"></span>
-        <span class="player3-info-chair"></span>
-        <div class="player-mark-meter"></div>
+        <div class="player3-info">
+          <span class="player3-info-name"></span>
+          <span class="player3-info-marks"></span>
+          <span class="player3-info-chair"></span>
+          <div class="player-mark-meter"></div>
+        </div>
+          <div class="player3-avatar"><img class="img-player-avatar" src="images/player4-avatar.png" alt="player3 avatar"></div>
       </div>
-        <div class="player3-avatar"><img class="img-player-avatar" src="images/player4-avatar.png" alt="player3 avatar"></div>
+
+      <div class="player5 player">
+        <div class="player5-info">
+          <span class="player5-info-name"></span>
+          <span class="player5-info-marks"></span>
+          <span class="player5-info-chair"></span>
+          <div class="player-mark-meter"></div>
+        </div>
+          <div class="player5-avatar"><img class="img-player-avatar" src="images/player5-avatar.jpg" alt="player5 avatar"></div>
       </div>
 
 

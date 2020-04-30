@@ -43,6 +43,17 @@ export const players = {
   answer: 'äpple',
   seated: false,
  },
+ player5: {
+  score: 0,
+  marks: 1000,
+  name: 'Luke',
+  seat: 5,
+  pass: false,
+  bet: [],
+  fold: false,
+  answer: 'päron',
+  seated: false,
+ },
 
 };
   
