@@ -19,5 +19,12 @@ export let questions = {
     alternative2: 'Olja',
     alternative3: 'Kaffe',
     correctAnswer: 'Kaffe',
+  },
+  question4: {
+    question: 'Who was the fourth Doctor Who',
+    alternative1: 'Tom Baker',
+    alternative2: 'Jon Pertwee',
+    alternative3: 'Peter Davison',
+    correctAnswer: 'Tom Baker',
   }
 };

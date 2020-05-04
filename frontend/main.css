@@ -81,9 +81,11 @@ display: none;
 
 .game-questions {
   position: relative;
+  width: 100%;
   padding: var(--standard-padding);
   display: block;
   background-color: #d3ae50;
+  z-index: 11;
 }
 
 fieldset {

@@ -1,4 +1,5 @@
 export function createQuestionForm(currentQuestion) {
+document.querySelector('.game-questions').style.display = 'block';
   const templateElement = document.createElement('template');
   templateElement.innerHTML = `
     <h2>${currentQuestion.question}</h2>

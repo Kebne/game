@@ -30,9 +30,9 @@
     </section>
 
     <section>
-      <div class="game-countdown">Tid</div>
+      <div class="game-countdown"></div>
       <div class="game-wait"></div>
-      <div class="game-correct-answer">Svar</div>
+      <div class="game-correct-answer"></div>
     </section>
 
     <section>
@@ -103,6 +103,7 @@ async function game() {
   var currentPlayer = 'player1';
   var currentPlayerNr = 1;
   var currentPlayerPath = data[0];
+  var seatedPlayers = ['player1','player2']; // not in use right now
   
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
@@ -194,28 +195,28 @@ async function game() {
   };
   //
  
-  // Main game logick
+ // Main game logic
   await seating(data);
-  await firstBet(data, gamePot);
+  await firstBet(data, gamePot); // this "betting" is handle by system not players
   await askQuestion(1);
   await wait();
-  await betting(0);
   await askQuestion(2);
-  await wait();
-  await betting(1);
+  await betting(0);
   await askQuestion(3);
-  console.log('game ends');
+  await wait();
+  await askQuestion(4);
+  await betting(1);
   await endGame(currentPlayerPath);
-  //
-  
 };
+//
 
+// According to spec players need pay 50 coins before seated, todo: make this funtion here.
 
 async function seating(data) {
-  return new Promise((resolve) => {
+  return new Promise((resolve) => { //maybe dont need to return this, todo: look it up.
     data.forEach((item) => {
-        item.seated = true;
-      });
+      item.seated = true;
+    });
     resolve();
   });
 };
@@ -223,22 +224,19 @@ async function seating(data) {
 
 async function firstBet(data, gamePot) {
   return new Promise((resolve) => {
-    
     data.forEach((item) => {
-      
         item.marks -= 10;
         gamePot += 10;
-        console.log('gamePot', gamePot);
         item.bet.push(10);
-        console.log('item is55', item);
-        
-      
-      });
-      /*document.querySelector(`.player1-info-marks`).innerHTML = `Marker: ${data[0].marks}<br>`;
-      document.querySelector(`.player2-info-marks`).innerHTML = `Marker: ${data[1].marks}<br>`;
-      document.querySelector(`.player3-info-marks`).innerHTML = `Marker: ${data[2].marks}<br>`;
-      document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[3].marks}<br>`;*/
-      document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+        console.log('Marks after first bet: ', item.marks);
+    });
+    document.querySelector(`.player1-info-marks`).innerHTML = `Marker: ${data[0].marks}<br>`;
+    document.querySelector(`.player2-info-marks`).innerHTML = `Marker: ${data[1].marks}<br>`;
+    document.querySelector(`.player3-info-marks`).innerHTML = `Marker: ${data[2].marks}<br>`;
+    document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[3].marks}<br>`;
+    document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[4].marks}<br>`;
+    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+    
     resolve();
   }); 
 };
@@ -253,7 +251,9 @@ async function askQuestion(nr) {
     questionSound.volume = 0.1;
     questionSound.play();
     createQuestionForm(currentQuestion);
+    
   });
+  
 };
 
 
@@ -268,7 +268,7 @@ async function wait()
 }
 
 
-async function betting(turn) {
+async function betting(turn, currentPlayer) {
   return new Promise((resolve) => {
     let p1 = 100;
     let p2 = 200;
