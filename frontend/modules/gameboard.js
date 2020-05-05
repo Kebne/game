@@ -21,7 +21,7 @@ class gameBoard extends HTMLElement {
         display: grid;
         width: 100%;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 150px 150px 150px 50px;
+        grid-template-rows: 150px 150px 150px auto;
         grid-template-areas: 
         "player1 board player4"
         "player2 board player3"
@@ -94,6 +94,7 @@ class gameBoard extends HTMLElement {
         grid-area: gamelog; 
         box-sizing: border-box;
         padding: var(--standard-padding);
+        color: #333;
       }
       .img-mark-player1, .img-mark-player2, .img-mark-player3, .img-mark-player4, .img-mark-player5 {
         width: 100%;
@@ -116,7 +117,7 @@ class gameBoard extends HTMLElement {
             <span class="player1-info-name"></span>
             <span class="player1-info-marks"></span>
             <span class="player1-info-chair"></span>
-            <div class="player-mark-meter"></div>
+            
           </div>
           <div class="player1-avatar"><img class="img-player-avatar" src="images/player1-avatar.png" alt="player1 avatar"></div>
           <div class="mark-player1"><img class="img-mark-player1" src="images/mark.png" alt="player1 mark"></div>
@@ -129,7 +130,7 @@ class gameBoard extends HTMLElement {
           <span class="player4-info-name"></span>
           <span class="player4-info-marks"></span>
           <span class="player4-info-chair"></span>
-            <div class="player-mark-meter"></div>
+            
           </div>
           <div class="player4-avatar"><img class="img-player-avatar"  src="images/player2-avatar.png" alt="player4 avatar"></div>
           <div class="mark-player4"><img class="img-mark-player4" src="images/mark.png" alt="player4 mark"></div>
@@ -140,7 +141,7 @@ class gameBoard extends HTMLElement {
             <span class="player2-info-name"></span>
             <span class="player2-info-marks"></span>
             <span class="player2-info-chair"></span>
-            <div class="player-mark-meter"></div>
+            
           </div>
           <div class="player2-avatar"><img class="img-player-avatar" src="images/player3-avatar.png" alt="player2 avatar"></div>
           <div class="mark-player2"><img class="img-mark-player2" src="images/mark.png" alt="player2 mark"></div>
@@ -151,7 +152,7 @@ class gameBoard extends HTMLElement {
           <span class="player3-info-name"></span>
           <span class="player3-info-marks"></span>
           <span class="player3-info-chair"></span>
-          <div class="player-mark-meter"></div>
+          
         </div>
           <div class="player3-avatar"><img class="img-player-avatar" src="images/player3-avatar.png" alt="player3 avatar"></div>
           <div class="mark-player3"><img class="img-mark-player3" src="images/mark.png" alt="player3 mark"></div>
@@ -168,7 +169,7 @@ class gameBoard extends HTMLElement {
           <div class="mark-player5"><img class="img-mark-player5" src="images/mark.png" alt="player5 mark"></div>
       </div>
 
-      <div class="game-log">List game events here</div>
+      <div class="game-log"></div>
 
 
       </div>

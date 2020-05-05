@@ -98,12 +98,24 @@ window.onload = game();
 
   
 async function game() {
+  
   var data = Object.values(players);
   var gamePot = 0;
   var currentPlayer = 'player1';
   var currentPlayerNr = 1;
   var currentPlayerPath = data[0];
   var seatedPlayers = ['player1','player2']; // not in use right now
+
+  /*document.body.addEventListener('click', function(event){
+    console.log('all events: ', event);
+  });*/
+
+  document.addEventListener("gameEvent", function(event) {
+    //console.log('Event massage!',event.detail);
+    document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${event.detail},<br>`);
+  });
+
+
   
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
@@ -156,9 +168,15 @@ async function game() {
     let audioBetting = new Audio('sound/betting.mp3');
     animateMarker(currentPlayer);
     audioBetting.play();
-    currentPlayerPath.bet.unshift(Number(slider.value));
+    let sliderValue = Number(slider.value);
+    currentPlayerPath.bet.unshift(sliderValue);
     currentPlayerPath.marks -= slider.value;
     gamePot += currentPlayerPath.bet[0];
+
+    // testing custom event
+    let customEvent = new CustomEvent("gameEvent", {detail: `Player bets ${sliderValue}`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+
     document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
     document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
     document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${currentPlayerPath.marks}<br>`
@@ -170,6 +188,11 @@ async function game() {
     let audioPass = new Audio('sound/pass.mp3');
     audioPass.play();
     data[0].pass = true;
+
+     // testing custom event
+     let customEvent = new CustomEvent("gameEvent", {detail: `Player passes ${currentPlayerPath.pass}`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
   });
   //
@@ -179,6 +202,10 @@ async function game() {
     let audioFold = new Audio('sound/fold.mp3');
     audioFold.play();
     currentPlayerPath.fold = true;
+
+    let customEvent = new CustomEvent("gameEvent", {detail: `Player folds ${currentPlayerPath.fold}`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
   });
   //
