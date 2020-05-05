@@ -46,6 +46,10 @@ class gameBoard extends HTMLElement {
         grid-area: board; 
         background-color: #3e7f38;
         padding: 1rem;
+        background-image: url('images/game-table.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center center;
         /*background: url(images/game-board.jpg) no-repeat center center fixed; 
         background-size: contain;*/
       }

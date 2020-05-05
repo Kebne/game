@@ -9,7 +9,6 @@
     <link href="main.css" rel="stylesheet">
 </head>
 
-
 <body id="sheriff-game">
   
   <main>
@@ -33,6 +32,7 @@
       <div class="game-countdown"></div>
       <div class="game-wait"></div>
       <div class="game-correct-answer"></div>
+      <div class="game-choice"></div>
     </section>
 
     <section>
@@ -106,17 +106,13 @@ async function game() {
   var currentPlayerPath = data[0];
   var seatedPlayers = ['player1','player2']; // not in use right now
 
-  /*document.body.addEventListener('click', function(event){
-    console.log('all events: ', event);
-  });*/
-
+  // Custom event, logs game events
   document.addEventListener("gameEvent", function(event) {
-    //console.log('Event massage!',event.detail);
-    document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${event.detail},<br>`);
+    document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${event.detail}<br>`);
   });
 
-
   
+
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
  
@@ -142,7 +138,6 @@ async function game() {
     console.log('obj',dataToSelect);
     
     dataToSelect.forEach((item) => {
-        console.log('item', item);
         const optionElement = document.createElement('option');
         optionElement.value = item;
         optionElement.text = item;
@@ -171,10 +166,11 @@ async function game() {
     let sliderValue = Number(slider.value);
     currentPlayerPath.bet.unshift(sliderValue);
     currentPlayerPath.marks -= slider.value;
+    console.log('gameptbefore', gamePot);
     gamePot += currentPlayerPath.bet[0];
+    console.log('gameptbefore', gamePot);
 
-    // testing custom event
-    let customEvent = new CustomEvent("gameEvent", {detail: `Player bets ${sliderValue}`, bubbles: true, cancelable: true });
+    let customEvent = new CustomEvent("gameEvent", {detail: `Player ${currentPlayer} bets ${sliderValue}`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
     document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
@@ -183,19 +179,20 @@ async function game() {
   });
   //
 
+
   // Player Passing
   document.querySelector('.js-player-pass').addEventListener('click', function () {
     let audioPass = new Audio('sound/pass.mp3');
     audioPass.play();
     data[0].pass = true;
 
-     // testing custom event
-     let customEvent = new CustomEvent("gameEvent", {detail: `Player passes ${currentPlayerPath.pass}`, bubbles: true, cancelable: true });
+     let customEvent = new CustomEvent("gameEvent", {detail: `Player ${currentPlayer} passes ${currentPlayerPath.pass}`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
   });
   //
+
 
   // Player Fold
   document.querySelector('.js-player-fold').addEventListener('click', function () {
@@ -203,12 +200,13 @@ async function game() {
     audioFold.play();
     currentPlayerPath.fold = true;
 
-    let customEvent = new CustomEvent("gameEvent", {detail: `Player folds ${currentPlayerPath.fold}`, bubbles: true, cancelable: true });
+    let customEvent = new CustomEvent("gameEvent", {detail: `Player ${currentPlayer} folds ${currentPlayerPath.fold}`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
   });
   //
+
 
   // Player betting slider
   const slider = document.querySelector('.bet-slider');
@@ -223,66 +221,65 @@ async function game() {
   };
   //
 
-  // Mark animation
+
+  // Mark animation, several animations needed due to players diffrent positions.
+  // Look into if you can have target goal cordinates instead.
   const animationMark = [
-{ 
-  transform: 'translateX(1px) rotate(4deg)', 
-  transformOrigin: 'center', 
-  filter: 'blur(8px)', 
-  opacity: 0.6 
-  },
   { 
-    transform: 'translateX(300px) rotate(360deg)',
-    transformOrigin: 'center',
-    filter: 'blur(0)',
-    opacity: 1 
-  }
-];
+    transform: 'translateX(1px) rotate(4deg)', 
+    transformOrigin: 'center', 
+    filter: 'blur(8px)', 
+    opacity: 0.6 
+    },
+    { 
+      transform: 'translateX(300px) rotate(360deg)',
+      transformOrigin: 'center',
+      filter: 'blur(0)',
+      opacity: 1 
+    }
+  ];
 
-const animationMarkRightSide = [
-{ 
-  transform: 'translateX(1px) rotate(4deg)', 
-  transformOrigin: 'center', 
-  filter: 'blur(8px)', 
-  opacity: 0.6 
-  },
+  const animationMarkRightSide = [
   { 
-    transform: 'translateX(-300px) rotate(360deg)',
-    transformOrigin: 'center',
-    filter: 'blur(0)',
-    opacity: 1 
-  }
-];
+    transform: 'translateX(1px) rotate(4deg)', 
+    transformOrigin: 'center', 
+    filter: 'blur(8px)', 
+    opacity: 0.6 
+    },
+    { 
+      transform: 'translateX(-300px) rotate(360deg)',
+      transformOrigin: 'center',
+      filter: 'blur(0)',
+      opacity: 1 
+    }
+  ];
 
-const animationMarkDownSide = [
-{ 
-  transform: 'translateY(1px) rotate(4deg)', 
-  transformOrigin: 'center', 
-  filter: 'blur(8px)', 
-  opacity: 0.6 
-  },
+  const animationMarkDownSide = [
   { 
-    transform: 'translateY(-300px) rotate(360deg)',
-    transformOrigin: 'center',
-    filter: 'blur(0)',
-    opacity: 1 
+    transform: 'translateY(1px) rotate(4deg)', 
+    transformOrigin: 'center', 
+    filter: 'blur(8px)', 
+    opacity: 0.6 
+    },
+    { 
+      transform: 'translateY(-300px) rotate(360deg)',
+      transformOrigin: 'center',
+      filter: 'blur(0)',
+      opacity: 1 
+    }
+  ];
+
+  const optionsMark = {
+    iterations: 1,
+    iterationStart: 0,
+    delay: 0,
+    endDelay: 0,
+    duration: 700,
+    fill: 'forwards',
+    easing: 'ease-out',
   }
-];
-
-
-
-const optionsMark = {
-  iterations: 1,
-  iterationStart: 0,
-  delay: 0,
-  endDelay: 0,
-  duration: 700,
-  fill: 'forwards',
-  easing: 'ease-out',
-}
 
 function animateMarker(currentPlayer) {
-  console.log('animate current player: ', currentPlayer);
   switch (currentPlayer) {
   case 'player1':
   case 'player2':
@@ -305,10 +302,7 @@ function animateMarker(currentPlayer) {
     break;
   default:
     console.log('Sorry, no player mark found');
-}
-
-  //let target = currentPlayer;
-  
+  }
 };
 //
  
@@ -344,6 +338,7 @@ async function firstBet(data, gamePot) {
     data.forEach((item) => {
         item.marks -= 10;
         gamePot += 10;
+        console.log('gamepot auto', gamePot);
         item.bet.push(10);
         console.log('Marks after first bet: ', item.marks);
     });
@@ -368,21 +363,25 @@ async function askQuestion(nr) {
     questionSound.volume = 0.1;
     questionSound.play();
     createQuestionForm(currentQuestion);
-    
+    let element = document.querySelector('#game-form');
+    element.addEventListener('change', function() {
+      console.log('player choise running');
+      playerChoice();
+    });
   });
-  
 };
 
 
 function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-}
-async function wait()
-{
+};
+
+
+async function wait() {
     document.querySelector('.game-wait').innerHTML = 'Snart kommer en ny fråga ...';
     await timeout(3000);
     document.querySelector('.game-wait').innerHTML = '';
-}
+};
 
 
 async function betting(turn, currentPlayer) {
@@ -396,12 +395,10 @@ async function betting(turn, currentPlayer) {
 
 async function endGame(currentPlayerPath) {
   return new Promise((resolve) => {
-
     let p1 = currentPlayerPath.bet; 
     let p1b = p1.reduce((a,b)=>a+b);
     let p2 = [400, 200];
     let p2b = p2.reduce((a,b)=>a+b);
-  
     resolve();
   });
 };
