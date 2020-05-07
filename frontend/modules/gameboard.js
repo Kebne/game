@@ -20,13 +20,13 @@ class gameBoard extends HTMLElement {
       .game-board {
         display: grid;
         width: 100%;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
         grid-template-rows: 150px 150px 150px auto;
         grid-template-areas: 
-        "player1 board player4 log"
-        "player2 board player3 log"
+        "player1 board player4 gamelog"
+        "player2 board player3 gamelog"
         ". player5 . gamelog"
-        "gamelog gamelog gamelog"
+        "controls controls controls controls"
         ;
         margin-bottom: 1rem;
         color: #eee;
@@ -50,8 +50,8 @@ class gameBoard extends HTMLElement {
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center center;
-        /*background: url(images/game-board.jpg) no-repeat center center fixed; 
-        background-size: contain;*/
+        color: pink;
+       
       }
       .player1 {
         grid-area: player1; 
@@ -180,8 +180,6 @@ class gameBoard extends HTMLElement {
     `;
     this.append(templateStyle);
     this.appendChild(templateElement.content.cloneNode(true));
-    
-   
     showSeating();
   }
 };

@@ -12,34 +12,8 @@ body {
   padding: 0;
 }
 
-/*Startscreen, set ths to display block and uncomment code in index.html for reable startscreen */
-.game-overlay-wrapper {
-display: none;
-}
 
-.game-overlay {
-  position: absolute;
-  z-index: 11;
-  width: 100vw;
-  height: 100vh;
-  box-sizing: border-box;
-  background-color: rgba(200,200,200,0.5);
-  background: url(images/start-bg.jpg) no-repeat center center fixed; 
-  background-size: cover;
-}
 
-.game-overlay-flex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.game-overlay-flex button {
-  font-size: 1.5rem;
-  letter-spacing: 2px;
-  animation: startButtonFx 1.5s infinite;
-
-}
 
 @keyframes startButtonFx {
   0%, 100% {
@@ -104,29 +78,6 @@ fieldset {
  padding: 1rem;
  background-color:rgb(73, 49, 49);
  color: white;
-}
-
-.game-start-button {
-  box-sizing: border-box;
-  font-style: normal;
-  font-family: 'Comic Neue', sans-serif;
-  font-size: 14px;
-  padding: 1rem;
-  color: #eee;
-  background-color: #333;
-  border: 1px solid #444;
-  border-radius: 4px;
-}
-
-.game-start-button:hover {
-  cursor: pointer;
-  filter: brightness(150%);
-}
-
-.game-start-button-wrapper {
-  display: flex;
-  justify-content: center;
-
 }
 
 
@@ -256,3 +207,93 @@ fieldset {
 .game-slider {
   margin-bottom: 0.5rem;
 }
+
+/* Game board */
+.game-board {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 150px 150px 150px auto;
+  grid-template-areas: 
+  "player1 board player4 gamelog"
+  "player2 board player3 gamelog"
+  " . player5 . gamelog"
+  "controls controls controls controls"
+  ;
+  margin-bottom: 1rem;
+  color: #eee;
+  
+}
+.img-player-avatar {
+  max-height: 120px;
+  min-height: 70px;
+}
+
+.board {
+  grid-area: board; 
+  background-color: #3e7f38;
+  padding: 1rem;
+  background-image: url('images/game-table.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  color: pink;
+ 
+}
+.player1 {
+  grid-area: player1; 
+  background-color: #153244; 
+  box-sizing: border-box; 
+  padding: var(--standard-padding);
+  display: flex;
+  gap: 8px;
+}
+
+.player2 {
+  grid-area: player2; 
+  background-color: #4D4940; 
+  box-sizing: border-box;
+  padding: var(--standard-padding);
+  display: flex;
+  gap: 8px;
+}
+.player3 {
+  grid-area: player3; 
+  background-color: #805238; 
+  box-sizing: border-box;
+  padding: var(--standard-padding);
+  display: flex;
+  gap: 8px;
+}
+.player4 {
+  grid-area: player4; 
+  background-color: #94855A; 
+  box-sizing: border-box;
+  padding: var(--standard-padding);
+  display: flex;
+  gap: 8px;
+}
+.player5 {
+  grid-area: player5; 
+  background-color: #5a8f93; 
+  box-sizing: border-box;
+  padding: var(--standard-padding);
+  display: flex;
+  gap: 8px;
+}
+.game-log {
+  grid-area: gamelog; 
+  box-sizing: border-box;
+  padding: var(--standard-padding);
+  color: #333;
+}
+.img-mark-player1, .img-mark-player2, .img-mark-player3, .img-mark-player4, .img-mark-player5 {
+  width: 100%;
+  display: relative;
+}
+.mark-player1, .mark-player2, .mark-player3, .mark-player4, .mark-player5 {
+  width: 60px;
+  height: 60px;
+}
+
+/* */
