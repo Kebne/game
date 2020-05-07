@@ -8,6 +8,7 @@ export const players = {
    bet: [],
    fold: false,
    answer: 'äpple',
+   rightAnswerNr: 0,
    seated: false,
  },
  player2: {
@@ -19,6 +20,7 @@ export const players = {
   bet: [],
   fold: false,
   answer: 'äpple',
+  rightAnswerNr: 2,
   seated: false,
  },
  player3: {
@@ -30,6 +32,7 @@ export const players = {
   bet: [],
   fold: false,
   answer: 'äpple',
+  rightAnswerNr: 0,
   seated: false,
  },
  player4: {
@@ -41,6 +44,7 @@ export const players = {
   bet: [],
   fold: false,
   answer: 'äpple',
+  rightAnswerNr: 0,
   seated: false,
  },
  player5: {
@@ -52,6 +56,7 @@ export const players = {
   bet: [],
   fold: false,
   answer: 'päron',
+  rightAnswerNr: 0,
   seated: false,
  },
 

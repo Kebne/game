@@ -111,7 +111,6 @@ async function game() {
     document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${event.detail}<br>`);
   });
 
-  
 
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
@@ -166,10 +165,8 @@ async function game() {
     let sliderValue = Number(slider.value);
     currentPlayerPath.bet.unshift(sliderValue);
     currentPlayerPath.marks -= slider.value;
-    console.log('gameptbefore', gamePot);
     gamePot += currentPlayerPath.bet[0];
-    console.log('gameptbefore', gamePot);
-
+    
     let customEvent = new CustomEvent("gameEvent", {detail: `Player ${currentPlayer} bets ${sliderValue}`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
@@ -365,7 +362,6 @@ async function askQuestion(nr) {
     createQuestionForm(currentQuestion);
     let element = document.querySelector('#game-form');
     element.addEventListener('change', function() {
-      console.log('player choise running');
       playerChoice();
     });
   });
