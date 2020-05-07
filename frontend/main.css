@@ -55,23 +55,16 @@ body {
 
 .game-questions {
   position: relative;
+  display: none;
   width: 100%;
+  box-sizing: border-box;
   grid-area: board;
   padding: var(--standard-padding);
-  display: block;
   background-color: #d3ae50;
   z-index: 11;
 }
 
 
-/*.game-questions {
-  position: relative;
-  width: 100%;
-  padding: var(--standard-padding);
-  display: block;
-  background-color: #d3ae50;
-  z-index: 11;
-}*/
 
 fieldset {
   box-sizing: border-box;
@@ -221,11 +214,20 @@ fieldset {
 }
 
 /* Game board */
+.main-game-grid {
+  grid-template-columns: 4fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas: 
+  "gameboard gamelog"
+  "controls gamelog"
+  ;
+}
+
 .game-board {
   display: grid;
   width: 100%;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 150px 150px 150px auto;
+  grid-template-columns: 2fr 8fr 2fr 200px;
+  grid-template-rows: auto;
   grid-template-areas: 
   "player1 board player4 gamelog"
   "player2 board player3 gamelog"
@@ -234,22 +236,27 @@ fieldset {
   ;
   margin-bottom: 1rem;
   color: #eee;
+  /*background-image: url('images/game-table.png');
+  background-size: cover;*/
   
 }
 .img-player-avatar {
-  max-height: 120px;
-  min-height: 70px;
+  
+  width: 64px;
 }
 
 .board {
   grid-area: board; 
-  background-color: #3e7f38;
+  
   padding: 1rem;
-  background-image: url('images/game-table.png');
-  background-size: contain;
+  box-sizing: border-box;
+  /*background-image: url('images/game-table.png');
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+  background-origin: content-box;*/
   color: pink;
+  
  
 }
 .player1 {
@@ -298,6 +305,8 @@ fieldset {
   box-sizing: border-box;
   padding: var(--standard-padding);
   color: #333;
+  background: linear-gradient(90deg, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+  overflow-y: scroll;
 }
 .img-mark-player1, .img-mark-player2, .img-mark-player3, .img-mark-player4, .img-mark-player5 {
   width: 100%;

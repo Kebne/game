@@ -15,9 +15,14 @@
     <div>
 
     <section>
+      <div class="main-game-grid">
+        <div class="game-log"></div>
+        <div>Gameboard</div>
+        <player-controls class="player-input-wrapper"></player-controls>
+      </div>
        <div class="game-board">
           <player-box class="player1" player="player1"></player-box>
-          <div class="game-questions">Hello</div>
+          <div class="game-questions"></div>
           <div class="board"></div>
           <player-box class="player4" player="player4"></player-box>
           <player-box class="player2" player="player2"></player-box>
@@ -299,7 +304,7 @@ async function seating(data) {
       item.seated = true;
       playerNumber++;
     });
-    resolve();
+    //resolve();
   });
 };
 
