@@ -17,60 +17,24 @@
     <section>
        <div class="game-board">
           <player-box class="player1" player="player1"></player-box>
+          <div class="game-questions">Hello</div>
           <div class="board"></div>
           <player-box class="player4" player="player4"></player-box>
           <player-box class="player2" player="player2"></player-box>
           <player-box class="player3" player="player3"></player-box>
           <player-box class="player5" player="player5"></player-box>
           <div class="game-log"></div>
+          <player-controls class="player-input-wrapper"></player-controls>
         </div>
     </section> 
      
-    <section>
-      <div class="game-questions"></div>
-    </section>
+   
 
     <section>
       <div class="game-countdown"></div>
       <div class="game-wait"></div>
       <div class="game-correct-answer"></div>
       <div class="game-choice"></div>
-    </section>
-
-    <section>
-      <div class="game-board-wrapper">
-       <game-board></game-board>
-      </div>
-    </section>
-
-    <section>
-      <div class="player-input-wrapper">  
-        <div>
-          <div class="player-marks"></div>
-          <div class="player-status"></div>
-          
-          <div class="game-slider">
-            <label for="playerslider">Att satsa:</label>
-            <input id="playerslider" type="range" min="10" max="100" value="10" step="10" class="bet-slider">
-            <output class="bet-slider-output"></output>
-          </div>
-          <div class="player-input">  
-              <div><button class="js-player-bet player-input-button">Betta</button></div>
-              <div><button class="js-player-pass player-input-button">Passa</button></div>
-              <div><button class="js-player-fold player-input-button">Lägga sig</button></div>
-          </div>
-        </div> 
-        
-          <div>
-            <div class="player-switch">
-              <i>Detta är endast till för testning, detta är inte en del av spelet</i><br>
-              <label for="player-switch-select">Välj spelare:</label>
-              <select class="player-switch-select">
-                <!--options in here dynamical -->
-              </select>
-            </div>
-          </div>
-      </div> 
     </section>
 
     
@@ -86,7 +50,7 @@ import {createQuestionForm} from './modules/createquestionform.js';
 import {countDown} from './modules/countdown.js';
 import {playerChoice} from './modules/playerchoice.js';
 import {players} from './modules/players.js';
-import {createGameBoard} from './modules/gameboard.js';
+import {controls} from './modules/controls.js';
 
   
  
@@ -125,9 +89,9 @@ async function game() {
   audio.loop = true;
   audio.play();*/
   
-  createGameBoard(data);
+  
   togglingCurrentPlayer(players);
-  document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+  //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
   
   //To highlight current player 
   let highlight = document.querySelector(`.${currentPlayer}`);
@@ -176,7 +140,7 @@ async function game() {
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
     document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
-    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+    //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
     document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${currentPlayerPath.marks}<br>`
   });
   //
@@ -345,16 +309,14 @@ async function firstBet(data, gamePot) {
     data.forEach((item) => {
         item.marks -= 10;
         gamePot += 10;
-        console.log('gamepot auto', gamePot);
         item.bet.push(10);
-        console.log('Marks after first bet: ', item.marks);
     });
     document.querySelector(`.player1-info-marks`).innerHTML = `Marker: ${data[0].marks}<br>`;
     document.querySelector(`.player2-info-marks`).innerHTML = `Marker: ${data[1].marks}<br>`;
     document.querySelector(`.player3-info-marks`).innerHTML = `Marker: ${data[2].marks}<br>`;
     document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[3].marks}<br>`;
     document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[4].marks}<br>`;
-    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+    //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
     
     resolve();
   }); 

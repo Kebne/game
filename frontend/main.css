@@ -56,11 +56,22 @@ body {
 .game-questions {
   position: relative;
   width: 100%;
+  grid-area: board;
   padding: var(--standard-padding);
   display: block;
   background-color: #d3ae50;
   z-index: 11;
 }
+
+
+/*.game-questions {
+  position: relative;
+  width: 100%;
+  padding: var(--standard-padding);
+  display: block;
+  background-color: #d3ae50;
+  z-index: 11;
+}*/
 
 fieldset {
   box-sizing: border-box;
@@ -90,6 +101,7 @@ fieldset {
   display: flex;
   justify-content: space-between;
   gap: 10px;
+  grid-area: controls;
 }
 
 .current-player-highlight {
