@@ -19,6 +19,7 @@ export class controls extends HTMLElement {
           <div><button class="js-player-pass player-input-button">Passa</button></div>
           <div><button class="js-player-fold player-input-button">Lägga sig</button></div>
       </div>
+     
     </div> 
     
       <div>
@@ -29,7 +30,15 @@ export class controls extends HTMLElement {
             <!--options in here dynamical -->
           </select>
         </div>
+        <hr>
+        <div>
+          <span>Välj fråga att visa:</span>
+          <input id="get-question-nr" type="number" min="1" max="4" value="1">
+          <button class="question-button player-input-button">Få fråga</button>
+        </div>
       </div>
+
+     
     `;
     this.appendChild(templateElement.content.cloneNode(true));
   };

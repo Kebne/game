@@ -74,12 +74,16 @@ fieldset {
 
 .player-input-wrapper {
   background-color: #999; 
+  color: var(--light-text-color);
   padding: var(--standard-padding);
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   gap: 10px;
   grid-area: controls;
+  background-color: #666;
+  
+  
 }
 
 .current-player-highlight {
@@ -110,7 +114,7 @@ fieldset {
 .player-switch {
   box-sizing: border-box;
   border: 1px dotted #666;
-  padding: var(--standard-padding);
+  /*padding: var(--standard-padding);*/
   
 }
 
@@ -122,14 +126,13 @@ fieldset {
 	font-weight: 700;
 	color: #444;
 	line-height: 1.3;
-	padding: .6em 1.4em .5em .8em;
+	padding: 0.5rem;
 	width: 100%;
-	max-width: 100%;
 	box-sizing: border-box;
 	margin: 0;
 	border: 1px solid #aaa;
 	box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
-	border-radius: .5em;
+	border-radius: 0.5rem;
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	appearance: none;
@@ -165,6 +168,7 @@ fieldset {
   font-family: 'Comic Neue', sans-serif;
   font-size: 14px;
   padding: 1rem;
+  margin-top: 8px;
   color: var(--light-text-color);
   background-color: #333;
   border: 1px solid #444;
@@ -196,6 +200,26 @@ fieldset {
   margin-bottom: 0.5rem;
 }
 
+#get-question-nr {
+  display: block;
+	font-size: 16px;
+	font-family: sans-serif;
+	font-weight: 700;
+	color: #444;
+	line-height: 1.3;
+	padding: 0.5rem;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	border: 1px solid #aaa;
+	box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+	border-radius: 0.5rem;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	background-color: #fff;
+}
+
 /* Game board */
 .main-game-grid {
   display: grid;
@@ -205,13 +229,17 @@ fieldset {
   "gameboard gamelog"
   "controls gamelog"
   ;
+  height: 100vh;
 }
 
 .game-board-wrapper {
   position: relative;
   grid-area: gameboard;
-  background-color: blueviolet;
-}
+  background-image: url('images/game-table.png');
+  background-size: cover;
+  background-position: top center;
+  background-color: burlywood;
+ }
 
 .game-board {
   display: grid;
@@ -223,11 +251,8 @@ fieldset {
   "player2 board player3"
   ". player5 ."
   ;
-  margin-bottom: 1rem;
-  color: #eee;
-  background-image: url('images/game-table.png');
-  background-size: cover;
-  
+  color: var(--light-text-color);
+ 
 }
 .img-player-avatar {
   width: 64px;
@@ -290,9 +315,10 @@ fieldset {
   grid-area: gamelog; 
   box-sizing: border-box;
   padding: var(--standard-padding);
-  color: #333;
-  background: linear-gradient(90deg, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+  color: var(--light-text-color);
+  background-color: #333;
   line-height: 1.6;
+  overflow-y: scroll;
 }
 
 .img-mark-player1, .img-mark-player2, .img-mark-player3, .img-mark-player4, .img-mark-player5 {

@@ -11,7 +11,6 @@ export class playerBox extends HTMLElement {
       <div class="${whichPlayer}-info">
         <span class="${whichPlayer}-info-name"></span>
         <span class="${whichPlayer}-info-marks"></span>
-        <span class="${whichPlayer}-info-chair"></span>
         <span class="${whichPlayer}-info-rightanswer"></span>
       </div>
       <div class="${whichPlayer}-avatar">
