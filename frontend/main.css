@@ -224,7 +224,7 @@ fieldset {
 .main-game-grid {
   display: grid;
   grid-template-columns: 4fr 1fr;
-  grid-template-rows: 2fr 1fr;
+  grid-template-rows: auto;
   grid-template-areas: 
   "gameboard gamelog"
   "controls gamelog"
@@ -235,14 +235,16 @@ fieldset {
 .game-board-wrapper {
   position: relative;
   grid-area: gameboard;
-  background-image: url('images/game-table.png');
-  background-size: cover;
-  background-position: top center;
+  
   background-color: burlywood;
  }
 
 .game-board {
   display: grid;
+  background-image: url('images/game-table.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   width: 100%;
   grid-template-columns: 2fr 8fr 2fr;
   grid-template-rows: auto;

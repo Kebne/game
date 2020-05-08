@@ -50,7 +50,7 @@ async function game() {
   var currentPlayerNr = 1;
   var currentPlayerPath = data[0];
   var seatedPlayers = ['player1','player2']; // not in use right now
-
+ 
   // Custom event, logs game events
   document.addEventListener("gameEvent", function(event) {
     let time = new Date(); 
@@ -292,7 +292,7 @@ async function seating(data) {
       item.seated = true;
       playerNumber++;
     });
-    //resolve();
+    resolve()
   });
 };
 
@@ -311,7 +311,8 @@ async function firstBet(data, gamePot) {
     document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[4].marks}<br>`;
     //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
     
-    resolve();
+    //Uncomment line belove to get game loop going again.
+    //resolve();
   }); 
 };
 
