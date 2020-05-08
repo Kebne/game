@@ -2,6 +2,8 @@ export function createQuestionForm(currentQuestion) {
 document.querySelector('.game-questions').style.display = 'block';
   const templateElement = document.createElement('template');
   templateElement.innerHTML = `
+  <div class="game-wait"></div>
+    <div class="game-countdown"></div>
     <h2>${currentQuestion.question}</h2>
     <form id="game-form">
       <fieldset>

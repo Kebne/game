@@ -5,7 +5,7 @@ export function countDown(timeLimit, currentQuestion, done) {
         clearInterval(downloadTimer);
         document.querySelector('.game-countdown').innerHTML = 'Tiden är slut';
         document.querySelector('fieldset').setAttribute('disabled', true);
-        document.querySelector('.game-correct-answer').innerHTML = `Rätt svar är: ${currentQuestion.correctAnswer}`;
+        console.log(`Rätt svar är: ${currentQuestion.correctAnswer}`);
         done();        
       } else {
       document.querySelector('.game-countdown').innerHTML = `0:${timeleft} sekunder kvar`;

@@ -9,41 +9,24 @@
     <link href="main.css" rel="stylesheet">
 </head>
 
-<body id="sheriff-game">
-  
-  <main>
-    <div>
 
-    <section>
-      <div class="main-game-grid">
+<body id="sheriff-game">
+  <main>
+    <div class="main-game-grid">
         <div class="game-log"></div>
-        <div>Gameboard</div>
+        <div class="game-board-wrapper">
+          <div class="game-board">
+            <player-box class="player1" player="player1"></player-box>
+            <div class="game-questions"></div>
+            <div class="board"></div>
+            <player-box class="player4" player="player4"></player-box>
+            <player-box class="player2" player="player2"></player-box>
+            <player-box class="player3" player="player3"></player-box>
+            <player-box class="player5" player="player5"></player-box>
+          </div>
+      </div>
         <player-controls class="player-input-wrapper"></player-controls>
       </div>
-       <div class="game-board">
-          <player-box class="player1" player="player1"></player-box>
-          <div class="game-questions"></div>
-          <div class="board"></div>
-          <player-box class="player4" player="player4"></player-box>
-          <player-box class="player2" player="player2"></player-box>
-          <player-box class="player3" player="player3"></player-box>
-          <player-box class="player5" player="player5"></player-box>
-          <div class="game-log"></div>
-          <player-controls class="player-input-wrapper"></player-controls>
-        </div>
-    </section> 
-     
-   
-
-    <section>
-      <div class="game-countdown"></div>
-      <div class="game-wait"></div>
-      <div class="game-correct-answer"></div>
-      <div class="game-choice"></div>
-    </section>
-
-    
-  </div>
   </main>
 </body>
 
@@ -57,10 +40,7 @@ import {playerChoice} from './modules/playerchoice.js';
 import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
 
-  
- 
 window.onload = game();
-
 
 async function game() {
   
@@ -73,7 +53,11 @@ async function game() {
 
   // Custom event, logs game events
   document.addEventListener("gameEvent", function(event) {
-    document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${event.detail}<br>`);
+    let time = new Date(); 
+    let timeMin = time.getMinutes();
+    let timeSec = time.getSeconds();
+    //time.toLocaleDateString();
+    document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
   });
 
   function showSeating(playerNumber = 1) {
@@ -84,7 +68,6 @@ async function game() {
         playerNumber++;
       });
     };
-
 
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
@@ -105,10 +88,8 @@ async function game() {
 
   // Remove this function in production, used for testing diffrent players actions.
   function togglingCurrentPlayer(data) {
-    console.log('t data', data)
     var selectElement = document.querySelector('.player-switch-select');
     const dataToSelect = Object.keys(data);
-    console.log('obj',dataToSelect);
     
     dataToSelect.forEach((item) => {
         const optionElement = document.createElement('option');
@@ -304,7 +285,7 @@ async function seating(data) {
       item.seated = true;
       playerNumber++;
     });
-    //resolve();
+    resolve();
   });
 };
 
@@ -331,7 +312,7 @@ async function firstBet(data, gamePot) {
 async function askQuestion(nr) {
   let currentQuestion = questions[`question${nr}`];
   return new Promise((resolve) => {
-    console.log('currentQuestion', currentQuestion);
+    console.log('currentQuestion: ', currentQuestion);
     countDown(3, currentQuestion, () => resolve()); 
     let questionSound = new Audio('sound/question.mp3');
     questionSound.volume = 0.1;
@@ -377,8 +358,5 @@ async function endGame(currentPlayerPath) {
 };
 
 
-
-
 </script>
-
 </html>
