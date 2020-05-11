@@ -69,6 +69,11 @@ fieldset {
  color: var(--light-text-color);
 }
 
+/* Seating */
+.player-seated {
+  filter: hue-rotate(90deg);
+  
+}
 
 /* Player input */
 
@@ -246,6 +251,7 @@ fieldset {
   background-position: center center;
   background-repeat: no-repeat;
   width: 100%;
+  height: 100%; /* Temp fix for layout problem */
   grid-template-columns: 2fr 8fr 2fr;
   grid-template-rows: auto;
   grid-template-areas: 
@@ -268,9 +274,11 @@ fieldset {
   min-width: 300px;
 }
 
+
+
 .player1 {
   grid-area: player1; 
-  /*background-color: #153244;*/
+  background-color: #153244;
   box-sizing: border-box; 
   padding: var(--standard-padding);
   display: flex;
@@ -279,7 +287,7 @@ fieldset {
 
 .player2 {
   grid-area: player2; 
-  /*background-color: #4D4940;*/
+  background-color: #4D4940;
   box-sizing: border-box;
   padding: var(--standard-padding);
   display: flex;
@@ -288,7 +296,7 @@ fieldset {
 
 .player3 {
   grid-area: player3; 
-  /*background-color: #805238;*/ 
+  background-color: #805238;
   box-sizing: border-box;
   padding: var(--standard-padding);
   display: flex;
@@ -297,7 +305,7 @@ fieldset {
 
 .player4 {
   grid-area: player4; 
-  /*background-color: #94855A;*/  
+  background-color: #94855A; 
   box-sizing: border-box;
   padding: var(--standard-padding);
   display: flex;
@@ -306,7 +314,7 @@ fieldset {
 
 .player5 {
   grid-area: player5; 
-  /*background-color: #5a8f93;*/  
+  background-color: #5a8f93;  
   box-sizing: border-box;
   padding: var(--standard-padding);
   display: flex;

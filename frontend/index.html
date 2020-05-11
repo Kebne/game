@@ -40,13 +40,15 @@ import {playerChoice} from './modules/playerchoice.js';
 import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
 
+var currentPlayer = 'player2';
+
 window.onload = game();
 
 async function game() {
   
   var data = Object.values(players);
   var gamePot = 0;
-  var currentPlayer = 'player1';
+  
   var currentPlayerNr = 1;
   var currentPlayerPath = data[0];
   var seatedPlayers = ['player1','player2']; // not in use right now
@@ -285,13 +287,19 @@ function animateMarker(currentPlayer) {
 
 async function seating(data) {
   return new Promise((resolve) => { //maybe dont need to return this, todo: look it up.
-    var playerNumber = 1;
+    let element = document.querySelector(`.${currentPlayer}`);
+    addEventListener('click', function(event){
+      element.classList.add('player-seated');
+      console.log('seating event target', event.target);
+    });
+
+    /*var playerNumber = 1;
     data.forEach((item) => {
       document.querySelector(`.player${playerNumber}-info-name`).innerHTML =  `Namn: ${item.name}<br>`;
       document.querySelector(`.player${playerNumber}-info-marks`).innerHTML = `Marker: ${item.marks}<br>`;
       item.seated = true;
       playerNumber++;
-    });
+    });*/
     resolve()
   });
 };
