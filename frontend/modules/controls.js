@@ -8,7 +8,7 @@ export class controls extends HTMLElement {
     <div>
       <div class="player-marks"></div>
       <div class="player-status"></div>
-      
+      <div><button class="js-player-ready player-input-button">Klar</button></div>
       <div class="game-slider">
         <label for="playerslider">Att satsa:</label>
         <input id="playerslider" type="range" min="10" max="100" value="10" step="10" class="bet-slider">
@@ -19,7 +19,6 @@ export class controls extends HTMLElement {
           <div><button class="js-player-pass player-input-button">Passa</button></div>
           <div><button class="js-player-fold player-input-button">Lägga sig</button></div>
       </div>
-     
     </div> 
     
       <div>

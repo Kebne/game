@@ -4,21 +4,23 @@ export class playerBox extends HTMLElement {
     super();
 
     let whichPlayer = this.getAttribute('player');
-    console.log('wichplayer for player layout: ',whichPlayer)
+    console.log('wichplayer for player layout: ',whichPlayer);
+    
    
     let templateElement = document.createElement('template');
     templateElement.innerHTML = `
     
-      <div class="${whichPlayer}-info">
-        <span class="${whichPlayer}-info-name"></span>
-        <span class="${whichPlayer}-info-marks"></span>
-        <span class="${whichPlayer}-info-rightanswer"></span>
-      </div>
+      
       <div class="${whichPlayer}-avatar">
         <img class="img-player-avatar" src="images/${whichPlayer}-avatar.png" alt="${whichPlayer} avatar">
       </div>
       <div class="mark-${whichPlayer}">
         <img class="img-mark-${whichPlayer}" src="images/mark.png" alt="${whichPlayer} mark"></div>
+      </div>
+      <div class="${whichPlayer}-info">
+        <span class="${whichPlayer}-info-name"></span><br>
+        <span class="${whichPlayer}-info-marks"></span><br>
+        <span class="${whichPlayer}-info-rightanswer"></span>
       </div>
    
     `;
