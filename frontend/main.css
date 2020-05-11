@@ -281,8 +281,6 @@ fieldset {
   background-color: #153244;
   box-sizing: border-box; 
   padding: var(--standard-padding);
-  display: flex;
-  gap: 8px;
 }
 
 .player2 {
@@ -290,8 +288,6 @@ fieldset {
   background-color: #4D4940;
   box-sizing: border-box;
   padding: var(--standard-padding);
-  display: flex;
-  gap: 8px;
 }
 
 .player3 {
@@ -299,8 +295,6 @@ fieldset {
   background-color: #805238;
   box-sizing: border-box;
   padding: var(--standard-padding);
-  display: flex;
-  gap: 8px;
 }
 
 .player4 {
@@ -308,8 +302,6 @@ fieldset {
   background-color: #94855A; 
   box-sizing: border-box;
   padding: var(--standard-padding);
-  display: flex;
-  gap: 8px;
 }
 
 .player5 {
@@ -317,8 +309,6 @@ fieldset {
   background-color: #5a8f93;  
   box-sizing: border-box;
   padding: var(--standard-padding);
-  display: flex;
-  gap: 8px;
 }
 
 .game-log {

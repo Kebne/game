@@ -4,6 +4,7 @@ export class playerBox extends HTMLElement {
     super();
 
     let whichPlayer = this.getAttribute('player');
+    console.log('wichplayer for player layout: ',whichPlayer)
    
     let templateElement = document.createElement('template');
     templateElement.innerHTML = `

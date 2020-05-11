@@ -16,13 +16,13 @@
         <div class="game-log"></div>
         <div class="game-board-wrapper">
           <div class="game-board">
-            <player-box class="player1" player="player1"></player-box>
+            <div class="player1"><img id="player1" src="images/empty-chair.png"></div>
             <div class="game-questions"></div>
             <div class="board"></div>
-            <player-box class="player4" player="player4"></player-box>
-            <player-box class="player2" player="player2"></player-box>
-            <player-box class="player3" player="player3"></player-box>
-            <player-box class="player5" player="player5"></player-box>
+            <div class="player4"><img id="player4" src="images/empty-chair.png"></div>
+            <div class="player2"><img id="player2" src="images/empty-chair.png"></div>
+            <div class="player3"><img id="player3" src="images/empty-chair.png"></div>
+            <div class="player5"><img id="player5" src="images/empty-chair.png"></div>
           </div>
       </div>
         <player-controls class="player-input-wrapper"></player-controls>
@@ -41,18 +41,27 @@ import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
 
 var currentPlayer = 'player2';
+var data = Object.values(players);
+var gamePot = 0;
+var currentPlayerNr = 1;
+var currentPlayerPath = data[0];
+var seatedPlayers = ['player1','player2']; // not in use right now, maybe implement as async await player1, player2 etc
+var allSeated = false;
+
+const playerProto = {
+   marks: 1000,
+   name: 'John Doe',
+   seat: 1,
+   pass: false,
+   bet: [],
+   fold: false,
+   answers: [],
+   rightAnswerNr: 0,
+   seated: false,
+ };
 
 window.onload = game();
-
 async function game() {
-  
-  var data = Object.values(players);
-  var gamePot = 0;
-  
-  var currentPlayerNr = 1;
-  var currentPlayerPath = data[0];
-  var seatedPlayers = ['player1','player2']; // not in use right now
- 
   // Custom event, logs game events
   document.addEventListener("gameEvent", function(event) {
     let time = new Date(); 
@@ -62,7 +71,62 @@ async function game() {
     document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
   });
 
-  function showSeating(playerNumber = 1) {
+  // Seating logic
+  document.querySelector('.game-board').addEventListener('click', function(event) {
+      let wichPlayers = event.target.id;
+      console.log('t event', event.target);
+      let playerNr = String(wichPlayers);
+      switch (playerNr) {
+        case 'player1' : 
+            window.player1 = Object.create(playerProto);
+            player1.name = playerNr;
+            player1.seated = true;
+            let element1 = document.querySelector(`.${playerNr}`);
+            element1.innerHTML = '<player-box style="display: flex;" player="player1"></player-box>';
+            console.log('player1', player1);
+          break;
+          case 'player2' : 
+            window.player2 = Object.create(playerProto);
+            player2.name = playerNr;
+            player2.seated = true;
+            let element2 = document.querySelector(`.${playerNr}`);
+            element2.innerHTML = '<player-box style="display: flex;" player="player2"></player-box>';
+            console.log('player2', player2);
+          break;
+          case 'player3' : 
+            window.player3 = Object.create(playerProto);
+            player3.name = playerNr;
+            player3.seated = true;
+            let element3 = document.querySelector(`.${playerNr}`);
+            element3.innerHTML = '<player-box style="display: flex;" player="player3"></player-box>';
+            console.log('player3', player3);
+          break;
+          case 'player4' : 
+            window.player4 = Object.create(playerProto);
+            player4.name = playerNr;
+            player4.seated = true;
+            let element4 = document.querySelector(`.${playerNr}`);
+            element4.innerHTML = '<player-box style="display: flex;" player="player4"></player-box>';
+            console.log('player4', player4);
+          break;
+          case 'player5' : 
+            window.player5 = Object.create(playerProto);
+            player5.name = playerNr;
+            player5.seated = true;
+            let element5 = document.querySelector(`.${playerNr}`);
+            element5.innerHTML = '<player-box style="display: flex;" player="player5"></player-box>';
+            console.log('player5', player5);
+          break;
+        default:
+        console.log(`Sorry, error`);
+      }
+      
+     
+      
+    });
+  //
+
+ /* function showSeating(playerNumber = 1) {
       data.forEach((element) => {
         document.querySelector(`.player${playerNumber}-info-name`).innerHTML =  `Namn: ${element.name}<br>`;
         document.querySelector(`.player${playerNumber}-info-marks`).innerHTML = `Marker: ${element.marks}<br>`;
@@ -70,7 +134,7 @@ async function game() {
         playerNumber++;
       });
     };
-
+*/
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
  
@@ -300,23 +364,28 @@ async function seating(data) {
       item.seated = true;
       playerNumber++;
     });*/
-    resolve()
+    if (allSeated) {resolve();};
+    
   });
 };
 
 
 async function firstBet(data, gamePot) {
+  
   return new Promise((resolve) => {
+    
     data.forEach((item) => {
         item.marks -= 10;
         gamePot += 10;
         item.bet.push(10);
     });
-    document.querySelector(`.player1-info-marks`).innerHTML = `Marker: ${data[0].marks}<br>`;
+    console.log('firstbet running');
+     let testDT = document.querySelector('.player1-info-marks');
+     console.log('testDT',testDT);
     document.querySelector(`.player2-info-marks`).innerHTML = `Marker: ${data[1].marks}<br>`;
     document.querySelector(`.player3-info-marks`).innerHTML = `Marker: ${data[2].marks}<br>`;
     document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[3].marks}<br>`;
-    document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[4].marks}<br>`;
+    document.querySelector(`.player5-info-marks`).innerHTML = `Marker: ${data[4].marks}<br>`;
     //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
     
     //Uncomment line belove to get game loop going again.
