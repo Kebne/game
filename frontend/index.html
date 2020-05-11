@@ -297,6 +297,11 @@ async function seating() {
   });
 
     // Seating logic
+  function seatingSound() {
+    let audioSeated = new Audio('sound/seated.mp3');
+    audioSeated.play();
+  }
+
   document.querySelector('.game-board').addEventListener('click', function(event) {
       let wichPlayers = event.target.id;
       let playerNr = String(wichPlayers);
@@ -304,6 +309,7 @@ async function seating() {
       switch (playerNr) {
         case 'player1' : 
             window.player1 = Object.create(playerProto);
+            seatingSound();
             player1.name = playerNr;
             player1.seated = true;
             let element1 = document.querySelector(`.${playerNr}`);
@@ -314,6 +320,7 @@ async function seating() {
           break;
           case 'player2' : 
             window.player2 = Object.create(playerProto);
+            seatingSound();
             player2.name = playerNr;
             player2.seated = true;
             let element2 = document.querySelector(`.${playerNr}`);
@@ -324,6 +331,7 @@ async function seating() {
           break;
           case 'player3' : 
             window.player3 = Object.create(playerProto);
+            seatingSound();
             player3.name = playerNr;
             player3.seated = true;
             let element3 = document.querySelector(`.${playerNr}`);
@@ -334,6 +342,7 @@ async function seating() {
           break;
           case 'player4' : 
             window.player4 = Object.create(playerProto);
+            seatingSound();
             player4.name = playerNr;
             player4.seated = true;
             let element4 = document.querySelector(`.${playerNr}`);
@@ -344,6 +353,7 @@ async function seating() {
           break;
           case 'player5' : 
             window.player5 = Object.create(playerProto);
+            seatingSound();
             player5.name = playerNr;
             player5.seated = true;
             let element5 = document.querySelector(`.${playerNr}`);
