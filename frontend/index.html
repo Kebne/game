@@ -349,7 +349,6 @@ async function firstBet(data, gamePot) {
     });
     
     seatedPlayers.forEach((item) => {
-    console.log('iitem', item); 
     let playerMark = players[item]['marks'];
     document.querySelector(`.${item}-info-marks`).innerHTML = `Marker: ${playerMark}`;   
     });
@@ -374,12 +373,30 @@ async function askQuestion(nr) {
     questionSound.volume = 0.1;
     questionSound.play();
     createQuestionForm(currentQuestion);
-    let element = document.querySelector('#game-form');
+
+    let element1 = document.querySelector('#game-question-button1');
+    element1.addEventListener('click', function() {
+        let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${element1.innerHTML}`, bubbles: true, cancelable: true });
+        document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
+    });
+    let element2 = document.querySelector('#game-question-button2');
+    element2.addEventListener('click', function() {
+      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${element2.innerHTML}`, bubbles: true, cancelable: true });
+      document.querySelector('#game-question-button1').dispatchEvent(customEvent);
+    });
+    let element3 = document.querySelector('#game-question-button3');
+    element3.addEventListener('click', function() {
+      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${element3.innerHTML}`, bubbles: true, cancelable: true });
+        document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
+    });
+    //Old
+    /*let element = document.querySelector('#game-form');
     element.addEventListener('change', function() {
       playerChoice();
-    });
+    });*/
   });
 };
+
 
 
 function timeout(ms) {
