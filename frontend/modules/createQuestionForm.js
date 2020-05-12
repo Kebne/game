@@ -8,22 +8,25 @@ document.querySelector('.game-questions').style.display = 'block';
     <form id="game-form">
       <fieldset>
         <div>
-        <label>
+        <label style="display: none;">
           ${currentQuestion.alternative1}
-          <input type="radio" value="${currentQuestion.alternative1}" name="questions">
+          <input  type="radio" value="${currentQuestion.alternative1}" name="questions">
         </label>
+        <button class="game-button">${currentQuestion.alternative1}</button>
         </div>
         <div>
-        <label>
+        <label style="display: none;">
           ${currentQuestion.alternative2}
           <input type="radio" value="${currentQuestion.alternative2}" name="questions">
         </label>
+        <button class="game-button">${currentQuestion.alternative2}</button>
       </div>
         <div>
-        <label>
+        <label style="display: none;">
           ${currentQuestion.alternative3}
           <input type="radio" value="${currentQuestion.alternative3}" name="questions">
         </label>
+        <button class="game-button">${currentQuestion.alternative3}</button>
       </div>
         </fieldset>
       </form>

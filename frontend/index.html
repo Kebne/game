@@ -60,15 +60,13 @@ var players = {
    player5: Object.create(playerProto), 
  };
 
- console.log('players dt',players.player1.name);
-
 
 var currentPlayer = 'player1';
 var data = Object.values(players);
 var gamePot = 0;
 var currentPlayerNr = 1;
 var currentPlayerPath = data[0];
-var seatedPlayers = ['player1','player2']; // not in use right now, maybe implement as async await player1, player2 etc
+var seatedPlayers = []; // not in use right now, maybe implement as async await player1, player2 etc
 var allSeated = false;
 
 
@@ -86,7 +84,6 @@ async function game() {
     document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
   });
 
-  
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
    
@@ -135,7 +132,7 @@ async function game() {
     currentPlayerPath.marks -= slider.value;
     gamePot += currentPlayerPath.bet[0];
     
-    let customEvent = new CustomEvent("gameEvent", {detail: `Player ${currentPlayer} bets ${sliderValue}`, bubbles: true, cancelable: true });
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} bettar ${sliderValue}`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
     document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
@@ -151,7 +148,7 @@ async function game() {
     audioPass.play();
     data[0].pass = true;
 
-     let customEvent = new CustomEvent("gameEvent", {detail: `Player ${currentPlayer} passes ${currentPlayerPath.pass}`, bubbles: true, cancelable: true });
+     let customEvent = new CustomEvent("gameEvent", {detail: `Spalare ${currentPlayer} passar ${currentPlayerPath.pass}`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
@@ -165,7 +162,7 @@ async function game() {
     audioFold.play();
     currentPlayerPath.fold = true;
 
-    let customEvent = new CustomEvent("gameEvent", {detail: `Player ${currentPlayer} folds ${currentPlayerPath.fold}`, bubbles: true, cancelable: true });
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} lägger sig ${currentPlayerPath.fold}`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
@@ -186,19 +183,7 @@ async function game() {
   };
   //
 
-  // Player ready'
-  document.querySelector('.js-player-ready').addEventListener('click', function () {
-    console.log('player ready');
-    let audioReady = new Audio('sound/start.mp3'); // lets go sound in here
-    audioReady.play();
-    currentPlayerPath.ready = true;
-
-    let customEvent = new CustomEvent("gameEvent", {detail: `Player ${currentPlayer} ready`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-ready').dispatchEvent(customEvent);
-
-
-  });
-  //
+ 
 
   // Admin activate question
   const getQButton = document.querySelector('.question-button');
@@ -305,57 +290,77 @@ function animateMarker(currentPlayer) {
 
 async function seating() {
   return new Promise((resolve) => { //maybe dont need to return this, todo: look it up.
-    let element = document.querySelector(`.${currentPlayer}`);
-    addEventListener('click', function(event){
-      element.classList.add('player-seated');
-      console.log('seating event target', event.target);
-  });
-
-   
+    
   function seatingSound() {
     let audioSeated = new Audio('sound/seated.mp3');
     audioSeated.play();
   };
 
-  document.querySelector('.game-board').addEventListener('click', function(event) {
-      let wichPlayer = event.target.id;
-      let playerNr = String(wichPlayer);
-      seatingSound();
-      players[playerNr]['seated'] = true;
-      players[playerNr]['marks'] = 500;
-      let playerName = players[playerNr]['name'];
-      let playerMark = players[playerNr]['marks'];
-      console.log('pleyr nr seated', players[playerNr]);
-      let element1 = document.querySelector(`.${playerNr}`);
-      element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
-      document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${playerName }`;
-      document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${playerMark}`;
+  document.querySelector('#player1').addEventListener('click', function(event){createPlayer(event)});
+  document.querySelector('#player2').addEventListener('click', function(event){createPlayer(event)});
+  document.querySelector('#player3').addEventListener('click', function(event){createPlayer(event)});
+  document.querySelector('#player4').addEventListener('click', function(event){createPlayer(event)});
+  document.querySelector('#player5').addEventListener('click', function(event){createPlayer(event)});
+  
+  function createPlayer(event) { 
+    let wichPlayer = event.target.id;
+    let playerNr = String(wichPlayer);
+    seatingSound();
+    players[playerNr]['seated'] = true;
+    seatedPlayers.push(playerNr);
+    players[playerNr]['marks'] = 500;
+    let playerName = players[playerNr]['name'];
+    let playerMark = players[playerNr]['marks'];
+    let element1 = document.querySelector(`.${playerNr}`);
+    element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
+    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${playerName }`;
+    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${playerMark}`;
+    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+    
+  };
+
+    // Player ready'
+  document.querySelector('.js-player-ready').addEventListener('click', function () {
+    let audioReady = new Audio('sound/start.mp3'); // lets go sound in here
+    audioReady.play();
+    currentPlayerPath.ready = true;
+
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} redo`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-ready').dispatchEvent(customEvent);
+    //We have resolve here so that it is first when player press ready the game skips forward
+    resolve();
   });
-  resolve();
+  //
+
+  
   });
 };
 
 
 async function firstBet(data, gamePot) {
+  console.log('firstbet now running');
   return new Promise((resolve) => {
     
-    data.forEach((item) => {
+  data.forEach((item) => {
+        console.log('item', item.name);
         item.marks -= 10;
         gamePot += 10;
         item.bet.push(10);
     });
+    
+    seatedPlayers.forEach((item) => {
+    console.log('iitem', item); 
+    let playerMark = players[item]['marks'];
+    document.querySelector(`.${item}-info-marks`).innerHTML = `Marker: ${playerMark}`;   
+    });
+  
+    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
 
-    console.log('firstbet running');
-     let testDT = document.querySelector('.player1-info-marks');
-     console.log('testDT',testDT);
-    document.querySelector(`.player2-info-marks`).innerHTML = `Marker: ${data[1].marks}<br>`;
-    document.querySelector(`.player3-info-marks`).innerHTML = `Marker: ${data[2].marks}<br>`;
-    document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${data[3].marks}<br>`;
-    document.querySelector(`.player5-info-marks`).innerHTML = `Marker: ${data[4].marks}<br>`;
-    //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+    let customEvent = new CustomEvent("gameEvent", {detail: `Alla spelare har gjort första bettet`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-ready').dispatchEvent(customEvent);
     
     //Uncomment line belove to get game loop going again.
-    //resolve();
+    resolve();
   }); 
 };
 
