@@ -14,7 +14,7 @@ export class playerBox extends HTMLElement {
       <div class="${whichPlayer}-avatar">
         <img class="img-player-avatar" src="images/${whichPlayer}-avatar.png" alt="${whichPlayer} avatar">
       </div>
-      <div class="mark-${whichPlayer}">
+      <div style="display: none;" class="mark-${whichPlayer}">
         <img class="img-mark-${whichPlayer}" src="images/mark.png" alt="${whichPlayer} mark"></div>
       </div>
       <div class="${whichPlayer}-info">

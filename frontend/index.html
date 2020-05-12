@@ -37,16 +37,8 @@ import {questions} from './modules/questions.js';
 import {createQuestionForm} from './modules/createquestionform.js';
 import {countDown} from './modules/countdown.js';
 import {playerChoice} from './modules/playerchoice.js';
-import {players} from './modules/players.js';
+//import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
-
-var currentPlayer = 'player2';
-var data = Object.values(players);
-var gamePot = 0;
-var currentPlayerNr = 1;
-var currentPlayerPath = data[0];
-var seatedPlayers = ['player1','player2']; // not in use right now, maybe implement as async await player1, player2 etc
-var allSeated = false;
 
 const playerProto = {
    marks: 1000,
@@ -59,6 +51,29 @@ const playerProto = {
    rightAnswerNr: 0,
    seated: false,
  };
+
+var players = {
+   player1: Object.create(playerProto),
+   player2: Object.create(playerProto),
+   player3: Object.create(playerProto),
+   player4: Object.create(playerProto),
+   player5: Object.create(playerProto), 
+ };
+
+ console.log('players dt',players.player1.name);
+
+
+var currentPlayer = 'player1';
+var data = Object.values(players);
+var gamePot = 0;
+var currentPlayerNr = 1;
+var currentPlayerPath = data[0];
+var seatedPlayers = ['player1','player2']; // not in use right now, maybe implement as async await player1, player2 etc
+var allSeated = false;
+
+
+
+ 
 
 window.onload = game();
 async function game() {
@@ -296,79 +311,27 @@ async function seating() {
       console.log('seating event target', event.target);
   });
 
-    // Seating logic
+   
   function seatingSound() {
     let audioSeated = new Audio('sound/seated.mp3');
     audioSeated.play();
-  }
+  };
 
   document.querySelector('.game-board').addEventListener('click', function(event) {
-      let wichPlayers = event.target.id;
-      let playerNr = String(wichPlayers);
-      
-      switch (playerNr) {
-        case 'player1' : 
-            window.player1 = Object.create(playerProto);
-            seatingSound();
-            player1.name = playerNr;
-            player1.seated = true;
-            let element1 = document.querySelector(`.${playerNr}`);
-            element1.innerHTML = '<player-box player="player1"></player-box>';
-            document.querySelector(`.player1-info-name`).innerHTML = `Namn: ${player1.name}`;
-            document.querySelector(`.player1-info-marks`).innerHTML = `Marker: ${player1.marks}`;
-            console.log('player1', player1);
-          break;
-          case 'player2' : 
-            window.player2 = Object.create(playerProto);
-            seatingSound();
-            player2.name = playerNr;
-            player2.seated = true;
-            let element2 = document.querySelector(`.${playerNr}`);
-            element2.innerHTML = '<player-box player="player2"></player-box>';
-            document.querySelector(`.player2-info-name`).innerHTML = `Namn: ${player2.name}`;
-            document.querySelector(`.player2-info-marks`).innerHTML = `Marker: ${player2.marks}`;
-            console.log('player2', player2);
-          break;
-          case 'player3' : 
-            window.player3 = Object.create(playerProto);
-            seatingSound();
-            player3.name = playerNr;
-            player3.seated = true;
-            let element3 = document.querySelector(`.${playerNr}`);
-            element3.innerHTML = '<player-box player="player3"></player-box>';
-            document.querySelector(`.player3-info-name`).innerHTML = `Namn: ${player3.name}`;
-            document.querySelector(`.player3-info-marks`).innerHTML = `Marker: ${player3.marks}`;
-            console.log('player3', player3);
-          break;
-          case 'player4' : 
-            window.player4 = Object.create(playerProto);
-            seatingSound();
-            player4.name = playerNr;
-            player4.seated = true;
-            let element4 = document.querySelector(`.${playerNr}`);
-            element4.innerHTML = '<player-box player="player4"></player-box>';
-            document.querySelector(`.player4-info-name`).innerHTML = `Namn: ${player4.name}`;
-            document.querySelector(`.player4-info-marks`).innerHTML = `Marker: ${player4.marks}`;
-            console.log('player4', player4);
-          break;
-          case 'player5' : 
-            window.player5 = Object.create(playerProto);
-            seatingSound();
-            player5.name = playerNr;
-            player5.seated = true;
-            let element5 = document.querySelector(`.${playerNr}`);
-            element5.innerHTML = '<player-box player="player5"></player-box>';
-            document.querySelector(`.player5-info-name`).innerHTML = `Namn: ${player5.name}`;
-            document.querySelector(`.player5-info-marks`).innerHTML = `Marker: ${player5.marks}`;
-            console.log('player5', player5);
-          break;
-        default:
-        console.log(`Sorry, error`);
-      }
+      let wichPlayer = event.target.id;
+      let playerNr = String(wichPlayer);
+      seatingSound();
+      players[playerNr]['seated'] = true;
+      players[playerNr]['marks'] = 500;
+      let playerName = players[playerNr]['name'];
+      let playerMark = players[playerNr]['marks'];
+      console.log('pleyr nr seated', players[playerNr]);
+      let element1 = document.querySelector(`.${playerNr}`);
+      element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
+      document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${playerName }`;
+      document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${playerMark}`;
   });
-  //
   resolve();
-    
   });
 };
 
