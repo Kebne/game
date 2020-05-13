@@ -39,6 +39,7 @@ import {countDown} from './modules/countdown.js';
 //import {playerChoice} from './modules/playerchoice.js';
 //import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
+import {animateMarker} from './modules/animations.js';
 
 const playerProto = {
    marks: 1000,
@@ -83,6 +84,25 @@ async function game() {
     //time.toLocaleDateString();
     document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
   });
+
+  const playerLeaveElement = document.querySelector('.game-board');
+  document.addEventListener('click', function() {
+    let whatElement = event.target;
+    let getString = whatElement.className;
+    let playerToSelectForLeaving = getString.replace('-leave', '');
+    
+    if(whatElement.nodeName == 'BUTTON') {
+      const imgElement = document.createElement("img");
+      imgElement.src = 'images/empty-chair.png';
+      imgElement.id = '${playerToSelectForLeaving}';
+      imgElement.class = 'img-full-width';
+      imgElement.addEventListener('click', masterEventHandler);
+      document.querySelector(`.${playerToSelectForLeaving}`).innerHTML = '';
+      document.querySelector(`.${playerToSelectForLeaving}`).appendChild(btnElement);
+    };
+    
+  });
+  
 
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
@@ -193,83 +213,9 @@ async function game() {
   });
   //
 
+  
 
-  // Mark animation, several animations needed due to players diffrent positions.
-  // Look into if you can have target goal cordinates instead.
-  const animationMark = [
-  { 
-    transform: 'translateX(1px) rotate(4deg)', 
-    transformOrigin: 'center', 
-    filter: 'blur(8px)', 
-    opacity: 0.6 
-    },
-    { 
-      transform: 'translateX(300px) rotate(360deg)',
-      transformOrigin: 'center',
-      filter: 'blur(0)',
-      opacity: 1 
-    }
-  ];
 
-  const animationMarkRightSide = [
-  { 
-    transform: 'translateX(1px) rotate(4deg)', 
-    transformOrigin: 'center', 
-    filter: 'blur(8px)', 
-    opacity: 0.6 
-    },
-    { 
-      transform: 'translateX(-300px) rotate(360deg)',
-      transformOrigin: 'center',
-      filter: 'blur(0)',
-      opacity: 1 
-    }
-  ];
-
-  const animationMarkDownSide = [
-  { 
-    transform: 'translateY(1px) rotate(4deg)', 
-    transformOrigin: 'center', 
-    filter: 'blur(8px)', 
-    opacity: 0.6 
-    },
-    { 
-      transform: 'translateY(-300px) rotate(360deg)',
-      transformOrigin: 'center',
-      filter: 'blur(0)',
-      opacity: 1 
-    }
-  ];
-
-  const optionsMark = {
-    iterations: 1,
-    iterationStart: 0,
-    delay: 0,
-    endDelay: 0,
-    duration: 700,
-    fill: 'forwards',
-    easing: 'ease-out',
-  }
-
-function animateMarker(currentPlayer) {
-  switch (currentPlayer) {
-  case 'player1':
-  case 'player2':
-    let element  = document.querySelector(`.img-mark-${currentPlayer}`);
-    element.animate(animationMark,optionsMark);
-    break;
-  case 'player3':
-  case 'player4':
-    document.querySelector(`.img-mark-${currentPlayer}`).animate (animationMarkRightSide,optionsMark);
-    break;
-  case 'player5':
-    document.querySelector(`.img-mark-${currentPlayer}`).animate (animationMarkDownSide,optionsMark);
-    break;
-  default:
-    console.log('Sorry, no player mark found');
-  }
-};
-//
  
  // Main game logic
   await seating();
@@ -286,10 +232,10 @@ function animateMarker(currentPlayer) {
 }; // end game function
 //
 
-// According to spec players need pay 50 coins before seated, todo: make this funtion here.
+
 
 async function seating() {
-  return new Promise((resolve) => { //maybe dont need to return this, todo: look it up.
+  return new Promise((resolve) => { 
     
   function seatingSound() {
     let audioSeated = new Audio('sound/seated.mp3');
