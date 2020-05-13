@@ -11,6 +11,7 @@ body {
   background-color: #F0EEE1;
   margin: 0;
   padding: 0;
+  font-size: 16px;
 }
 
 .img-full-width {
@@ -269,6 +270,7 @@ fieldset {
 
 .game-board {
   display: grid;
+  box-sizing: border-box;
   background-image: url('images/game-table.png');
   background-size: cover;
   background-position: center center;
@@ -288,6 +290,10 @@ fieldset {
 
 .img-player-avatar {
   width: 64px;
+}
+
+.mark-wrapper-display-none {
+  display: none;
 }
 
 .board {
