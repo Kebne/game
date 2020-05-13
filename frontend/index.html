@@ -71,6 +71,23 @@ var seatedPlayers = []; // not in use right now, maybe implement as async await 
 var allSeated = false;
 
 
+// This is needed to be globally function se we can reapply event listner when players left
+function createPlayer() { 
+    let wichPlayer = event.target.id;
+    let playerNr = String(wichPlayer);
+    let audioSeated = new Audio('sound/seated.mp3');
+    audioSeated.play();
+    players[playerNr]['seated'] = true;
+    seatedPlayers.push(playerNr);
+    players[playerNr]['marks'] = 500;
+    let playerName = players[playerNr]['name'];
+    let playerMark = players[playerNr]['marks'];
+    let element1 = document.querySelector(`.${playerNr}`);
+    element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
+    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${playerName }`;
+    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${playerMark}`;
+    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+};
 
  
 
@@ -94,11 +111,11 @@ async function game() {
     if(whatElement.nodeName == 'BUTTON') {
       const imgElement = document.createElement("img");
       imgElement.src = 'images/empty-chair.png';
-      imgElement.id = '${playerToSelectForLeaving}';
-      imgElement.class = 'img-full-width';
-      imgElement.addEventListener('click', masterEventHandler);
+      imgElement.id = playerToSelectForLeaving;
+      imgElement.className = 'img-full-width';
+      imgElement.addEventListener('click', createPlayer);
       document.querySelector(`.${playerToSelectForLeaving}`).innerHTML = '';
-      document.querySelector(`.${playerToSelectForLeaving}`).appendChild(btnElement);
+      document.querySelector(`.${playerToSelectForLeaving}`).appendChild(imgElement);
     };
     
   });
@@ -236,34 +253,15 @@ async function game() {
 
 async function seating() {
   return new Promise((resolve) => { 
-    
-  function seatingSound() {
-    let audioSeated = new Audio('sound/seated.mp3');
-    audioSeated.play();
-  };
+ 
 
-  document.querySelector('#player1').addEventListener('click', function(event){createPlayer(event)});
-  document.querySelector('#player2').addEventListener('click', function(event){createPlayer(event)});
-  document.querySelector('#player3').addEventListener('click', function(event){createPlayer(event)});
-  document.querySelector('#player4').addEventListener('click', function(event){createPlayer(event)});
-  document.querySelector('#player5').addEventListener('click', function(event){createPlayer(event)});
+  document.querySelector('#player1').addEventListener('click', createPlayer);
+  document.querySelector('#player2').addEventListener('click', createPlayer);
+  document.querySelector('#player3').addEventListener('click', createPlayer);
+  document.querySelector('#player4').addEventListener('click', createPlayer);
+  document.querySelector('#player5').addEventListener('click', createPlayer);
   
-  function createPlayer(event) { 
-    let wichPlayer = event.target.id;
-    let playerNr = String(wichPlayer);
-    seatingSound();
-    players[playerNr]['seated'] = true;
-    seatedPlayers.push(playerNr);
-    players[playerNr]['marks'] = 500;
-    let playerName = players[playerNr]['name'];
-    let playerMark = players[playerNr]['marks'];
-    let element1 = document.querySelector(`.${playerNr}`);
-    element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
-    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${playerName }`;
-    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${playerMark}`;
-    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
-    
-  };
+
 
     // Player ready'
   document.querySelector('.js-player-ready').addEventListener('click', function () {
