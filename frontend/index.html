@@ -75,8 +75,7 @@ var allSeated = false;
 function createPlayer() { 
     let wichPlayer = event.target.id;
     let playerNr = String(wichPlayer);
-    let audioSeated = new Audio('sound/seated.mp3');
-    audioSeated.play();
+    playSoundFx('seated');
     players[playerNr]['seated'] = true;
     seatedPlayers.push(playerNr);
     players[playerNr]['marks'] = 500;
@@ -89,6 +88,11 @@ function createPlayer() {
     document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
 };
 
+function playSoundFx(sound = 'start', volume = 1) {
+  let audio = new Audio(`sound/${sound}.mp3`);
+  audio.volume = volume;
+  audio.play();
+}
  
 
 window.onload = game();
@@ -161,9 +165,8 @@ async function game() {
 
   // Player Betting
   document.querySelector('.js-player-bet').addEventListener('click', function () {
-    let audioBetting = new Audio('sound/betting.mp3');
     animateMarker(currentPlayer);
-    audioBetting.play();
+    playSoundFx('betting');
     let sliderValue = Number(slider.value);
     currentPlayerPath.bet.unshift(sliderValue);
     currentPlayerPath.marks -= slider.value;
@@ -181,8 +184,7 @@ async function game() {
 
   // Player Passing
   document.querySelector('.js-player-pass').addEventListener('click', function () {
-    let audioPass = new Audio('sound/pass.mp3');
-    audioPass.play();
+    playSoundFx('pass');
     data[0].pass = true;
 
      let customEvent = new CustomEvent("gameEvent", {detail: `Spalare ${currentPlayer} passar ${currentPlayerPath.pass}`, bubbles: true, cancelable: true });
@@ -195,8 +197,7 @@ async function game() {
 
   // Player Fold
   document.querySelector('.js-player-fold').addEventListener('click', function () {
-    let audioFold = new Audio('sound/fold.mp3');
-    audioFold.play();
+    playSoundFx('fold');
     currentPlayerPath.fold = true;
 
     let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} lägger sig ${currentPlayerPath.fold}`, bubbles: true, cancelable: true });
@@ -221,8 +222,7 @@ async function game() {
   //
 
  
-
-  // Admin activate question
+   // Admin activate question
   const getQButton = document.querySelector('.question-button');
   const getQNr = document.querySelector('#get-question-nr');
   getQButton.addEventListener('click', function() {
@@ -236,16 +236,16 @@ async function game() {
  
  // Main game logic
   await seating();
-  await firstBet(data, gamePot); // this "betting" is handle by system not players
+  await firstBet(); // this "betting" is handle by system not players
   await askQuestion(1);
   await wait();
   await askQuestion(2);
-  await betting(0);
+  await betting(0, currentPlayer);
   await askQuestion(3);
   await wait();
   await askQuestion(4);
-  await betting(1);
-  await endGame(currentPlayerPath);
+  await betting(1, currentPlayer);
+  await endGame();
 }; // end game function
 //
 
@@ -261,8 +261,7 @@ async function seating() {
   document.querySelector('#player5').addEventListener('click', createPlayer);
   
     document.querySelector('.js-player-ready').addEventListener('click', function () {
-      let audioReady = new Audio('sound/start.mp3');
-      audioReady.play();
+      playSoundFx('start');
       currentPlayerPath.ready = true;
 
       // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
@@ -278,12 +277,11 @@ async function seating() {
 };
 
 
-async function firstBet(data, gamePot) {
+async function firstBet() {
   console.log('firstbet now running');
   return new Promise((resolve) => {
     
   data.forEach((item) => {
-        console.log('item', item.name);
         item.marks -= 10;
         gamePot += 10;
         item.bet.push(10);
@@ -298,8 +296,10 @@ async function firstBet(data, gamePot) {
 
     let customEvent = new CustomEvent("gameEvent", {detail: `Alla spelare har gjort första bettet`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-ready').dispatchEvent(customEvent);
-    
+    document.querySelector('.js-player-ready-q').addEventListener('click', function () {
+      playSoundFx('start');
     resolve();
+    });
   }); 
 };
 
@@ -309,30 +309,58 @@ async function askQuestion(nr) {
   return new Promise((resolve) => {
     console.log('currentQuestion: ', currentQuestion);
     countDown(4, currentQuestion, () => resolve()); 
-    let questionSound = new Audio('sound/question.mp3');
-    questionSound.volume = 0.1;
-    questionSound.play();
+    playSoundFx('question', 0.1);
     createQuestionForm(currentQuestion);
+  
 
-    let element1 = document.querySelector('#game-question-button1');
-    element1.addEventListener('click', function() {
-      let audioReady = new Audio('sound/start.mp3'); // lets go sound in here
-      audioReady.play();
-      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${element1.innerHTML}`, bubbles: true, cancelable: true });
+    document.querySelector('#game-question-button1').addEventListener('click', function() {
+      playSoundFx('start');
+
+      let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
+      let content = this.innerHTML;
+      let correct = currentQuestion.correctAnswer;
+      if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
+        console.log('its true');
+        playerCorrectAnswersNr++;
+        let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
+        correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
+      };
+
+      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
       document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
     });
-    let element2 = document.querySelector('#game-question-button2');
-    element2.addEventListener('click', function() {
-      let audioReady = new Audio('sound/start.mp3'); // lets go sound in here
-      audioReady.play();
-      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${element2.innerHTML}`, bubbles: true, cancelable: true });
+    
+    document.querySelector('#game-question-button2').addEventListener('click', function() {
+      playSoundFx('start');
+
+      let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
+      let content = this.innerHTML;
+      let correct = currentQuestion.correctAnswer;
+      if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
+        console.log('its true');
+        playerCorrectAnswersNr++;
+        let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
+        correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
+      };
+      
+      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
       document.querySelector('#game-question-button1').dispatchEvent(customEvent);
     });
-    let element3 = document.querySelector('#game-question-button3');
-    element3.addEventListener('click', function() {
-      let audioReady = new Audio('sound/start.mp3'); // lets go sound in here
-      audioReady.play();
-      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${element3.innerHTML}`, bubbles: true, cancelable: true });
+    
+   document.querySelector('#game-question-button3').addEventListener('click', function() {
+    playSoundFx('start');
+
+    let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
+      let content = this.innerHTML;
+      let correct = currentQuestion.correctAnswer;
+      if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
+        console.log('its true');
+        playerCorrectAnswersNr++;
+        let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
+        correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
+      };
+
+      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
       document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
     });
     
@@ -353,14 +381,14 @@ async function wait() {
 
 
 async function betting(turn, currentPlayer) {
+  console.log('Betting round');
   return new Promise((resolve) => {
   document.querySelector('.js-player-bet').removeAttribute('disabled');
   document.querySelector('.js-player-pass').removeAttribute('disabled');
   document.querySelector('.js-player-fold').removeAttribute('disabled');
   
-  document.querySelector('.js-player-ready-bet1').addEventListener('click', function () {
-      let audioReady = new Audio('sound/start.mp3'); 
-      audioReady.play();
+  document.querySelector('.js-player-ready-betting-done').addEventListener('click', function () {
+    playSoundFx('start');
       resolve();
     });
   });
@@ -369,10 +397,11 @@ async function betting(turn, currentPlayer) {
 
 async function endGame(currentPlayerPath) {
   return new Promise((resolve) => {
-    let p1 = currentPlayerPath.bet; 
+    console.log('End game');
+    /*let p1 = currentPlayerPath.bet; 
     let p1b = p1.reduce((a,b)=>a+b);
     let p2 = [400, 200];
-    let p2b = p2.reduce((a,b)=>a+b);
+    let p2b = p2.reduce((a,b)=>a+b);*/
     resolve();
   });
 };

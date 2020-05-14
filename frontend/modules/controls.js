@@ -9,8 +9,9 @@ export class controls extends HTMLElement {
       <div class="player-marks"></div>
       <div class="player-status"></div>
       <div>
-        <button class="js-player-ready player-input-button">Klar</button>
-        <button class="js-player-ready-bet1 player-input-button">Klar betta1</button>
+        <button class="js-player-ready player-input-button">Klar (starta)</button>
+        <button class="js-player-ready-q player-input-button">2 frågor</button>
+        <button class="js-player-ready-betting-done player-input-button">Betting done</button>
       </div>
       <div class="game-slider">
         <label for="playerslider">Att satsa:</label>

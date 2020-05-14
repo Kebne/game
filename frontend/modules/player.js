@@ -16,7 +16,7 @@ export class playerBox extends HTMLElement {
     <div class="${whichPlayer}-info">
       <span class="${whichPlayer}-info-name"></span><br>
       <span class="${whichPlayer}-info-marks"></span><br>
-      <span class="${whichPlayer}-info-rightanswer"></span>
+      <span class="${whichPlayer}-info-rightanswer">Antal rätt svar: 0</span>
     </div>
     <div><button class="${whichPlayer}-leave">Lämna</button></div>
     `;
