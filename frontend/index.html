@@ -316,7 +316,7 @@ async function askQuestion(nr) {
   let currentQuestion = questions[`question${nr}`];
   return new Promise((resolve) => {
     console.log('currentQuestion: ', currentQuestion);
-    countDown(3, currentQuestion, () => resolve()); 
+    countDown(10, currentQuestion, () => resolve()); 
     let questionSound = new Audio('sound/question.mp3');
     questionSound.volume = 0.1;
     questionSound.play();
