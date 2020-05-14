@@ -108,7 +108,7 @@ async function game() {
     let getString = whatElement.className;
     let playerToSelectForLeaving = getString.replace('-leave', '');
     
-    if(whatElement.nodeName == 'BUTTON') {
+    if(whatElement.nodeName == 'BUTTON' && whatElement.innerText == 'Lämna') {
       const imgElement = document.createElement("img");
       imgElement.src = 'images/empty-chair.png';
       imgElement.id = playerToSelectForLeaving;
@@ -254,33 +254,26 @@ async function game() {
 async function seating() {
   return new Promise((resolve) => { 
  
-
   document.querySelector('#player1').addEventListener('click', createPlayer);
   document.querySelector('#player2').addEventListener('click', createPlayer);
   document.querySelector('#player3').addEventListener('click', createPlayer);
   document.querySelector('#player4').addEventListener('click', createPlayer);
   document.querySelector('#player5').addEventListener('click', createPlayer);
   
+    document.querySelector('.js-player-ready').addEventListener('click', function () {
+      let audioReady = new Audio('sound/start.mp3');
+      audioReady.play();
+      currentPlayerPath.ready = true;
 
+      // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
+      let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
+      getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
 
-    // Player ready'
-  document.querySelector('.js-player-ready').addEventListener('click', function () {
-    let audioReady = new Audio('sound/start.mp3'); // lets go sound in here
-    audioReady.play();
-    currentPlayerPath.ready = true;
+      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} redo`, bubbles: true, cancelable: true });
+      document.querySelector('.js-player-ready').dispatchEvent(customEvent);
 
-    // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
-    let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
-    getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
-
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} redo`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-ready').dispatchEvent(customEvent);
-
-    resolve();
-  });
-  //
-
-  
+      resolve();
+    });
   });
 };
 
@@ -306,7 +299,6 @@ async function firstBet(data, gamePot) {
     let customEvent = new CustomEvent("gameEvent", {detail: `Alla spelare har gjort första bettet`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-ready').dispatchEvent(customEvent);
     
-    //Uncomment line belove to get game loop going again.
     resolve();
   }); 
 };
@@ -316,7 +308,7 @@ async function askQuestion(nr) {
   let currentQuestion = questions[`question${nr}`];
   return new Promise((resolve) => {
     console.log('currentQuestion: ', currentQuestion);
-    countDown(10, currentQuestion, () => resolve()); 
+    countDown(4, currentQuestion, () => resolve()); 
     let questionSound = new Audio('sound/question.mp3');
     questionSound.volume = 0.1;
     questionSound.play();
@@ -348,9 +340,8 @@ async function askQuestion(nr) {
 };
 
 
-
 function timeout(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 };
 
 
@@ -363,9 +354,15 @@ async function wait() {
 
 async function betting(turn, currentPlayer) {
   return new Promise((resolve) => {
-    let p1 = 100;
-    let p2 = 200;
-    resolve();
+  document.querySelector('.js-player-bet').removeAttribute('disabled');
+  document.querySelector('.js-player-pass').removeAttribute('disabled');
+  document.querySelector('.js-player-fold').removeAttribute('disabled');
+  
+  document.querySelector('.js-player-ready-bet1').addEventListener('click', function () {
+      let audioReady = new Audio('sound/start.mp3'); 
+      audioReady.play();
+      resolve();
+    });
   });
 };
 
