@@ -24,6 +24,10 @@ button:disabled {
   pointer-events: none;
 }
 
+.game-hide {
+  display: none;
+}
+
 
 .game-button {
   box-sizing: border-box;
@@ -77,7 +81,6 @@ button:disabled {
 
 .game-questions {
   position: relative;
-  display: none;
   width: 100%;
   box-sizing: border-box;
   grid-area: board;

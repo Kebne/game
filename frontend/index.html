@@ -17,7 +17,7 @@
         <div class="game-board-wrapper">
           <div class="game-board">
             <div class="player1"><img class="img-full-width" id="player1" src="images/empty-chair.png"></div>
-            <div class="game-questions"></div>
+            <div class="game-questions game-hide"></div>
             <div class="board"></div>
             <div class="player4"><img class="img-full-width" id="player4" src="images/empty-chair.png"></div>
             <div class="player2"><img class="img-full-width" id="player2" src="images/empty-chair.png"></div>
@@ -308,6 +308,7 @@ async function askQuestion(nr) {
   let currentQuestion = questions[`question${nr}`];
   return new Promise((resolve) => {
     console.log('currentQuestion: ', currentQuestion);
+    document.querySelector('.game-questions').classList.remove('game-hide');
     countDown(4, currentQuestion, () => resolve()); 
     playSoundFx('question', 0.1);
     createQuestionForm(currentQuestion);
@@ -383,6 +384,7 @@ async function wait() {
 async function betting(turn, currentPlayer) {
   console.log('Betting round');
   return new Promise((resolve) => {
+  document.querySelector('.game-questions').classList.add('game-hide');
   document.querySelector('.js-player-bet').removeAttribute('disabled');
   document.querySelector('.js-player-pass').removeAttribute('disabled');
   document.querySelector('.js-player-fold').removeAttribute('disabled');
