@@ -93,6 +93,20 @@ function playSoundFx(sound = 'start', volume = 1) {
   audio.volume = volume;
   audio.play();
 }
+
+function* gameLoop() {
+  yield seating();
+  yield firstBet(); 
+  yield askQuestion(1);
+  yield askQuestion(2);
+  yield betting(0, currentPlayer);
+  yield askQuestion(3);
+  yield askQuestion(4);
+  yield betting(1, currentPlayer);
+  yield endGame();
+};
+var theGameLoop = gameLoop();
+theGameLoop.next();
  
 
 window.onload = game();
@@ -230,12 +244,11 @@ async function game() {
   });
   //
 
-  
 
 
  
  // Main game logic
-  await seating();
+  /*await seating();
   await firstBet(); // this "betting" is handle by system not players
   await askQuestion(1);
   await wait();
@@ -245,15 +258,15 @@ async function game() {
   await wait();
   await askQuestion(4);
   await betting(1, currentPlayer);
-  await endGame();
+  await endGame();*/
 }; // end game function
 //
 
 
 
-async function seating() {
-  return new Promise((resolve) => { 
- 
+function seating() {
+  
+  
   document.querySelector('#player1').addEventListener('click', createPlayer);
   document.querySelector('#player2').addEventListener('click', createPlayer);
   document.querySelector('#player3').addEventListener('click', createPlayer);
@@ -271,16 +284,14 @@ async function seating() {
       let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} redo`, bubbles: true, cancelable: true });
       document.querySelector('.js-player-ready').dispatchEvent(customEvent);
 
-      resolve();
+      theGameLoop.next('seating done');
     });
-  });
+ 
 };
 
 
-async function firstBet() {
+function firstBet() {
   console.log('firstbet now running');
-  return new Promise((resolve) => {
-    
   data.forEach((item) => {
         item.marks -= 10;
         gamePot += 10;
@@ -298,18 +309,17 @@ async function firstBet() {
     document.querySelector('.js-player-ready').dispatchEvent(customEvent);
     document.querySelector('.js-player-ready-q').addEventListener('click', function () {
       playSoundFx('start');
-    resolve();
-    });
-  }); 
+      theGameLoop.next();
+    }); 
 };
 
 
-async function askQuestion(nr) {
+function askQuestion(nr) {
   let currentQuestion = questions[`question${nr}`];
-  return new Promise((resolve) => {
+  
     console.log('currentQuestion: ', currentQuestion);
     document.querySelector('.game-questions').classList.remove('game-hide');
-    countDown(4, currentQuestion, () => resolve()); 
+    countDown(4, currentQuestion, theGameLoop);
     playSoundFx('question', 0.1);
     createQuestionForm(currentQuestion);
   
@@ -365,11 +375,11 @@ async function askQuestion(nr) {
       document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
     });
     
-  });
+
 };
 
 
-function timeout(ms) {
+/*function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
@@ -378,12 +388,12 @@ async function wait() {
     document.querySelector('.game-wait').innerHTML = 'Snart kommer en ny fråga ...';
     await timeout(3000);
     document.querySelector('.game-wait').innerHTML = '';
-};
+};*/
 
 
-async function betting(turn, currentPlayer) {
+function betting(turn, currentPlayer) {
   console.log('Betting round');
-  return new Promise((resolve) => {
+  
   document.querySelector('.game-questions').classList.add('game-hide');
   document.querySelector('.js-player-bet').removeAttribute('disabled');
   document.querySelector('.js-player-pass').removeAttribute('disabled');
@@ -391,21 +401,19 @@ async function betting(turn, currentPlayer) {
   
   document.querySelector('.js-player-ready-betting-done').addEventListener('click', function () {
     playSoundFx('start');
-      resolve();
+    theGameLoop.next()
     });
-  });
+
 };
 
 
-async function endGame(currentPlayerPath) {
-  return new Promise((resolve) => {
+function endGame(currentPlayerPath) {
     console.log('End game');
     /*let p1 = currentPlayerPath.bet; 
     let p1b = p1.reduce((a,b)=>a+b);
     let p2 = [400, 200];
     let p2b = p2.reduce((a,b)=>a+b);*/
-    resolve();
-  });
+    theGameLoop.next();
 };
 
 
