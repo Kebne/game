@@ -42,6 +42,7 @@ import {controls} from './modules/controls.js';
 import {animateMarker} from './modules/animations.js';
 
 const playerProto = {
+  playerInternalName: 'player1',
    marks: 1000,
    name: 'John Doe',
    seat: 1,
@@ -51,6 +52,7 @@ const playerProto = {
    answers: [],
    rightAnswerNr: 0,
    seated: false,
+   ready: false,
  };
 
 var players = {
@@ -60,6 +62,18 @@ var players = {
    player4: Object.create(playerProto),
    player5: Object.create(playerProto), 
  };
+ 
+
+const handler = {
+  set(target, property, value, receiver) {
+    target.property = value;
+    /*let output = document.querySelector(`.${property}`);    
+    output.innerHTML = `${value}`;*/
+    console.log(`Player1's ${property} is now: ${value},`)
+    return true;
+  }
+};
+const proxyPlayer1 = new Proxy(players.player1, handler);
 
 
 var currentPlayer = 'player1';
@@ -139,6 +153,7 @@ async function game() {
   });
   
 
+
   document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
   document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
    
@@ -168,7 +183,6 @@ async function game() {
       let highlight = document.querySelector(`.${currentPlayer}`);
       highlight.classList.remove('current-player-highlight');
       currentPlayer = choosenPlayer;
-      console.log('current player after chose',currentPlayer);
       let highlight2 = document.querySelector(`.${currentPlayer}`);
       highlight2.classList.add('current-player-highlight');
       console.log('currentPlayer', currentPlayer);
@@ -275,7 +289,7 @@ function seating() {
   
     document.querySelector('.js-player-ready').addEventListener('click', function () {
       playSoundFx('start');
-      currentPlayerPath.ready = true;
+      proxyPlayer1.ready = true;
 
       // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
       let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
