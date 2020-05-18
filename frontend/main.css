@@ -89,6 +89,17 @@ button:disabled {
   z-index: 11;
 }
 
+.game-betting {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  grid-area: board;
+  padding: var(--standard-padding);
+  background-color: rgba(80, 137, 211, 0.9);
+  z-index: 11;
+}
+
 fieldset {
   box-sizing: border-box;
   border: 1px transparent solid;

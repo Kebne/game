@@ -18,6 +18,7 @@
           <div class="game-board">
             <div class="player1"><img class="img-full-width" id="player1" src="images/empty-chair.png"></div>
             <div class="game-questions game-hide"></div>
+            <div class="game-betting game-hide"></div>
             <div class="board"></div>
             <div class="player4"><img class="img-full-width" id="player4" src="images/empty-chair.png"></div>
             <div class="player2"><img class="img-full-width" id="player2" src="images/empty-chair.png"></div>
@@ -62,6 +63,9 @@ var players = {
    player4: Object.create(playerProto),
    player5: Object.create(playerProto), 
  };
+
+ 
+ 
  
 
 const handler = {
@@ -69,18 +73,23 @@ const handler = {
     target.property = value;
     /*let output = document.querySelector(`.${property}`);    
     output.innerHTML = `${value}`;*/
-    console.log(`Player1's ${property} is now: ${value},`)
+    console.log(`Players ${property} is now: ${value},`)
     return true;
   }
 };
+const proxyPlayer = new Proxy(players, handler);
+
 const proxyPlayer1 = new Proxy(players.player1, handler);
+const proxyPlayer2 = new Proxy(players.player2, handler);
+const proxyPlayer3 = new Proxy(players.player3, handler);
+const proxyPlayer4 = new Proxy(players.player4, handler);
+const proxyPlayer5 = new Proxy(players.player5, handler);
 
 
 var currentPlayer = 'player1';
 var data = Object.values(players);
 var gamePot = 0;
 var currentPlayerNr = 1;
-var currentPlayerPath = data[0];
 var seatedPlayers = []; // not in use right now, maybe implement as async await player1, player2 etc
 var allSeated = false;
 
@@ -113,18 +122,17 @@ function* gameLoop() {
   yield firstBet(); 
   yield askQuestion(1);
   yield askQuestion(2);
-  yield betting(0, currentPlayer);
+  yield betting(0);
   yield askQuestion(3);
   yield askQuestion(4);
-  yield betting(1, currentPlayer);
+  yield betting(1);
   yield endGame();
 };
 var theGameLoop = gameLoop();
 theGameLoop.next();
  
 
-window.onload = game();
-async function game() {
+
   // Custom event, logs game events
   document.addEventListener("gameEvent", function(event) {
     let time = new Date(); 
@@ -154,8 +162,8 @@ async function game() {
   
 
 
-  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`;
-  document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
+  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`;
+  document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
    
   togglingCurrentPlayer(players);
   //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
@@ -191,63 +199,10 @@ async function game() {
   };
   //
 
-  // Player Betting
-  document.querySelector('.js-player-bet').addEventListener('click', function () {
-    animateMarker(currentPlayer);
-    playSoundFx('betting');
-    let sliderValue = Number(slider.value);
-    currentPlayerPath.bet.unshift(sliderValue);
-    currentPlayerPath.marks -= slider.value;
-    gamePot += currentPlayerPath.bet[0];
-    
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} bettar ${sliderValue}`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
-
-    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
-    //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
-    document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${currentPlayerPath.marks}<br>`
-  });
-  //
+ 
 
 
-  // Player Passing
-  document.querySelector('.js-player-pass').addEventListener('click', function () {
-    playSoundFx('pass');
-    data[0].pass = true;
 
-     let customEvent = new CustomEvent("gameEvent", {detail: `Spalare ${currentPlayer} passar ${currentPlayerPath.pass}`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
-
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
-  });
-  //
-
-
-  // Player Fold
-  document.querySelector('.js-player-fold').addEventListener('click', function () {
-    playSoundFx('fold');
-    currentPlayerPath.fold = true;
-
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} lägger sig ${currentPlayerPath.fold}`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
-
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerPath.pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
-  });
-  //
-
-
-  // Player betting slider
-  const slider = document.querySelector('.bet-slider');
-  const output = document.querySelector('.bet-slider-output');
-  output.innerHTML = slider.value;
-  slider.addEventListener('input', sliderOutput);
-  
-  function sliderOutput() {
-    console.log('slideroutput running');
-    output.innerHTML = slider.value;
-    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerPath.marks}`; 
-  };
-  //
 
  
    // Admin activate question
@@ -258,29 +213,7 @@ async function game() {
   });
   //
 
-
-
- 
- // Main game logic
-  /*await seating();
-  await firstBet(); // this "betting" is handle by system not players
-  await askQuestion(1);
-  await wait();
-  await askQuestion(2);
-  await betting(0, currentPlayer);
-  await askQuestion(3);
-  await wait();
-  await askQuestion(4);
-  await betting(1, currentPlayer);
-  await endGame();*/
-}; // end game function
-//
-
-
-
 function seating() {
-  
-  
   document.querySelector('#player1').addEventListener('click', createPlayer);
   document.querySelector('#player2').addEventListener('click', createPlayer);
   document.querySelector('#player3').addEventListener('click', createPlayer);
@@ -289,8 +222,12 @@ function seating() {
   
     document.querySelector('.js-player-ready').addEventListener('click', function () {
       playSoundFx('start');
-      proxyPlayer1.ready = true;
-
+      //let lastLetter = currentPlayer.slice(-1);
+      //console.log('lastLetter', lastLetter)
+      console.log('players tesing', players.player1.ready);
+      proxyPlayer[currentPlayer]['ready'] = true;
+      console.log('players tesing2', players.player1.ready);
+      
       // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
       let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
       getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
@@ -333,7 +270,7 @@ function askQuestion(nr) {
   
     console.log('currentQuestion: ', currentQuestion);
     document.querySelector('.game-questions').classList.remove('game-hide');
-    countDown(4, currentQuestion, theGameLoop);
+    countDown(2, currentQuestion, theGameLoop);
     playSoundFx('question', 0.1);
     createQuestionForm(currentQuestion);
   
@@ -393,41 +330,102 @@ function askQuestion(nr) {
 };
 
 
-/*function timeout(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
-
-
-async function wait() {
-    document.querySelector('.game-wait').innerHTML = 'Snart kommer en ny fråga ...';
-    await timeout(3000);
-    document.querySelector('.game-wait').innerHTML = '';
-};*/
-
-
-function betting(turn, currentPlayer) {
+function betting(turn) {
   console.log('Betting round');
-  
+  console.log('currentPlayer', currentPlayer);
   document.querySelector('.game-questions').classList.add('game-hide');
-  document.querySelector('.js-player-bet').removeAttribute('disabled');
-  document.querySelector('.js-player-pass').removeAttribute('disabled');
-  document.querySelector('.js-player-fold').removeAttribute('disabled');
+  let bettingElement = document.querySelector('.game-betting');
+  bettingElement.classList.remove('game-hide');
+  bettingElement.innerText = 'Dags att betta';
+
+  let bet = document.querySelector('.js-player-bet');
+  bet.removeAttribute('disabled');
+
+  let pass = document.querySelector('.js-player-pass');
+  pass.removeAttribute('disabled')
+  
+  let fold = document.querySelector('.js-player-fold');
+  fold.removeAttribute('disabled');
+  
+  
+
+   // Player Betting
+   document.querySelector('.js-player-bet').addEventListener('click', function () {
+    animateMarker(currentPlayer);
+    playSoundFx('betting');
+    let sliderValue = Number(slider.value);
+    players[currentPlayer].bet.unshift(sliderValue);
+    players[currentPlayer].marks -= slider.value;
+    gamePot += players[currentPlayer].bet[0];
+
+    console.log('player bet', players);
+    
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} bettar ${sliderValue}`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+
+    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`; 
+    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+    document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${players[currentPlayer].marks}<br>`
+  });
+  //
+
+  // Player betting slider
+  const slider = document.querySelector('.bet-slider');
+  const output = document.querySelector('.bet-slider-output');
+  output.innerHTML = slider.value;
+  slider.addEventListener('input', sliderOutput);
+  
+  function sliderOutput() {
+    console.log('slideroutput running');
+    output.innerHTML = slider.value;
+    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`; 
+  };
+  //
+
+
+  // Player Passing
+  document.querySelector('.js-player-pass').addEventListener('click', function () {
+    playSoundFx('pass');
+    players[currentPlayer].pass = true;
+
+     let customEvent = new CustomEvent("gameEvent", {detail: `Spalare ${currentPlayer} passar ${players[currentPlayer].pass}`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
+  });
+  //
+
+
+  // Player Fold
+  document.querySelector('.js-player-fold').addEventListener('click', function () {
+    playSoundFx('fold');
+    players[currentPlayer].fold = true;
+
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} lägger sig ${players[currentPlayer].fold}`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
+  });
+  //
+
   
   document.querySelector('.js-player-ready-betting-done').addEventListener('click', function () {
     playSoundFx('start');
     theGameLoop.next()
-    });
+  });
 
 };
 
 
-function endGame(currentPlayerPath) {
+function endGame() {
     console.log('End game');
+   
     /*let p1 = currentPlayerPath.bet; 
     let p1b = p1.reduce((a,b)=>a+b);
     let p2 = [400, 200];
     let p2b = p2.reduce((a,b)=>a+b);*/
-    theGameLoop.next();
+    
+   
 };
 
 

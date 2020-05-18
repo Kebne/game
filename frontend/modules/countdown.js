@@ -4,11 +4,11 @@ export function countDown(timeLimit, currentQuestion, theGameLoop) {
       if(timeleft <= 0) {
         clearInterval(downloadTimer);
         document.querySelector('.game-countdown').innerHTML = 'Tiden är slut';
-        theGameLoop.next();
+        
         //document.querySelector('fieldset').setAttribute('disabled', true);
         let customEvent = new CustomEvent("gameEvent", {detail: `Rätt svar är: ${currentQuestion.correctAnswer}`, bubbles: true, cancelable: true });
         document.querySelector('.game-countdown').dispatchEvent(customEvent);
-        
+        theGameLoop.next();
             
       } 
       else {
