@@ -9,7 +9,6 @@
     <link href="main.css" rel="stylesheet">
 </head>
 
-
 <body id="sheriff-game">
   <main>
     <div class="main-game-grid">
@@ -31,7 +30,6 @@
   </main>
 </body>
 
-
 <script type="module">
 import {playerBox} from './modules/player.js';
 import {questions} from './modules/questions.js';
@@ -42,48 +40,105 @@ import {countDown} from './modules/countdown.js';
 import {controls} from './modules/controls.js';
 import {animateMarker} from './modules/animations.js';
 
-const playerProto = {
-  playerInternalName: 'player1',
-   marks: 1000,
-   name: 'John Doe',
+
+var players = {
+  player1: {
+   score: 0,
+   marks: 900,
+   name: 'Han Solo',
    seat: 1,
    pass: false,
    bet: [],
    fold: false,
-   answers: [],
+   answer: 'äpple',
    rightAnswerNr: 0,
    seated: false,
    ready: false,
- };
-
-var players = {
-   player1: Object.create(playerProto),
+ },
+ player2: {
+  score: 0,
+  marks: 1000,
+  name: 'Rey',
+  seat: 2,
+  pass: false,
+  bet: [],
+  fold: false,
+  answer: 'äpple',
+  rightAnswerNr: 2,
+  seated: false,
+  ready: false,
+ },
+ player3: {
+  score: 0,
+  marks: 1000,
+  name: 'R2D2',
+  seat: 3,
+  pass: false,
+  bet: [],
+  fold: false,
+  answer: 'äpple',
+  rightAnswerNr: 0,
+  seated: false,
+  ready: false,
+ },
+ player4: {
+  score: 0,
+  marks: 1000,
+  name: 'Leia',
+  seat: 4,
+  pass: false,
+  bet: [],
+  fold: false,
+  answer: 'äpple',
+  rightAnswerNr: 0,
+  seated: false,
+  ready: false,
+ },
+ player5: {
+  score: 0,
+  marks: 1000,
+  name: 'Luke',
+  seat: 5,
+  pass: false,
+  bet: [],
+  fold: false,
+  answer: 'päron',
+  rightAnswerNr: 0,
+  seated: false,
+  ready: false,
+ }
+   /*player1: Object.create(playerProto),
    player2: Object.create(playerProto),
    player3: Object.create(playerProto),
    player4: Object.create(playerProto),
-   player5: Object.create(playerProto), 
+   player5: Object.create(playerProto),*/ 
  };
 
  
  
- 
-
+// Using proxy for handling events and states
 const handler = {
   set(target, property, value, receiver) {
-    target.property = value;
+    target[property] = value;
     /*let output = document.querySelector(`.${property}`);    
     output.innerHTML = `${value}`;*/
-    console.log(`Players ${property} is now: ${value},`)
+    //när denna körs på marker, uppdatera marker
+    if (property.localeCompare('marks') == 0) {
+      console.log('proxy testing running');
+      let output = document.querySelector(`.${currentPlayer}-info-marks`);
+      console.log('output proxy', output);
+      output.innerHTML = `Marker (proxy)${value}`; 
+    }
+    console.log(`Player ${property} is now: ${value}`)
     return true;
   }
 };
-const proxyPlayer = new Proxy(players, handler);
 
-const proxyPlayer1 = new Proxy(players.player1, handler);
-const proxyPlayer2 = new Proxy(players.player2, handler);
-const proxyPlayer3 = new Proxy(players.player3, handler);
-const proxyPlayer4 = new Proxy(players.player4, handler);
-const proxyPlayer5 = new Proxy(players.player5, handler);
+var proxyPlayer1 = new Proxy(players.player1, handler);
+var proxyPlayer2 = new Proxy(players.player2, handler);
+var proxyPlayer3 = new Proxy(players.player3, handler);
+var proxyPlayer4 = new Proxy(players.player4, handler);
+var proxyPlayer5 = new Proxy(players.player5, handler);
 
 
 var currentPlayer = 'player1';
@@ -101,7 +156,7 @@ function createPlayer() {
     playSoundFx('seated');
     players[playerNr]['seated'] = true;
     seatedPlayers.push(playerNr);
-    players[playerNr]['marks'] = 500;
+    //players[playerNr]['marks'] = 500;
     let playerName = players[playerNr]['name'];
     let playerMark = players[playerNr]['marks'];
     let element1 = document.querySelector(`.${playerNr}`);
@@ -132,86 +187,80 @@ var theGameLoop = gameLoop();
 theGameLoop.next();
  
 
+// Custom event, logs game events
+document.addEventListener("gameEvent", function(event) {
+  let time = new Date(); 
+  let timeMin = time.getMinutes();
+  let timeSec = time.getSeconds();
+  //time.toLocaleDateString();
+  document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
+});
 
-  // Custom event, logs game events
-  document.addEventListener("gameEvent", function(event) {
-    let time = new Date(); 
-    let timeMin = time.getMinutes();
-    let timeSec = time.getSeconds();
-    //time.toLocaleDateString();
-    document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
-  });
 
-  const playerLeaveElement = document.querySelector('.game-board');
-  document.addEventListener('click', function() {
-    let whatElement = event.target;
-    let getString = whatElement.className;
-    let playerToSelectForLeaving = getString.replace('-leave', '');
-    
-    if(whatElement.nodeName == 'BUTTON' && whatElement.innerText == 'Lämna') {
-      const imgElement = document.createElement("img");
-      imgElement.src = 'images/empty-chair.png';
-      imgElement.id = playerToSelectForLeaving;
-      imgElement.className = 'img-full-width';
-      imgElement.addEventListener('click', createPlayer);
-      document.querySelector(`.${playerToSelectForLeaving}`).innerHTML = '';
-      document.querySelector(`.${playerToSelectForLeaving}`).appendChild(imgElement);
-    };
-    
-  });
+const playerLeaveElement = document.querySelector('.game-board');
+document.addEventListener('click', function() {
+  let whatElement = event.target;
+  let getString = whatElement.className;
+  let playerToSelectForLeaving = getString.replace('-leave', '');
   
-
-
-  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`;
-  document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
-   
-  togglingCurrentPlayer(players);
-  //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
-  
-  //To highlight current player 
-  let highlight = document.querySelector(`.${currentPlayer}`);
-  highlight.classList.add('current-player-highlight');
-
-
-  // Remove this function in production, used for testing diffrent players actions.
-  function togglingCurrentPlayer(data) {
-    
-    var selectElement = document.querySelector('.player-switch-select');
-    const dataToSelect = Object.keys(data);
-    
-    dataToSelect.forEach((item) => {
-        const optionElement = document.createElement('option');
-        optionElement.value = item;
-        optionElement.text = item;
-        selectElement.appendChild(optionElement);
-    });
-   
-    selectElement.addEventListener('change', function() {
-      let choosenPlayer = selectElement.options[selectElement.selectedIndex].value;
-      let highlight = document.querySelector(`.${currentPlayer}`);
-      highlight.classList.remove('current-player-highlight');
-      currentPlayer = choosenPlayer;
-      let highlight2 = document.querySelector(`.${currentPlayer}`);
-      highlight2.classList.add('current-player-highlight');
-      console.log('currentPlayer', currentPlayer);
-    });
-   
+  if(whatElement.nodeName == 'BUTTON' && whatElement.innerText == 'Lämna') {
+    const imgElement = document.createElement("img");
+    imgElement.src = 'images/empty-chair.png';
+    imgElement.id = playerToSelectForLeaving;
+    imgElement.className = 'img-full-width';
+    imgElement.addEventListener('click', createPlayer);
+    document.querySelector(`.${playerToSelectForLeaving}`).innerHTML = '';
+    document.querySelector(`.${playerToSelectForLeaving}`).appendChild(imgElement);
   };
-  //
+  
+});
 
- 
+document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`;
+document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
+  
+togglingCurrentPlayer(players);
+//document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+
+//To highlight current player 
+let highlight = document.querySelector(`.${currentPlayer}`);
+highlight.classList.add('current-player-highlight');
 
 
-
-
- 
-   // Admin activate question
-  const getQButton = document.querySelector('.question-button');
-  const getQNr = document.querySelector('#get-question-nr');
-  getQButton.addEventListener('click', function() {
-    askQuestion(getQNr.value);
+// You can remove this function in production, used for testing diffrent players actions.
+function togglingCurrentPlayer(data) {
+  
+  var selectElement = document.querySelector('.player-switch-select');
+  const dataToSelect = Object.keys(data);
+  
+  dataToSelect.forEach((item) => {
+      const optionElement = document.createElement('option');
+      optionElement.value = item;
+      optionElement.text = item;
+      selectElement.appendChild(optionElement);
   });
-  //
+  
+  selectElement.addEventListener('change', function() {
+    let choosenPlayer = selectElement.options[selectElement.selectedIndex].value;
+    let highlight = document.querySelector(`.${currentPlayer}`);
+    highlight.classList.remove('current-player-highlight');
+    currentPlayer = choosenPlayer;
+    let highlight2 = document.querySelector(`.${currentPlayer}`);
+    highlight2.classList.add('current-player-highlight');
+    console.log('currentPlayer', currentPlayer);
+  });
+  
+};
+//
+
+ 
+// Admin activate question
+const getQButton = document.querySelector('.question-button');
+const getQNr = document.querySelector('#get-question-nr');
+getQButton.addEventListener('click', function() {
+  askQuestion(getQNr.value);
+});
+//
+
 
 function seating() {
   document.querySelector('#player1').addEventListener('click', createPlayer);
@@ -220,14 +269,16 @@ function seating() {
   document.querySelector('#player4').addEventListener('click', createPlayer);
   document.querySelector('#player5').addEventListener('click', createPlayer);
   
-    document.querySelector('.js-player-ready').addEventListener('click', function () {
+  document.querySelector('.js-player-ready').addEventListener('click', function () {
       playSoundFx('start');
-      //let lastLetter = currentPlayer.slice(-1);
-      //console.log('lastLetter', lastLetter)
-      console.log('players tesing', players.player1.ready);
-      proxyPlayer[currentPlayer]['ready'] = true;
-      console.log('players tesing2', players.player1.ready);
       
+      // Todo, try make this an oneliner
+      if (!currentPlayer.localeCompare('player1')) { proxyPlayer1.ready = true; };
+      if (!currentPlayer.localeCompare('player2')) { proxyPlayer2.ready = true; };
+      if (!currentPlayer.localeCompare('player3')) { proxyPlayer3.ready = true; };
+      if (!currentPlayer.localeCompare('player4')) { proxyPlayer4.ready = true; };
+      if (!currentPlayer.localeCompare('player5')) { proxyPlayer5.ready = true; };
+
       // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
       let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
       getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
@@ -235,10 +286,9 @@ function seating() {
       let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} redo`, bubbles: true, cancelable: true });
       document.querySelector('.js-player-ready').dispatchEvent(customEvent);
 
-      theGameLoop.next('seating done');
+      theGameLoop.next();
     });
- 
-};
+ };
 
 
 function firstBet() {
@@ -250,8 +300,8 @@ function firstBet() {
     });
     
     seatedPlayers.forEach((item) => {
-    let playerMark = players[item]['marks'];
-    document.querySelector(`.${item}-info-marks`).innerHTML = `Marker: ${playerMark}`;   
+      let playerMark = players[item]['marks'];
+      document.querySelector(`.${item}-info-marks`).innerHTML = `Marker: ${playerMark}`;   
     });
   
     document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
@@ -268,65 +318,64 @@ function firstBet() {
 function askQuestion(nr) {
   let currentQuestion = questions[`question${nr}`];
   
-    console.log('currentQuestion: ', currentQuestion);
-    document.querySelector('.game-questions').classList.remove('game-hide');
-    countDown(2, currentQuestion, theGameLoop);
-    playSoundFx('question', 0.1);
-    createQuestionForm(currentQuestion);
+  console.log('currentQuestion: ', currentQuestion);
+  document.querySelector('.game-questions').classList.remove('game-hide');
+  countDown(2, currentQuestion, theGameLoop);
+  playSoundFx('question', 0.1);
+  createQuestionForm(currentQuestion);
   
 
-    document.querySelector('#game-question-button1').addEventListener('click', function() {
-      playSoundFx('start');
-
-      let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
-      let content = this.innerHTML;
-      let correct = currentQuestion.correctAnswer;
-      if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-        console.log('its true');
-        playerCorrectAnswersNr++;
-        let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
-        correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
-      };
-
-      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
-      document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
-    });
-    
-    document.querySelector('#game-question-button2').addEventListener('click', function() {
-      playSoundFx('start');
-
-      let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
-      let content = this.innerHTML;
-      let correct = currentQuestion.correctAnswer;
-      if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-        console.log('its true');
-        playerCorrectAnswersNr++;
-        let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
-        correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
-      };
-      
-      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
-      document.querySelector('#game-question-button1').dispatchEvent(customEvent);
-    });
-    
-   document.querySelector('#game-question-button3').addEventListener('click', function() {
+  document.querySelector('#game-question-button1').addEventListener('click', function() {
     playSoundFx('start');
 
     let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
-      let content = this.innerHTML;
-      let correct = currentQuestion.correctAnswer;
-      if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-        console.log('its true');
-        playerCorrectAnswersNr++;
-        let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
-        correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
-      };
+    let content = this.innerHTML;
+    let correct = currentQuestion.correctAnswer;
+    if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
+      console.log('its true');
+      playerCorrectAnswersNr++;
+      let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
+      correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
+    };
 
-      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
-      document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
-    });
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
+    document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
+  });
     
+  document.querySelector('#game-question-button2').addEventListener('click', function() {
+    playSoundFx('start');
 
+    let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
+    let content = this.innerHTML;
+    let correct = currentQuestion.correctAnswer;
+    if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
+      console.log('its true');
+      playerCorrectAnswersNr++;
+      let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
+      correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
+    };
+    
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
+    document.querySelector('#game-question-button1').dispatchEvent(customEvent);
+  });
+  
+  document.querySelector('#game-question-button3').addEventListener('click', function() {
+  playSoundFx('start');
+
+  let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
+    let content = this.innerHTML;
+    let correct = currentQuestion.correctAnswer;
+    if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
+      console.log('its true');
+      playerCorrectAnswersNr++;
+      let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
+      correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
+    };
+
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
+    document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
+  });
+    
 };
 
 
@@ -346,28 +395,32 @@ function betting(turn) {
   
   let fold = document.querySelector('.js-player-fold');
   fold.removeAttribute('disabled');
+
+ 
   
   
+  // Player Betting
+  document.querySelector('.js-player-bet').addEventListener('click', function () {
+  animateMarker(currentPlayer);
+  playSoundFx('betting');
+  let sliderValue = Number(slider.value);
+  //before players[currentPlayer] now proxyPlayer1
+  players[currentPlayer].bet.unshift(sliderValue);
+  //proxyPlayer1.marks -= slider.value; // just for testing proxy, line below should go via proxy realy.
+  players[currentPlayer].marks -= slider.value;
+  gamePot += players[currentPlayer].bet[0];
 
-   // Player Betting
-   document.querySelector('.js-player-bet').addEventListener('click', function () {
-    animateMarker(currentPlayer);
-    playSoundFx('betting');
-    let sliderValue = Number(slider.value);
-    players[currentPlayer].bet.unshift(sliderValue);
-    players[currentPlayer].marks -= slider.value;
-    gamePot += players[currentPlayer].bet[0];
+  console.log('player bet', players);
+  
+  let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} bettar ${sliderValue}`, bubbles: true, cancelable: true });
+  document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
-    console.log('player bet', players);
-    
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} bettar ${sliderValue}`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
-
-    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`; 
-    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
-    document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${players[currentPlayer].marks}<br>`
+  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`; 
+  document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+  document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${players[currentPlayer].marks}<br>`
   });
   //
+
 
   // Player betting slider
   const slider = document.querySelector('.bet-slider');
@@ -388,10 +441,20 @@ function betting(turn) {
     playSoundFx('pass');
     players[currentPlayer].pass = true;
 
-     let customEvent = new CustomEvent("gameEvent", {detail: `Spalare ${currentPlayer} passar ${players[currentPlayer].pass}`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+     let customEvent = new CustomEvent(
+       "gameEvent", {
+         detail: `Spalare ${currentPlayer} passar ${players[currentPlayer].pass}`, bubbles: true, cancelable: true 
+      });
+      document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${currentPlayerPath.fold}</i>`;
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].pass}</i>`;
+
+    if(players.player1.pass == true && players.player2.pass == true) {
+      console.log('Both players pass, getting new questions');
+      proxyPlayer1.pass == false;
+      proxyPlayer2.pass == false;
+      theGameLoop.next();
+    };
   });
   //
 
@@ -411,9 +474,8 @@ function betting(turn) {
   
   document.querySelector('.js-player-ready-betting-done').addEventListener('click', function () {
     playSoundFx('start');
-    theGameLoop.next()
+    theGameLoop.next();
   });
-
 };
 
 
@@ -425,7 +487,6 @@ function endGame() {
     let p2 = [400, 200];
     let p2b = p2.reduce((a,b)=>a+b);*/
     
-   
 };
 
 
