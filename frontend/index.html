@@ -35,7 +35,6 @@ import {playerBox} from './modules/player.js';
 import {questions} from './modules/questions.js';
 import {createQuestionForm} from './modules/createquestionform.js';
 import {countDown} from './modules/countdown.js';
-//import {playerChoice} from './modules/playerchoice.js';
 //import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
 import {animateMarker} from './modules/animations.js';
@@ -134,14 +133,16 @@ const handler = {
   }
 };
 
-var proxyPlayer1 = new Proxy(players.player1, handler);
-var proxyPlayer2 = new Proxy(players.player2, handler);
-var proxyPlayer3 = new Proxy(players.player3, handler);
-var proxyPlayer4 = new Proxy(players.player4, handler);
-var proxyPlayer5 = new Proxy(players.player5, handler);
+var proxyplayer1 = new Proxy(players.player1, handler);
+var proxyplayer2 = new Proxy(players.player2, handler);
+var proxyplayer3 = new Proxy(players.player3, handler);
+var proxyplayer4 = new Proxy(players.player4, handler);
+var proxyplayer5 = new Proxy(players.player5, handler);
 
 
 var currentPlayer = 'player1';
+var currentPlayerProxy = proxyplayer1;
+console.log('currentPlayerProxy', currentPlayerProxy);
 var data = Object.values(players);
 var gamePot = 0;
 var currentPlayerNr = 1;
@@ -153,6 +154,7 @@ var allSeated = false;
 function createPlayer() { 
     let wichPlayer = event.target.id;
     let playerNr = String(wichPlayer);
+    console.log('player nr', playerNr);
     playSoundFx('seated');
     players[playerNr]['seated'] = true;
     seatedPlayers.push(playerNr);
@@ -273,12 +275,10 @@ function seating() {
       playSoundFx('start');
       
       // Todo, try make this an oneliner
-      if (!currentPlayer.localeCompare('player1')) { proxyPlayer1.ready = true; };
-      if (!currentPlayer.localeCompare('player2')) { proxyPlayer2.ready = true; };
-      if (!currentPlayer.localeCompare('player3')) { proxyPlayer3.ready = true; };
-      if (!currentPlayer.localeCompare('player4')) { proxyPlayer4.ready = true; };
-      if (!currentPlayer.localeCompare('player5')) { proxyPlayer5.ready = true; };
-
+      console.log(` ${currentPlayer} redo : ${players[currentPlayer]['ready']}`);
+      //currentPlayerProxy['ready'] = true;  Todo make this code work
+      currentPlayerProxy.ready = true; //Todo, make sure this actully works
+      console.log(` ${currentPlayer} redo2 : ${players[currentPlayer]['ready']}`);
       // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
       let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
       getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
@@ -397,8 +397,6 @@ function betting(turn) {
   fold.removeAttribute('disabled');
 
  
-  
-  
   // Player Betting
   document.querySelector('.js-player-bet').addEventListener('click', function () {
   animateMarker(currentPlayer);
@@ -406,7 +404,6 @@ function betting(turn) {
   let sliderValue = Number(slider.value);
   //before players[currentPlayer] now proxyPlayer1
   players[currentPlayer].bet.unshift(sliderValue);
-  //proxyPlayer1.marks -= slider.value; // just for testing proxy, line below should go via proxy realy.
   players[currentPlayer].marks -= slider.value;
   gamePot += players[currentPlayer].bet[0];
 
