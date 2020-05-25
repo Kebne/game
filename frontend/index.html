@@ -46,10 +46,11 @@ const handler = {
     target[property] = value;
     if (property.localeCompare('marks') == 0) {
       let output = document.querySelector(`.${currentPlayer}-info-marks`);
+      let outputCtrlPanel = document.querySelector('.player-marks');
+      output.innerHTML = `Marker proxy ${value}`; 
+      outputCtrlPanel .innerHTML = `Spelare marker: ${value}`;
       console.log('output proxy', output);
-      output.innerHTML = `Marker (proxy)${value}`; 
     };
-    
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
   }
@@ -74,7 +75,6 @@ var seatedPlayers = []; // not in use right now, maybe implement as async await 
 function createPlayer() { 
     let wichPlayer = event.target.id;
     let playerNr = String(wichPlayer);
-    
     playSoundFx('seated');
     players[playerNr]['seated'] = true;
     console.log('%c Player seated: ','color: #156b26', playerNr);
@@ -114,7 +114,6 @@ document.addEventListener("gameEvent", function(event) {
   let time = new Date(); 
   let timeMin = time.getMinutes();
   let timeSec = time.getSeconds();
-  //time.toLocaleDateString();
   document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
 });
 
@@ -137,8 +136,8 @@ document.addEventListener('click', function() {
   
 });
 
-document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`;
-document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
+document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerProxy.marks}`;
+document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
   
 togglingCurrentPlayer(players);
 //document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
@@ -188,7 +187,7 @@ function togglingCurrentPlayer(data) {
     let highlight2 = document.querySelector(`.${currentPlayer}`);
     highlight2.classList.add('current-player-highlight');
     console.log('%c Current proxy player is now: ', 'color: #1a329b', currentPlayerProxy);
-    console.log('%c currentPlayer is now:', 'color: #1a329b', currentPlayer);
+    console.log('%c CurrentPlayer is now:', 'color: #1a329b', currentPlayer);
   });
   
 };
@@ -219,7 +218,7 @@ function seating() {
     let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
     getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
 
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} redo`, bubbles: true, cancelable: true });
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${ currentPlayerProxy.name} redo`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-ready').dispatchEvent(customEvent);
 
     theGameLoop.next();
@@ -254,65 +253,30 @@ function firstBet() {
 function askQuestion(nr) {
   console.log(`%c Question ${nr} now running`, 'font-weight: 700');
   let currentQuestion = questions[`question${nr}`];
-  
-  console.log('currentQuestion: ', currentQuestion);
   document.querySelector('.game-questions').classList.remove('game-hide');
   countDown(2, currentQuestion, theGameLoop);
   playSoundFx('question', 0.1);
   createQuestionForm(currentQuestion);
-  
 
-  document.querySelector('#game-question-button1').addEventListener('click', function() {
+
+  document.querySelector('#game-question-button1').addEventListener('click', questionAnswerCheck);
+  document.querySelector('#game-question-button2').addEventListener('click', questionAnswerCheck);
+  document.querySelector('#game-question-button3').addEventListener('click', questionAnswerCheck);
+
+  function questionAnswerCheck(event) {
     playSoundFx('start');
-
-    let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
-    let content = this.innerHTML;
+    let content = event.target.innerHTML;
     let correct = currentQuestion.correctAnswer;
     if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-      console.log('its true');
-      playerCorrectAnswersNr++;
+      console.log('Players anser is correct!');
+      currentPlayerProxy.rightAnswerNr++;
       let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
-      correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
+      correctOutput.innerText = `Antal rätt svar: ${currentPlayerProxy.rightAnswerNr}`;
     };
-
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name}  svarade: ${content}`, bubbles: true, cancelable: true });
     document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
-  });
-    
-  document.querySelector('#game-question-button2').addEventListener('click', function() {
-    playSoundFx('start');
-
-    let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
-    let content = this.innerHTML;
-    let correct = currentQuestion.correctAnswer;
-    if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-      console.log('its true');
-      playerCorrectAnswersNr++;
-      let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
-      correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
-    };
-    
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
-    document.querySelector('#game-question-button1').dispatchEvent(customEvent);
-  });
+  };
   
-  document.querySelector('#game-question-button3').addEventListener('click', function() {
-  playSoundFx('start');
-
-  let playerCorrectAnswersNr = players[currentPlayer]['rightAnswerNr'];
-    let content = this.innerHTML;
-    let correct = currentQuestion.correctAnswer;
-    if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-      console.log('its true');
-      playerCorrectAnswersNr++;
-      let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
-      correctOutput.innerText = `Antal rätt svar: ${playerCorrectAnswersNr}`;
-    };
-
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer}  svarade: ${this.innerHTML}`, bubbles: true, cancelable: true });
-    document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
-  });
-    
 };
 
 
@@ -347,7 +311,6 @@ function betting(turn) {
   animateMarker(currentPlayer);
   playSoundFx('betting');
   let sliderValue = Number(slider.value);
-  //before players[currentPlayer] now proxyPlayer1
   currentPlayerProxy.bet.unshift(sliderValue);
   currentPlayerProxy.marks -= slider.value;
   gamePot += currentPlayerProxy.bet[0];
@@ -355,11 +318,8 @@ function betting(turn) {
   console.log('player bet', currentPlayerProxy);
   
   let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, bubbles: true, cancelable: true });
-  document.querySelector('.js-player-bet').dispatchEvent(customEvent);
-
-  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerProxy.marks}`; 
+  document.querySelector('.js-player-bet').dispatchEvent(customEvent); 
   document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
-  document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${currentPlayerProxy.marks}<br>`
   });
   //
 
@@ -385,7 +345,7 @@ function betting(turn) {
 
      let customEvent = new CustomEvent(
        "gameEvent", {
-         detail: `Spalare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, bubbles: true, cancelable: true 
+         detail: `Spelare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, bubbles: true, cancelable: true 
       });
       document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
