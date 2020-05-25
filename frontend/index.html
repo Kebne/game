@@ -282,6 +282,7 @@ getQButton.addEventListener('click', function() {
 
 
 function seating() {
+  console.log(`%c Seating now running`, 'font-weight: 700');
   document.querySelector('#player1').addEventListener('click', createPlayer);
   document.querySelector('#player2').addEventListener('click', createPlayer);
   document.querySelector('#player3').addEventListener('click', createPlayer);
@@ -304,7 +305,7 @@ function seating() {
 
 
 function firstBet() {
-  console.log('firstbet now running');
+  console.log('%c Firstbet now running', 'font-weight: 700');
   data.forEach((item) => {
         item.marks -= 10;
         gamePot += 10;
@@ -328,6 +329,7 @@ function firstBet() {
 
 
 function askQuestion(nr) {
+  console.log(`%c Question ${nr} now running`, 'font-weight: 700');
   let currentQuestion = questions[`question${nr}`];
   
   console.log('currentQuestion: ', currentQuestion);
@@ -392,8 +394,7 @@ function askQuestion(nr) {
 
 
 function betting(turn) {
-  console.log('Betting round');
-  console.log('currentPlayer', currentPlayer);
+  console.log(`%c Betting round ${turn} now running`, 'font-weight: 700');
   document.querySelector('.game-questions').classList.add('game-hide');
   let bettingElement = document.querySelector('.game-betting');
   bettingElement.classList.remove('game-hide');
@@ -504,7 +505,7 @@ function betting(turn) {
 
 
 function endGame() {
-    console.log('End game');
+  console.log(`%c End game now running`, 'font-weight: 700');
    
     /*let p1 = currentPlayerPath.bet; 
     let p1b = p1.reduce((a,b)=>a+b);
