@@ -258,7 +258,6 @@ function askQuestion(nr) {
   playSoundFx('question', 0.1);
   createQuestionForm(currentQuestion);
 
-
   document.querySelector('#game-question-button1').addEventListener('click', questionAnswerCheck);
   document.querySelector('#game-question-button2').addEventListener('click', questionAnswerCheck);
   document.querySelector('#game-question-button3').addEventListener('click', questionAnswerCheck);
@@ -276,7 +275,7 @@ function askQuestion(nr) {
     let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name}  svarade: ${content}`, bubbles: true, cancelable: true });
     document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
   };
-  
+
 };
 
 
@@ -314,8 +313,6 @@ function betting(turn) {
   currentPlayerProxy.bet.unshift(sliderValue);
   currentPlayerProxy.marks -= slider.value;
   gamePot += currentPlayerProxy.bet[0];
-
-  console.log('player bet', currentPlayerProxy);
   
   let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, bubbles: true, cancelable: true });
   document.querySelector('.js-player-bet').dispatchEvent(customEvent); 
@@ -375,16 +372,14 @@ function betting(turn) {
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
 
     checkPlayersRemaining();
-    /*if(proxyplayer1.fold == true && proxyplayer2.fold == true) {
-      console.log('Both players fold, game over');
+    if(proxyplayer1.fold == true && proxyplayer2.fold == true && proxyplayer3.fold == true) {
       proxyplayer1.fold = true;
       proxyplayer2.fold = true;
+      proxyplayer3.fold = true;
       bettingElement.classList.add('game-hide');
-      console.log('theGameLoop', theGameLoop);
-        theGameLoop.done = true;
-      console.log('theGameLoop2', theGameLoop);
+      theGameLoop.done = true;
       endGame();
-    };*/
+    };
 
   });
   //
