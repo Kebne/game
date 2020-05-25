@@ -119,16 +119,13 @@ import {animateMarker} from './modules/animations.js';
 const handler = {
   set(target, property, value, receiver) {
     target[property] = value;
-    /*let output = document.querySelector(`.${property}`);    
-    output.innerHTML = `${value}`;*/
-    //när denna körs på marker, uppdatera marker
     if (property.localeCompare('marks') == 0) {
-      console.log('proxy testing running');
       let output = document.querySelector(`.${currentPlayer}-info-marks`);
       console.log('output proxy', output);
       output.innerHTML = `Marker (proxy)${value}`; 
     }
-    console.log(`Player ${property} is now: ${value}`)
+    
+    console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
   }
 };
@@ -139,7 +136,6 @@ var proxyplayer3 = new Proxy(players.player3, handler);
 var proxyplayer4 = new Proxy(players.player4, handler);
 var proxyplayer5 = new Proxy(players.player5, handler);
 
-console.log('pp1',proxyplayer1);
 
 
 var currentPlayer = 'player1';
@@ -147,18 +143,18 @@ var currentPlayerProxy = proxyplayer1;
 console.log('currentPlayerProxy', currentPlayerProxy);
 var data = Object.values(players);
 var gamePot = 0;
-var currentPlayerNr = 1;
 var seatedPlayers = []; // not in use right now, maybe implement as async await player1, player2 etc
-var allSeated = false;
+
 
 
 // This is needed to be globally function se we can reapply event listner when players left
 function createPlayer() { 
     let wichPlayer = event.target.id;
     let playerNr = String(wichPlayer);
-    console.log('player nr', playerNr);
+    
     playSoundFx('seated');
     players[playerNr]['seated'] = true;
+    console.log('%c Player seated: ','color: #156b26', playerNr);
     seatedPlayers.push(playerNr);
     //players[playerNr]['marks'] = 500;
     let playerName = players[playerNr]['name'];
@@ -246,10 +242,30 @@ function togglingCurrentPlayer(data) {
     let choosenPlayer = selectElement.options[selectElement.selectedIndex].value;
     let highlight = document.querySelector(`.${currentPlayer}`);
     highlight.classList.remove('current-player-highlight');
+    
+    // This so we also switch to correct proxy
+    if (choosenPlayer.localeCompare('player1') == 0) {
+      currentPlayerProxy = proxyplayer1
+    };
+    if (choosenPlayer.localeCompare('player2') == 0) {
+      currentPlayerProxy = proxyplayer2
+    };
+    if (choosenPlayer.localeCompare('player3') == 0) {
+      currentPlayerProxy = proxyplayer3
+    };
+    if (choosenPlayer.localeCompare('player4') == 0) {
+      currentPlayerProxy = proxyplayer4;
+    };
+    if (choosenPlayer.localeCompare('player5') == 0) {
+      currentPlayerProxy = proxyplayer5;
+    };
+      
     currentPlayer = choosenPlayer;
+    
     let highlight2 = document.querySelector(`.${currentPlayer}`);
     highlight2.classList.add('current-player-highlight');
-    console.log('currentPlayer', currentPlayer);
+    console.log('%c Current proxy player is now: ', 'color: #1a329b', currentPlayerProxy);
+    console.log('%c currentPlayer is now:', 'color: #1a329b', currentPlayer);
   });
   
 };
@@ -273,21 +289,16 @@ function seating() {
   document.querySelector('#player5').addEventListener('click', createPlayer);
   
   document.querySelector('.js-player-ready').addEventListener('click', function () {
-      playSoundFx('start');
-      
-      // Todo, try make this an oneliner
-      console.log(` ${currentPlayer} redo : ${players[currentPlayer]['ready']}`);
-      //currentPlayerProxy['ready'] = true;  Todo make this code work
-      currentPlayerProxy.ready = true; //Todo, make sure this actully works
-      console.log(` ${currentPlayer} redo2 : ${players[currentPlayer]['ready']}`);
-      // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
-      let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
-      getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
+    playSoundFx('start');
+    currentPlayerProxy.ready = true; //Todo, make sure this actully works
+    // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
+    let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
+    getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
 
-      let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} redo`, bubbles: true, cancelable: true });
-      document.querySelector('.js-player-ready').dispatchEvent(customEvent);
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} redo`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-ready').dispatchEvent(customEvent);
 
-      theGameLoop.next();
+    theGameLoop.next();
     });
  };
 
@@ -397,13 +408,8 @@ function betting(turn) {
   let fold = document.querySelector('.js-player-fold');
   fold.removeAttribute('disabled');
 
-  const playersInPlay = [player1, player2, player3, player4, player5];
-  function* playersBetHandler(playersInPlay) {
-    for(const item of playersInPlay) {
-      yield console.log(item);
-    };
-  };
-
+  
+  
  
   // Player Betting
   document.querySelector('.js-player-bet').addEventListener('click', function () {
@@ -411,18 +417,18 @@ function betting(turn) {
   playSoundFx('betting');
   let sliderValue = Number(slider.value);
   //before players[currentPlayer] now proxyPlayer1
-  players[currentPlayer].bet.unshift(sliderValue);
-  players[currentPlayer].marks -= slider.value;
-  gamePot += players[currentPlayer].bet[0];
+  currentPlayerProxy.bet.unshift(sliderValue);
+  currentPlayerProxy.marks -= slider.value;
+  gamePot += currentPlayerProxy.bet[0];
 
-  console.log('player bet', players);
+  console.log('player bet', currentPlayerProxy);
   
-  let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} bettar ${sliderValue}`, bubbles: true, cancelable: true });
+  let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, bubbles: true, cancelable: true });
   document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
-  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`; 
+  document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerProxy.marks}`; 
   document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
-  document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${players[currentPlayer].marks}<br>`
+  document.querySelector(`.${currentPlayer}-info-marks`).innerHTML =  `Marker: ${currentPlayerProxy.marks}<br>`
   });
   //
 
@@ -436,7 +442,7 @@ function betting(turn) {
   function sliderOutput() {
     console.log('slideroutput running');
     output.innerHTML = slider.value;
-    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${players[currentPlayer].marks}`; 
+    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerProxy.marks}`; 
   };
   //
 
@@ -444,15 +450,15 @@ function betting(turn) {
   // Player Passing
   document.querySelector('.js-player-pass').addEventListener('click', function () {
     playSoundFx('pass');
-    players[currentPlayer].pass = true;
+    currentPlayerProxy.pass = true;
 
      let customEvent = new CustomEvent(
        "gameEvent", {
-         detail: `Spalare ${currentPlayer} passar ${players[currentPlayer].pass}`, bubbles: true, cancelable: true 
+         detail: `Spalare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, bubbles: true, cancelable: true 
       });
       document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].pass}</i>`;
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.pass}</i>`;
 
     if(proxyplayer1.pass == true && proxyplayer2.pass == true) {
       console.log('Both players pass, getting new questions');
@@ -468,14 +474,14 @@ function betting(turn) {
   // Player Fold
   document.querySelector('.js-player-fold').addEventListener('click', function () {
     playSoundFx('fold');
-    players[currentPlayer].fold = true;
+    currentPlayerProxy.fold = true;
 
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayer} lägger sig ${players[currentPlayer].fold}`, bubbles: true, cancelable: true });
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} lägger sig ${currentPlayerProxy.fold}`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
 
-    if(proxyplayer1.fold == true && proxyplayer2.fold == true) {
+  if(proxyplayer1.fold == true && proxyplayer2.fold == true) {
       console.log('Both players fold, game over');
       proxyplayer1.fold = true;
       proxyplayer2.fold = true;

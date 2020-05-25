@@ -3,6 +3,7 @@ export var players = {
    score: 0,
    marks: 900,
    name: 'Han Solo',
+   internalName: 'proxyplayer1',
    seat: 1,
    pass: false,
    bet: [],
