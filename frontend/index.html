@@ -40,81 +40,6 @@ import {controls} from './modules/controls.js';
 import {animateMarker} from './modules/animations.js';
 
 
-/*var players = {
-  player1: {
-   score: 0,
-   marks: 900,
-   name: 'Han Solo',
-   seat: 1,
-   pass: false,
-   bet: [],
-   fold: false,
-   answer: 'äpple',
-   rightAnswerNr: 0,
-   seated: false,
-   ready: false,
- },
- player2: {
-  score: 0,
-  marks: 1000,
-  name: 'Rey',
-  seat: 2,
-  pass: false,
-  bet: [],
-  fold: false,
-  answer: 'äpple',
-  rightAnswerNr: 2,
-  seated: false,
-  ready: false,
- },
- player3: {
-  score: 0,
-  marks: 1000,
-  name: 'R2D2',
-  seat: 3,
-  pass: false,
-  bet: [],
-  fold: false,
-  answer: 'äpple',
-  rightAnswerNr: 0,
-  seated: false,
-  ready: false,
- },
- player4: {
-  score: 0,
-  marks: 1000,
-  name: 'Leia',
-  seat: 4,
-  pass: false,
-  bet: [],
-  fold: false,
-  answer: 'äpple',
-  rightAnswerNr: 0,
-  seated: false,
-  ready: false,
- },
- player5: {
-  score: 0,
-  marks: 1000,
-  name: 'Luke',
-  seat: 5,
-  pass: false,
-  bet: [],
-  fold: false,
-  answer: 'päron',
-  rightAnswerNr: 0,
-  seated: false,
-  ready: false,
- }
-   player1: Object.create(playerProto),
-   player2: Object.create(playerProto),
-   player3: Object.create(playerProto),
-   player4: Object.create(playerProto),
-   player5: Object.create(playerProto), 
- };*/
-
- 
- 
 // Using proxy for handling events and states
 const handler = {
   set(target, property, value, receiver) {
@@ -123,7 +48,7 @@ const handler = {
       let output = document.querySelector(`.${currentPlayer}-info-marks`);
       console.log('output proxy', output);
       output.innerHTML = `Marker (proxy)${value}`; 
-    }
+    };
     
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
@@ -137,10 +62,8 @@ var proxyplayer4 = new Proxy(players.player4, handler);
 var proxyplayer5 = new Proxy(players.player5, handler);
 
 
-
 var currentPlayer = 'player1';
 var currentPlayerProxy = proxyplayer1;
-console.log('currentPlayerProxy', currentPlayerProxy);
 var data = Object.values(players);
 var gamePot = 0;
 var seatedPlayers = []; // not in use right now, maybe implement as async await player1, player2 etc
@@ -409,7 +332,14 @@ function betting(turn) {
   let fold = document.querySelector('.js-player-fold');
   fold.removeAttribute('disabled');
 
-  
+  function checkPlayersRemaining() {
+    const result = data.filter(player => player.fold == false);
+    const finalResult = result.length ? 'keep going' : 'Game over man, game over!'; 
+    console.log(`Players remaining ${result.length}, ${finalResult}`);
+    return result;
+  };
+  const playersRemain = checkPlayersRemaining();
+  console.log('playersRemain: ', playersRemain);
   
  
   // Player Betting
@@ -468,6 +398,8 @@ function betting(turn) {
       bettingElement.classList.add('game-hide');
       theGameLoop.next();
     };
+
+
   });
   //
 
@@ -482,7 +414,8 @@ function betting(turn) {
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
 
-  if(proxyplayer1.fold == true && proxyplayer2.fold == true) {
+    checkPlayersRemaining();
+    /*if(proxyplayer1.fold == true && proxyplayer2.fold == true) {
       console.log('Both players fold, game over');
       proxyplayer1.fold = true;
       proxyplayer2.fold = true;
@@ -491,16 +424,17 @@ function betting(turn) {
         theGameLoop.done = true;
       console.log('theGameLoop2', theGameLoop);
       endGame();
-    };
+    };*/
 
   });
   //
 
-  
+
   document.querySelector('.js-player-ready-betting-done').addEventListener('click', function () {
     playSoundFx('start');
     theGameLoop.next();
   });
+
 };
 
 
