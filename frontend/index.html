@@ -35,12 +35,12 @@ import {playerBox} from './modules/player.js';
 import {questions} from './modules/questions.js';
 import {createQuestionForm} from './modules/createquestionform.js';
 import {countDown} from './modules/countdown.js';
-//import {players} from './modules/players.js';
+import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
 import {animateMarker} from './modules/animations.js';
 
 
-var players = {
+/*var players = {
   player1: {
    score: 0,
    marks: 900,
@@ -106,12 +106,12 @@ var players = {
   seated: false,
   ready: false,
  }
-   /*player1: Object.create(playerProto),
+   player1: Object.create(playerProto),
    player2: Object.create(playerProto),
    player3: Object.create(playerProto),
    player4: Object.create(playerProto),
-   player5: Object.create(playerProto),*/ 
- };
+   player5: Object.create(playerProto), 
+ };*/
 
  
  
@@ -138,6 +138,8 @@ var proxyplayer2 = new Proxy(players.player2, handler);
 var proxyplayer3 = new Proxy(players.player3, handler);
 var proxyplayer4 = new Proxy(players.player4, handler);
 var proxyplayer5 = new Proxy(players.player5, handler);
+
+console.log('pp1',proxyplayer1);
 
 
 var currentPlayer = 'player1';
@@ -183,7 +185,6 @@ function* gameLoop() {
   yield askQuestion(3);
   yield askQuestion(4);
   yield betting(1);
-  yield endGame();
 };
 var theGameLoop = gameLoop();
 theGameLoop.next();
@@ -396,6 +397,13 @@ function betting(turn) {
   let fold = document.querySelector('.js-player-fold');
   fold.removeAttribute('disabled');
 
+  const playersInPlay = [player1, player2, player3, player4, player5];
+  function* playersBetHandler(playersInPlay) {
+    for(const item of playersInPlay) {
+      yield console.log(item);
+    };
+  };
+
  
   // Player Betting
   document.querySelector('.js-player-bet').addEventListener('click', function () {
@@ -446,10 +454,11 @@ function betting(turn) {
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].pass}</i>`;
 
-    if(players.player1.pass == true && players.player2.pass == true) {
+    if(proxyplayer1.pass == true && proxyplayer2.pass == true) {
       console.log('Both players pass, getting new questions');
-      proxyPlayer1.pass == false;
-      proxyPlayer2.pass == false;
+      proxyplayer1.pass = false;
+      proxyplayer2.pass = false;
+      bettingElement.classList.add('game-hide');
       theGameLoop.next();
     };
   });
@@ -465,6 +474,18 @@ function betting(turn) {
     document.querySelector('.js-player-bet').dispatchEvent(customEvent);
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${players[currentPlayer].pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
+
+    if(proxyplayer1.fold == true && proxyplayer2.fold == true) {
+      console.log('Both players fold, game over');
+      proxyplayer1.fold = true;
+      proxyplayer2.fold = true;
+      bettingElement.classList.add('game-hide');
+      console.log('theGameLoop', theGameLoop);
+        theGameLoop.done = true;
+      console.log('theGameLoop2', theGameLoop);
+      endGame();
+    };
+
   });
   //
 

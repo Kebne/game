@@ -1,4 +1,4 @@
-export const players = {
+export var players = {
  player1: {
    score: 0,
    marks: 900,
@@ -10,6 +10,7 @@ export const players = {
    answer: 'äpple',
    rightAnswerNr: 0,
    seated: false,
+   ready: false,
  },
  player2: {
   score: 0,
@@ -22,6 +23,7 @@ export const players = {
   answer: 'äpple',
   rightAnswerNr: 2,
   seated: false,
+  ready: false,
  },
  player3: {
   score: 0,
@@ -34,6 +36,7 @@ export const players = {
   answer: 'äpple',
   rightAnswerNr: 0,
   seated: false,
+  ready: false,
  },
  player4: {
   score: 0,
@@ -46,6 +49,7 @@ export const players = {
   answer: 'äpple',
   rightAnswerNr: 0,
   seated: false,
+  ready: false,
  },
  player5: {
   score: 0,
@@ -58,6 +62,7 @@ export const players = {
   answer: 'päron',
   rightAnswerNr: 0,
   seated: false,
+  ready: false,
  },
 
 };
