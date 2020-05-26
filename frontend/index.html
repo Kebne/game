@@ -41,7 +41,7 @@ import {animateMarker} from './modules/animations.js';
 
 
 // Using proxy for handling events and states
-const handler = {
+const proxyHandler = {
   set(target, property, value, receiver) {
     target[property] = value;
     if (property.localeCompare('marks') == 0) {
@@ -56,11 +56,11 @@ const handler = {
   }
 };
 
-var proxyplayer1 = new Proxy(players.player1, handler);
-var proxyplayer2 = new Proxy(players.player2, handler);
-var proxyplayer3 = new Proxy(players.player3, handler);
-var proxyplayer4 = new Proxy(players.player4, handler);
-var proxyplayer5 = new Proxy(players.player5, handler);
+var proxyplayer1 = new Proxy(players.player1, proxyHandler);
+var proxyplayer2 = new Proxy(players.player2, proxyHandler);
+var proxyplayer3 = new Proxy(players.player3, proxyHandler);
+var proxyplayer4 = new Proxy(players.player4, proxyHandler);
+var proxyplayer5 = new Proxy(players.player5, proxyHandler);
 
 
 var currentPlayer = 'player1';
@@ -94,6 +94,7 @@ function playSoundFx(sound = 'start', volume = 1) {
   audio.volume = volume;
   audio.play();
 }
+
 
 function* gameLoop() {
   yield seating();
@@ -371,11 +372,9 @@ function betting(turn) {
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
 
-    checkPlayersRemaining();
-    if(proxyplayer1.fold == true && proxyplayer2.fold == true && proxyplayer3.fold == true) {
-      proxyplayer1.fold = true;
-      proxyplayer2.fold = true;
-      proxyplayer3.fold = true;
+    const playersLeftAfterFold = checkPlayersRemaining();
+    console.log('playersLeftAfterFold',playersLeftAfterFold);
+    if(playersLeftAfterFold.length == 0) {
       bettingElement.classList.add('game-hide');
       theGameLoop.done = true;
       endGame();
