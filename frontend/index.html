@@ -76,18 +76,34 @@ function createPlayer() {
     let wichPlayer = event.target.id;
     let playerNr = String(wichPlayer);
     playSoundFx('seated');
-    players[playerNr]['seated'] = true;
-    console.log('%c Player seated: ','color: #156b26', playerNr);
-    seatedPlayers.push(playerNr);
-    //players[playerNr]['marks'] = 500;
-    let playerName = players[playerNr]['name'];
-    let playerMark = players[playerNr]['marks'];
+
+    // This switches wich proxy to go to.
+    if (playerNr.localeCompare('player1') == 0) {
+      currentPlayerProxy = proxyplayer1
+    };
+    if (playerNr.localeCompare('player2') == 0) {
+      currentPlayerProxy = proxyplayer2
+    };
+    if (playerNr.localeCompare('player3') == 0) {
+      currentPlayerProxy = proxyplayer3
+    };
+    if (playerNr.localeCompare('player4') == 0) {
+      currentPlayerProxy = proxyplayer4;
+    };
+    if (playerNr.localeCompare('player5') == 0) {
+      currentPlayerProxy = proxyplayer5;
+    };
+
+    currentPlayerProxy.seated = true;
+    console.log('%c Player seated: ','color: #156b26', currentPlayerProxy);
+    seatedPlayers.push(playerNr); //maybe alter this
     let element1 = document.querySelector(`.${playerNr}`);
     element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
-    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${playerName }`;
-    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${playerMark}`;
+    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${currentPlayerProxy.name}`;
+    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${currentPlayerProxy.marks}`;
     document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
 };
+
 
 function playSoundFx(sound = 'start', volume = 1) {
   let audio = new Audio(`sound/${sound}.mp3`);
