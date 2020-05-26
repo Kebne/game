@@ -215,9 +215,7 @@ function seating() {
   document.querySelector('.js-player-ready').addEventListener('click', function () {
     playSoundFx('start');
     currentPlayerProxy.ready = true; //Todo, make sure this actully works
-    // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
-    let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
-    getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
+   
 
     let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${ currentPlayerProxy.name} redo`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-ready').dispatchEvent(customEvent);
@@ -304,6 +302,10 @@ function betting(turn) {
   };
   const playersRemain = checkPlayersRemaining();
   console.log('playersRemain: ', playersRemain);
+
+   // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
+   let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
+    getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
   
  
   // Player Betting
