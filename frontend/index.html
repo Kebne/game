@@ -18,7 +18,7 @@
             <div class="player1"><img class="img-full-width" id="player1" src="images/empty-chair.png"></div>
             <div class="game-questions game-hide"></div>
             <div class="game-betting game-hide"></div>
-            <div class="board"></div>
+            <div class="board"><span class="board-pot"></span></div>
             <div class="player4"><img class="img-full-width" id="player4" src="images/empty-chair.png"></div>
             <div class="player2"><img class="img-full-width" id="player2" src="images/empty-chair.png"></div>
             <div class="player3"><img class="img-full-width" id="player3" src="images/empty-chair.png"></div>
@@ -56,6 +56,17 @@ const proxyHandler = {
   }
 };
 
+const proxyHandlerGamePot = {
+  set(target, property, value, receiver) {
+  console.log('proxy gamepot running');
+  target[property] = value;
+  let outputPot = document.querySelector(`.board-pot`);
+  console.log('outputPot', outputPot);
+  outputPot.innerHTML = `Spelpotten är ${value}`;
+  return true;
+  }
+};
+
 var proxyplayer1 = new Proxy(players.player1, proxyHandler);
 var proxyplayer2 = new Proxy(players.player2, proxyHandler);
 var proxyplayer3 = new Proxy(players.player3, proxyHandler);
@@ -63,14 +74,16 @@ var proxyplayer4 = new Proxy(players.player4, proxyHandler);
 var proxyplayer5 = new Proxy(players.player5, proxyHandler);
 
 
+
+
 var currentPlayer = 'player1';
 var currentPlayerProxy = proxyplayer1;
 var data = Object.values(players);
-var gamePot = 0;
+var gamePot = { pot: 0 };
 var seatedPlayers = []; // not in use right now, maybe implement as async await player1, player2 etc
 
-
-
+var proxyGamePot = new Proxy(gamePot ,proxyHandlerGamePot);
+gamePot.pot = 0;
 // This is needed to be globally function se we can reapply event listner when players left
 function createPlayer() { 
     let wichPlayer = event.target.id;
@@ -101,7 +114,6 @@ function createPlayer() {
     element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
     document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${currentPlayerProxy.name}`;
     document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${currentPlayerProxy.marks}`;
-    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
 };
 
 
@@ -157,7 +169,6 @@ document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPl
 document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
   
 togglingCurrentPlayer(players);
-//document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
 
 //To highlight current player 
 let highlight = document.querySelector(`.${currentPlayer}`);
@@ -245,7 +256,7 @@ function firstBet() {
   console.log('%c Firstbet now running', 'font-weight: 700');
   data.forEach((item) => {
         item.marks -= 10;
-        gamePot += 10;
+        proxyGamePot.pot += 10;
         item.bet.push(10);
     });
     
@@ -253,8 +264,6 @@ function firstBet() {
       let playerMark = players[item]['marks'];
       document.querySelector(`.${item}-info-marks`).innerHTML = `Marker: ${playerMark}`;   
     });
-  
-    document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
 
     let customEvent = new CustomEvent("gameEvent", {detail: `Alla spelare har gjort första bettet`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-ready').dispatchEvent(customEvent);
@@ -331,11 +340,10 @@ function betting(turn) {
   let sliderValue = Number(slider.value);
   currentPlayerProxy.bet.unshift(sliderValue);
   currentPlayerProxy.marks -= slider.value;
-  gamePot += currentPlayerProxy.bet[0];
+  proxyGamePot += currentPlayerProxy.bet[0];
   
   let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, bubbles: true, cancelable: true });
-  document.querySelector('.js-player-bet').dispatchEvent(customEvent); 
-  document.querySelector('.board').innerHTML =  `Potten är: ${gamePot}`;
+  document.querySelector('.js-player-bet').dispatchEvent(customEvent);
   });
   //
 
