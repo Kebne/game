@@ -47,9 +47,8 @@ const proxyHandler = {
     if (property.localeCompare('marks') == 0) {
       let output = document.querySelector(`.${currentPlayer}-info-marks`);
       let outputCtrlPanel = document.querySelector('.player-marks');
-      output.innerHTML = `Marker proxy ${value}`; 
+      output.innerHTML = `Marker ${value}`; 
       outputCtrlPanel .innerHTML = `Spelare marker: ${value}`;
-      console.log('output proxy', output);
     };
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
@@ -58,10 +57,8 @@ const proxyHandler = {
 
 const proxyHandlerGamePot = {
   set(target, property, value, receiver) {
-  console.log('proxy gamepot running');
   target[property] = value;
   let outputPot = document.querySelector(`.board-pot`);
-  console.log('outputPot', outputPot);
   outputPot.innerHTML = `Spelpotten är ${value}`;
   return true;
   }
@@ -83,7 +80,7 @@ var gamePot = { pot: 0 };
 var seatedPlayers = []; // not in use right now, maybe implement as async await player1, player2 etc
 
 var proxyGamePot = new Proxy(gamePot ,proxyHandlerGamePot);
-gamePot.pot = 0;
+proxyGamePot.pot = 0;
 // This is needed to be globally function se we can reapply event listner when players left
 function createPlayer() { 
     let wichPlayer = event.target.id;
@@ -340,7 +337,7 @@ function betting(turn) {
   let sliderValue = Number(slider.value);
   currentPlayerProxy.bet.unshift(sliderValue);
   currentPlayerProxy.marks -= slider.value;
-  proxyGamePot += currentPlayerProxy.bet[0];
+  proxyGamePot += currentPlayerProxy.bet[0]; // seems not to work right now (26/5)
   
   let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, bubbles: true, cancelable: true });
   document.querySelector('.js-player-bet').dispatchEvent(customEvent);
