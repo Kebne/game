@@ -303,7 +303,7 @@ fieldset {
   grid-template-areas: 
   "player1 board player4"
   "player2 board player3"
-  "player5 . ."
+  ". player5 ."
   ;
   color: var(--light-text-color);
  
@@ -361,10 +361,12 @@ fieldset {
 
 .player5 {
   grid-area: player5; 
+  place-self: center;
   /*background-color: #5a8f93;*/  
   box-sizing: border-box;
   padding: var(--standard-padding);
   min-width: 200px;
+  max-width: 200px;
 }
 
 .game-log {
