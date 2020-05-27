@@ -39,21 +39,25 @@ import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
 import {animateMarker} from './modules/animations.js';
 
+var currentPlayer = 'player1';
+var data = Object.values(players); //this should not be needed anymore
+var gamePot = { pot: 0 };
+var seatedPlayers = [];
 
 // Using proxy for handling events and states
 const proxyHandler = {
   set(target, property, value, receiver) {
+    console.log(`Target, property, value, receiver '${target.internalName}', '${property}', '${value}', '${receiver}'`);
     target[property] = value;
     if (property.localeCompare('marks') == 0) {
       let output = document.querySelector(`.${currentPlayer}-info-marks`);
-      let outputCtrlPanel = document.querySelector('.player-marks');
-      output.innerHTML = `Marker ${value}`; 
-      outputCtrlPanel .innerHTML = `Spelare marker: ${value}`;
+      output.innerHTML = `Marker (proxy) ${value}`;
     };
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
   }
 };
+
 
 const proxyHandlerGamePot = {
   set(target, property, value, receiver) {
@@ -70,18 +74,12 @@ var proxyplayer3 = new Proxy(players.player3, proxyHandler);
 var proxyplayer4 = new Proxy(players.player4, proxyHandler);
 var proxyplayer5 = new Proxy(players.player5, proxyHandler);
 
-
-
-
-var currentPlayer = 'player1';
 var currentPlayerProxy = proxyplayer1;
-var data = Object.values(players);
-var gamePot = { pot: 0 };
-var seatedPlayers = []; // not in use right now, maybe implement as async await player1, player2 etc
 
 var proxyGamePot = new Proxy(gamePot ,proxyHandlerGamePot);
 proxyGamePot.pot = 0;
-// This is needed to be globally function se we can reapply event listner when players left
+
+// This is a globally function so we can reapply event listner when players left
 function createPlayer() { 
     let wichPlayer = event.target.id;
     let playerNr = String(wichPlayer);
@@ -89,13 +87,13 @@ function createPlayer() {
 
     // This switches wich proxy to go to.
     if (playerNr.localeCompare('player1') == 0) {
-      currentPlayerProxy = proxyplayer1
+      currentPlayerProxy = proxyplayer1;
     };
     if (playerNr.localeCompare('player2') == 0) {
-      currentPlayerProxy = proxyplayer2
+      currentPlayerProxy = proxyplayer2;
     };
     if (playerNr.localeCompare('player3') == 0) {
-      currentPlayerProxy = proxyplayer3
+      currentPlayerProxy = proxyplayer3;
     };
     if (playerNr.localeCompare('player4') == 0) {
       currentPlayerProxy = proxyplayer4;
@@ -103,14 +101,16 @@ function createPlayer() {
     if (playerNr.localeCompare('player5') == 0) {
       currentPlayerProxy = proxyplayer5;
     };
-
+    
     currentPlayerProxy.seated = true;
+    
     console.log('%c Player seated: ','color: #156b26', currentPlayerProxy);
     seatedPlayers.push(playerNr); //maybe alter this
     let element1 = document.querySelector(`.${playerNr}`);
     element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
     document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${currentPlayerProxy.name}`;
-    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${currentPlayerProxy.marks}`;
+    //currentPlayerProxy.marks = currentPlayerProxy.marks; all should be current
+    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker (create player): ${currentPlayerProxy.marks}`;
 };
 
 
@@ -162,7 +162,6 @@ document.addEventListener('click', function() {
   
 });
 
-document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerProxy.marks}`;
 document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
   
 togglingCurrentPlayer(players);
@@ -238,36 +237,46 @@ function seating() {
   
   document.querySelector('.js-player-ready').addEventListener('click', function () {
     playSoundFx('start');
-    currentPlayerProxy.ready = true; //Todo, make sure this actully works
-   
-
+    //currentPlayerProxy.ready = true;
+    // manually setting all players to ready, we do this later at back-end
+    proxyplayer1.ready = true;
+    proxyplayer2.ready = true;
+    proxyplayer3.ready = true;
+    proxyplayer4.ready = true;
+    proxyplayer5.ready = true;
     let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${ currentPlayerProxy.name} redo`, bubbles: true, cancelable: true });
     document.querySelector('.js-player-ready').dispatchEvent(customEvent);
-
     theGameLoop.next();
-    });
- };
+  });
+};
 
 
 function firstBet() {
   console.log('%c Firstbet now running', 'font-weight: 700');
-  data.forEach((item) => {
+  proxyplayer1.marks -= 10;
+  proxyplayer2.marks -= 10;
+  proxyplayer3.marks -= 10;
+  proxyplayer4.marks -= 10;
+  proxyplayer5.marks -= 10;
+  proxyGamePot.pot += 50;
+  /*data.forEach((item) => {
         item.marks -= 10;
         proxyGamePot.pot += 10;
         item.bet.push(10);
-    });
+  });*/
     
-    seatedPlayers.forEach((item) => {
-      let playerMark = players[item]['marks'];
-      document.querySelector(`.${item}-info-marks`).innerHTML = `Marker: ${playerMark}`;   
-    });
+  /*seatedPlayers.forEach((item) => {
+    let playerMark = players[item]['marks'];
+    document.querySelector(`.${item}-info-marks`).innerHTML = `Marker: ${playerMark}`;   
+  });*/
 
-    let customEvent = new CustomEvent("gameEvent", {detail: `Alla spelare har gjort första bettet`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-ready').dispatchEvent(customEvent);
-    document.querySelector('.js-player-ready-q').addEventListener('click', function () {
-      playSoundFx('start');
-      theGameLoop.next();
-    }); 
+  let customEvent = new CustomEvent("gameEvent", {detail: `Alla spelare har gjort första bettet`, bubbles: true, cancelable: true });
+  document.querySelector('.js-player-ready').dispatchEvent(customEvent);
+  document.querySelector('.js-player-ready-q').addEventListener('click', function () {
+    playSoundFx('start');
+    theGameLoop.next();
+  }); 
+
 };
 
 
@@ -332,15 +341,16 @@ function betting(turn) {
  
   // Player Betting
   document.querySelector('.js-player-bet').addEventListener('click', function () {
-  animateMarker(currentPlayer);
-  playSoundFx('betting');
-  let sliderValue = Number(slider.value);
-  currentPlayerProxy.bet.unshift(sliderValue);
-  currentPlayerProxy.marks -= slider.value;
-  proxyGamePot += currentPlayerProxy.bet[0]; // seems not to work right now (26/5)
-  
-  let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, bubbles: true, cancelable: true });
-  document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+    animateMarker(currentPlayer); 
+    playSoundFx('betting');
+    let sliderValue = Number(slider.value);
+    console.log('slidervalue when betted: ', sliderValue)
+    currentPlayerProxy.bet.unshift(sliderValue);
+    currentPlayerProxy.marks -= slider.value; 
+    proxyGamePot.pot += currentPlayerProxy.bet[0]; 
+    
+    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, bubbles: true, cancelable: true });
+    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
   });
   //
 
@@ -352,9 +362,8 @@ function betting(turn) {
   slider.addEventListener('input', sliderOutput);
   
   function sliderOutput() {
-    console.log('slideroutput running');
+    console.log(`Slider output running ${slider.value}`);
     output.innerHTML = slider.value;
-    document.querySelector('.player-marks').innerHTML = `Spelare marker: ${currentPlayerProxy.marks}`; 
   };
   //
 

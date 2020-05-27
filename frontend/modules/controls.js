@@ -6,9 +6,8 @@ export class controls extends HTMLElement {
     let templateElement = document.createElement('template');
     templateElement.innerHTML = `
     <div>
-      <div class="player-marks"></div>
       <div class="player-status"></div>
-      <div>
+      <div class="game-progress-buttons">
         <button class="js-player-ready player-input-button">Klar (starta)</button>
         <button class="js-player-ready-q player-input-button">2 frågor</button>
         <button class="js-player-ready-betting-done player-input-button">Betting done</button>
