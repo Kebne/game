@@ -47,11 +47,10 @@ var seatedPlayers = [];
 // Using proxy for handling events and states
 const proxyHandler = {
   set(target, property, value, receiver) {
-    console.log(`Target, property, value, receiver '${target.internalName}', '${property}', '${value}', '${receiver}'`);
     target[property] = value;
     if (property.localeCompare('marks') == 0) {
       let output = document.querySelector(`.${currentPlayer}-info-marks`);
-      output.innerHTML = `Marker (proxy) ${value}`;
+      output.innerHTML = `Marker: ${value}.`;
     };
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
@@ -88,29 +87,34 @@ function createPlayer() {
     // This switches wich proxy to go to.
     if (playerNr.localeCompare('player1') == 0) {
       currentPlayerProxy = proxyplayer1;
+      proxyplayer1.seated = true;
     };
     if (playerNr.localeCompare('player2') == 0) {
       currentPlayerProxy = proxyplayer2;
+      proxyplayer2.seated = true;
     };
     if (playerNr.localeCompare('player3') == 0) {
       currentPlayerProxy = proxyplayer3;
+      proxyplayer3.seated = true;
     };
     if (playerNr.localeCompare('player4') == 0) {
       currentPlayerProxy = proxyplayer4;
+      proxyplayer4.seated = true;
     };
     if (playerNr.localeCompare('player5') == 0) {
       currentPlayerProxy = proxyplayer5;
+      proxyplayer5.seated = true;
     };
     
-    currentPlayerProxy.seated = true;
     
     console.log('%c Player seated: ','color: #156b26', currentPlayerProxy);
     seatedPlayers.push(playerNr); //maybe alter this
+    console.log('seatedPlayers', seatedPlayers);
     let element1 = document.querySelector(`.${playerNr}`);
     element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
     document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${currentPlayerProxy.name}`;
     //currentPlayerProxy.marks = currentPlayerProxy.marks; all should be current
-    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker (create player): ${currentPlayerProxy.marks}`;
+    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${currentPlayerProxy.marks}`;
 };
 
 
@@ -118,7 +122,7 @@ function playSoundFx(sound = 'start', volume = 1) {
   let audio = new Audio(`sound/${sound}.mp3`);
   audio.volume = volume;
   audio.play();
-}
+};
 
 
 function* gameLoop() {
@@ -243,13 +247,13 @@ function seating() {
   
   document.querySelector('.js-player-ready').addEventListener('click', function () {
     playSoundFx('start');
-    //currentPlayerProxy.ready = true;
     // manually setting all players to ready, we do this later at back-end
     proxyplayer1.ready = true;
     proxyplayer2.ready = true;
     proxyplayer3.ready = true;
     proxyplayer4.ready = true;
     proxyplayer5.ready = true;
+    currentPlayerProxy = proxyplayer1; // Make this p1 again so we now its that player that begins
     customEvent(`Spelare ${ currentPlayerProxy.name} redo`, '.js-player-ready');
     theGameLoop.next();
   });
@@ -292,7 +296,7 @@ function askQuestion(nr) {
     let content = event.target.innerHTML;
     let correct = currentQuestion.correctAnswer;
     if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-      console.log('Players anser is correct!');
+      console.log('Players answer is correct!');
       currentPlayerProxy.rightAnswerNr++;
       let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
       correctOutput.innerText = `Antal rätt svar: ${currentPlayerProxy.rightAnswerNr}`;
@@ -379,7 +383,6 @@ function betting(turn) {
       theGameLoop.next();
     };
 
-
   });
   //
 
@@ -404,7 +407,6 @@ function betting(turn) {
   });
   //
 
-
   document.querySelector('.js-player-ready-betting-done').addEventListener('click', function () {
     playSoundFx('start');
     theGameLoop.next();
@@ -415,12 +417,10 @@ function betting(turn) {
 
 function endGame() {
   console.log(`%c End game now running`, 'font-weight: 700');
-   
-    /*let p1 = currentPlayerPath.bet; 
-    let p1b = p1.reduce((a,b)=>a+b);
-    let p2 = [400, 200];
-    let p2b = p2.reduce((a,b)=>a+b);*/
-    
+  /*let p1 = currentPlayerPath.bet; 
+  let p1b = p1.reduce((a,b)=>a+b);
+  let p2 = [400, 200];
+  let p2b = p2.reduce((a,b)=>a+b);*/
 };
 
 

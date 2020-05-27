@@ -92,6 +92,8 @@ button:disabled {
 .game-betting {
   position: relative;
   width: 100%;
+  margin-top: 3rem;
+  height: calc(100%-3rem);
   text-align: center;
   box-sizing: border-box;
   grid-area: board;
@@ -329,6 +331,9 @@ fieldset {
 
 .player1 {
   grid-area: player1; 
+  display: flex;
+  justify-content: center;
+  place-self: center;
   /*background-color: #153244;*/
   box-sizing: border-box; 
   padding: var(--standard-padding);
@@ -337,6 +342,8 @@ fieldset {
 
 .player2 {
   grid-area: player2; 
+  display: flex;
+  justify-content: center;
   /*background-color: #4D4940;*/
   box-sizing: border-box;
   padding: var(--standard-padding);
@@ -345,6 +352,8 @@ fieldset {
 
 .player3 {
   grid-area: player3; 
+  display: flex;
+  justify-content: center;
   /*background-color: #805238;*/
   box-sizing: border-box;
   padding: var(--standard-padding);
@@ -353,6 +362,8 @@ fieldset {
 
 .player4 {
   grid-area: player4; 
+  display: flex;
+  justify-content: center;
   /*background-color: #94855A;*/ 
   box-sizing: border-box;
   padding: var(--standard-padding);
@@ -362,12 +373,15 @@ fieldset {
 .player5 {
   grid-area: player5; 
   place-self: center;
+  display: flex;
+  justify-content: center;
   /*background-color: #5a8f93;*/  
   box-sizing: border-box;
   padding: var(--standard-padding);
   min-width: 200px;
   max-width: 200px;
 }
+
 
 .game-log {
   grid-area: gamelog; 
