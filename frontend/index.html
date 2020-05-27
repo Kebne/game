@@ -143,6 +143,12 @@ document.addEventListener("gameEvent", function(event) {
   document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
 });
 
+// Helper function for Custom events
+function customEvent(message, dispatchFrom) {
+  const custElement = new CustomEvent("gameEvent", {detail: message, bubbles: true, cancelable: true });
+  document.querySelector(`${dispatchFrom}`).dispatchEvent(custElement);
+};
+
 
 const playerLeaveElement = document.querySelector('.game-board');
 document.addEventListener('click', function() {
@@ -244,8 +250,7 @@ function seating() {
     proxyplayer3.ready = true;
     proxyplayer4.ready = true;
     proxyplayer5.ready = true;
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${ currentPlayerProxy.name} redo`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-ready').dispatchEvent(customEvent);
+    customEvent(`Spelare ${ currentPlayerProxy.name} redo`, '.js-player-ready');
     theGameLoop.next();
   });
 };
@@ -259,19 +264,9 @@ function firstBet() {
   proxyplayer4.marks -= 10;
   proxyplayer5.marks -= 10;
   proxyGamePot.pot += 50;
-  /*data.forEach((item) => {
-        item.marks -= 10;
-        proxyGamePot.pot += 10;
-        item.bet.push(10);
-  });*/
-    
-  /*seatedPlayers.forEach((item) => {
-    let playerMark = players[item]['marks'];
-    document.querySelector(`.${item}-info-marks`).innerHTML = `Marker: ${playerMark}`;   
-  });*/
 
-  let customEvent = new CustomEvent("gameEvent", {detail: `Alla spelare har gjort första bettet`, bubbles: true, cancelable: true });
-  document.querySelector('.js-player-ready').dispatchEvent(customEvent);
+  customEvent(`Alla spelare har gjort första bettet`, '.js-player-ready');
+  
   document.querySelector('.js-player-ready-q').addEventListener('click', function () {
     playSoundFx('start');
     theGameLoop.next();
@@ -302,8 +297,7 @@ function askQuestion(nr) {
       let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
       correctOutput.innerText = `Antal rätt svar: ${currentPlayerProxy.rightAnswerNr}`;
     };
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name}  svarade: ${content}`, bubbles: true, cancelable: true });
-    document.querySelector('#game-question-button1').dispatchEvent(customEvent); 
+    customEvent(`Spelare ${currentPlayerProxy.name}  svarade: ${content}`, '#game-question-button1');
   };
 
 };
@@ -349,8 +343,8 @@ function betting(turn) {
     currentPlayerProxy.marks -= slider.value; 
     proxyGamePot.pot += currentPlayerProxy.bet[0]; 
     
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+    customEvent(`Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, '.js-player-bet');
+
   });
   //
 
@@ -372,12 +366,8 @@ function betting(turn) {
   document.querySelector('.js-player-pass').addEventListener('click', function () {
     playSoundFx('pass');
     currentPlayerProxy.pass = true;
-
-     let customEvent = new CustomEvent(
-       "gameEvent", {
-         detail: `Spelare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, bubbles: true, cancelable: true 
-      });
-      document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+    
+    customEvent(`Spelare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, '.js-player-pass');
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.pass}</i>`;
 
@@ -399,8 +389,7 @@ function betting(turn) {
     playSoundFx('fold');
     currentPlayerProxy.fold = true;
 
-    let customEvent = new CustomEvent("gameEvent", {detail: `Spelare ${currentPlayerProxy.name} lägger sig ${currentPlayerProxy.fold}`, bubbles: true, cancelable: true });
-    document.querySelector('.js-player-bet').dispatchEvent(customEvent);
+    customEvent(`Spelare ${currentPlayerProxy.name} lägger sig ${currentPlayerProxy.fold}`, '.js-player-fold');
 
     document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
 
