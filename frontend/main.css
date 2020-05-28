@@ -1,14 +1,22 @@
 :root {
   --min-height: 50px; 
   --standard-padding: 1rem;
-  --light-text-color: #eee;
+  --light-text-color: var(--grey-100);
+  --button-bgcolor: hsla(17, 8%, 13%, 1);
+  --grey-100: hsla(24, 12%, 98%, 1);
+  --grey-200: hsla(24, 10%, 78%, 1);
+  --grey-300: hsla(24, 8%, 58%, 1);
+  --grey-400: hsla(24, 6%, 38%, 1);
+  --grey-500: hsla(24, 4%, 18%, 1);
+  --grey-600: hsla(24, 2%, 8%, 1);
+  --grey-700: hsla(24, 1%, 2%, 1);
 }
 
 body {
   font-style: normal;
   font-family: 'Manrope','Roboto Slab','Comic Neue', sans-serif;
-  color: #333;
-  background-color: #F0EEE1;
+  color: var(--grey-500);
+  background-color: var(--grey-100);
   margin: 0;
   padding: 0;
   font-size: 16px;
@@ -37,7 +45,7 @@ button:disabled {
   padding: 1rem;
   margin-top: 8px;
   color: var(--light-text-color);
-  background-color: #333;
+  background-color: #333; /*333*/
   border: 1px solid #444;
   border-radius: 4px;
 }
@@ -68,14 +76,14 @@ button:disabled {
   padding: 1rem;
   box-sizing: border-box;
   min-height: var(--min-height);
-  background-color: #FFFCDD;
+  background-color: var(--grey-100);
 }
 
 .game-choice {
   box-sizing: border-box;
   padding: var(--standard-padding);
   min-height: var(--min-height);
-  background-color: #FFD8D8;
+  background-color: var(--grey-100);
   color:rgb(73, 49, 49);
 }
 
@@ -133,7 +141,7 @@ fieldset {
   justify-content: space-between;
   gap: 10px;
   grid-area: controls;
-  background-color: #666;
+  background-color: var(--grey-400);
   
   
 }
@@ -149,11 +157,11 @@ fieldset {
 @keyframes avatarHighlightFx {
   0%, 100% {
     transform: translateX(0);
-    filter: drop-shadow(0 0 30px #111);
+    filter: drop-shadow(0 0 30px var(--grey-700));
   }
   50% {
     transform: translateX(10px);
-    filter: drop-shadow(0 0 60px #111);
+    filter: drop-shadow(0 0 60px var(--grey-700));
   }
 }
 
@@ -165,7 +173,7 @@ fieldset {
 
 .player-switch {
   box-sizing: border-box;
-  border: 1px dotted #666;
+  border: 1px dotted var(var(--grey-300));
   /*padding: var(--standard-padding);*/
   
 }
@@ -176,7 +184,7 @@ fieldset {
 	font-size: 16px;
 	font-family: sans-serif;
 	font-weight: 700;
-	color: #444;
+	color: var(--grey-500);
 	line-height: 1.3;
 	padding: 0.5rem;
 	width: 100%;
@@ -222,8 +230,8 @@ fieldset {
   padding: 1rem;
   margin-top: 8px;
   color: var(--light-text-color);
-  background-color: #333;
-  border: 1px solid #444;
+  background-color: var(--grey-500);
+  border: 1px solid var(--grey-600);
   border-radius: 4px;
 }
 
@@ -257,14 +265,13 @@ fieldset {
 	font-size: 16px;
 	font-family: sans-serif;
 	font-weight: 700;
-	color: #444;
+	color: var(--grey-400);
 	line-height: 1.3;
 	padding: 0.5rem;
 	width: 100%;
 	box-sizing: border-box;
 	margin: 0;
 	border: 1px solid #aaa;
-	box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
 	border-radius: 0.5rem;
 	-moz-appearance: none;
 	-webkit-appearance: none;
@@ -287,7 +294,6 @@ fieldset {
 .game-board-wrapper {
   position: relative;
   grid-area: gameboard;
-  
   background-color: burlywood;
  }
 
@@ -326,7 +332,6 @@ fieldset {
   color: #d3ae50;
   min-width: 300px;
 }
-
 
 
 .player1 {
@@ -389,7 +394,7 @@ fieldset {
   box-sizing: border-box;
   padding: var(--standard-padding);
   color: var(--light-text-color);
-  background-color: #333;
+  background-color: var(--grey-500);
   line-height: 1.6;
   overflow-y: scroll;
 }
