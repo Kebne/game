@@ -15,14 +15,29 @@
         <div class="game-log"></div>
         <div class="game-board-wrapper">
           <div class="game-board">
-            <div class="player1"><img class="img-full-width" id="player1" src="images/empty-chair.png"></div>
+            <div class="player1">
+              <img class="img-full-width" id="player1" src="images/empty-chair.png">
+              <player-box class="game-hide" player="player1"></player-box>
+            </div>
             <div class="game-questions game-hide"></div>
             <div class="game-betting game-hide"></div>
             <div class="board"><span class="board-pot"></span></div>
-            <div class="player4"><img class="img-full-width" id="player4" src="images/empty-chair.png"></div>
-            <div class="player2"><img class="img-full-width" id="player2" src="images/empty-chair.png"></div>
-            <div class="player3"><img class="img-full-width" id="player3" src="images/empty-chair.png"></div>
-            <div class="player5"><img class="img-full-width" id="player5" src="images/empty-chair.png"></div>
+            <div class="player4">
+              <img class="img-full-width" id="player4" src="images/empty-chair.png">
+              <player-box class="game-hide" player="player4"></player-box>
+            </div>
+            <div class="player2">
+              <img class="img-full-width" id="player2" src="images/empty-chair.png">
+              <player-box class="game-hide" player="player2"></player-box>
+            </div>
+            <div class="player3">
+              <img class="img-full-width" id="player3" src="images/empty-chair.png">
+              <player-box class="game-hide" player="player3"></player-box>
+            </div>
+            <div class="player5">
+              <img class="img-full-width" id="player5" src="images/empty-chair.png">
+              <player-box class="game-hide" player="player5"></player-box>
+            </div>
           </div>
       </div>
         <player-controls class="player-input-wrapper"></player-controls>
@@ -85,8 +100,8 @@ proxyGamePot.pot = 0;
 
 // This is a globally function so we can reapply event listner when players left
 function createPlayer() { 
-    let wichPlayer = event.target.id;
-    let playerNr = String(wichPlayer);
+    let whichPlayer = event.target.id;
+    let playerNr = String(whichPlayer);
     playSoundFx('seated');
 
     // This switches wich proxy to go to.
@@ -115,8 +130,11 @@ function createPlayer() {
     console.log('%c Player seated: ','color: #156b26', currentPlayerProxy);
     seatedPlayers.push(playerNr);
     console.log('seatedPlayers', seatedPlayers);
-    let element1 = document.querySelector(`.${playerNr}`);
-    element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
+    let element1 = document.querySelector(`[player='${playerNr}']`); 
+    element1.classList.remove('game-hide');
+    let element2 = document.querySelector(`.game-board #${playerNr}`); 
+    element2.classList.add('game-hide');
+    
     document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${currentPlayerProxy.name}`;
     //currentPlayerProxy.marks = currentPlayerProxy.marks; all should be current
     document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${currentPlayerProxy.marks}`;
@@ -388,6 +406,7 @@ function betting(turn) {
       bettingElement.classList.add('game-hide');
       theGameLoop.next();
     };
+
   };
 
   function playerFold() { 
@@ -401,7 +420,7 @@ function betting(turn) {
       theGameLoop.done = true;
       endGame();
     };
-    
+
   };
  
   // Player betting slider
