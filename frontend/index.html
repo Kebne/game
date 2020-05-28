@@ -268,9 +268,7 @@ function firstBet() {
   proxyplayer4.marks -= 10;
   proxyplayer5.marks -= 10;
   proxyGamePot.pot += 50;
-
   customEvent(`Alla spelare har gjort första bettet`, '.js-player-ready');
-  
   document.querySelector('.js-player-ready-q').addEventListener('click', function () {
     playSoundFx('start');
     theGameLoop.next();
@@ -330,15 +328,39 @@ function betting(turn) {
     return result;
   };
   const playersRemain = checkPlayersRemaining();
-  console.log('playersRemain: ', playersRemain);
 
-   // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
-   let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
-    getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
+  // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
+  let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
+  getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
   
- 
-  // Player Betting
-  document.querySelector('.js-player-bet').addEventListener('click', function () {
+  
+  document.querySelector('.player-input').addEventListener('click', function (event) {
+    console.log('event target', event.target.classList[0]);
+    const whichButton = event.target.classList[0];
+    
+    switch (whichButton) {
+      
+      case 'js-player-bet':
+        console.log('bet');
+        playerBets();
+        break;
+      
+      case 'js-player-pass':
+        console.log('pass');
+        playerPass();
+        break;
+      
+      case 'js-player-fold':
+        console.log('fold');
+        playerFold();
+        break;
+      default:
+        console.log(`Event target not found`);
+    };
+
+  });
+
+  function playerBets() {
     animateMarker(currentPlayer); 
     playSoundFx('betting');
     let sliderValue = Number(slider.value);
@@ -346,13 +368,38 @@ function betting(turn) {
     currentPlayerProxy.bet.unshift(sliderValue);
     currentPlayerProxy.marks -= slider.value; 
     proxyGamePot.pot += currentPlayerProxy.bet[0]; 
-    
     customEvent(`Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, '.js-player-bet');
+  };
 
-  });
-  //
+  function playerPass() {
+    playSoundFx('pass');
+    currentPlayerProxy.pass = true;
+    customEvent(`Spelare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, '.js-player-pass');
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.pass}</i>`;
 
+    if(proxyplayer1.pass == true && proxyplayer2.pass == true) {
+      console.log('Both players pass, getting new questions');
+      proxyplayer1.pass = false;
+      proxyplayer2.pass = false;
+      bettingElement.classList.add('game-hide');
+      theGameLoop.next();
+    };
+  };
 
+  function playerFold() { 
+    playSoundFx('fold');
+    currentPlayerProxy.fold = true;
+    customEvent(`Spelare ${currentPlayerProxy.name} lägger sig ${currentPlayerProxy.fold}`, '.js-player-fold');
+    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
+    
+    const playersLeftAfterFold = checkPlayersRemaining();
+    if(playersLeftAfterFold.length == 0) {
+      bettingElement.classList.add('game-hide');
+      theGameLoop.done = true;
+      endGame();
+    };
+  };
+ 
   // Player betting slider
   const slider = document.querySelector('.bet-slider');
   const output = document.querySelector('.bet-slider-output');
@@ -363,48 +410,6 @@ function betting(turn) {
     console.log(`Slider output running ${slider.value}`);
     output.innerHTML = slider.value;
   };
-  //
-
-
-  // Player Passing
-  document.querySelector('.js-player-pass').addEventListener('click', function () {
-    playSoundFx('pass');
-    currentPlayerProxy.pass = true;
-    
-    customEvent(`Spelare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, '.js-player-pass');
-
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.pass}</i>`;
-
-    if(proxyplayer1.pass == true && proxyplayer2.pass == true) {
-      console.log('Both players pass, getting new questions');
-      proxyplayer1.pass = false;
-      proxyplayer2.pass = false;
-      bettingElement.classList.add('game-hide');
-      theGameLoop.next();
-    };
-
-  });
-  //
-
-
-  // Player Fold
-  document.querySelector('.js-player-fold').addEventListener('click', function () {
-    playSoundFx('fold');
-    currentPlayerProxy.fold = true;
-
-    customEvent(`Spelare ${currentPlayerProxy.name} lägger sig ${currentPlayerProxy.fold}`, '.js-player-fold');
-
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
-
-    const playersLeftAfterFold = checkPlayersRemaining();
-    console.log('playersLeftAfterFold',playersLeftAfterFold);
-    if(playersLeftAfterFold.length == 0) {
-      bettingElement.classList.add('game-hide');
-      theGameLoop.done = true;
-      endGame();
-    };
-
-  });
   //
 
   document.querySelector('.js-player-ready-betting-done').addEventListener('click', function () {
