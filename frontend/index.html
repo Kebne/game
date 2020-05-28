@@ -49,8 +49,13 @@ const proxyHandler = {
   set(target, property, value, receiver) {
     target[property] = value;
     if (property.localeCompare('marks') == 0) {
+      // need also to handle target.name here
       let output = document.querySelector(`.${currentPlayer}-info-marks`);
       output.innerHTML = `Marker: ${value}.`;
+    };
+    if (property.localeCompare('pass') == 0 || property.localeCompare('fold') == 0) {
+      const output = document.querySelector(`.player-status`);
+      output.innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
     };
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
@@ -108,7 +113,7 @@ function createPlayer() {
     
     
     console.log('%c Player seated: ','color: #156b26', currentPlayerProxy);
-    seatedPlayers.push(playerNr); //maybe alter this
+    seatedPlayers.push(playerNr);
     console.log('seatedPlayers', seatedPlayers);
     let element1 = document.querySelector(`.${playerNr}`);
     element1.innerHTML = `<player-box player="${playerNr}"></player-box>`;
@@ -155,7 +160,7 @@ function customEvent(message, dispatchFrom) {
 
 
 const playerLeaveElement = document.querySelector('.game-board');
-document.addEventListener('click', function() {
+playerLeaveElement.addEventListener('click', function() {
   let whatElement = event.target;
   let getString = whatElement.className;
   let playerToSelectForLeaving = getString.replace('-leave', '');
@@ -172,7 +177,7 @@ document.addEventListener('click', function() {
   
 });
 
-document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${players[currentPlayer].fold}</i>`;
+document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
   
 togglingCurrentPlayer(players);
 
@@ -335,7 +340,6 @@ function betting(turn) {
   
   
   document.querySelector('.player-input').addEventListener('click', function (event) {
-    console.log('event target', event.target.classList[0]);
     const whichButton = event.target.classList[0];
     
     switch (whichButton) {
@@ -354,6 +358,7 @@ function betting(turn) {
         console.log('fold');
         playerFold();
         break;
+
       default:
         console.log(`Event target not found`);
     };
@@ -375,7 +380,6 @@ function betting(turn) {
     playSoundFx('pass');
     currentPlayerProxy.pass = true;
     customEvent(`Spelare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, '.js-player-pass');
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.pass}</i>`;
 
     if(proxyplayer1.pass == true && proxyplayer2.pass == true) {
       console.log('Both players pass, getting new questions');
@@ -390,14 +394,14 @@ function betting(turn) {
     playSoundFx('fold');
     currentPlayerProxy.fold = true;
     customEvent(`Spelare ${currentPlayerProxy.name} lägger sig ${currentPlayerProxy.fold}`, '.js-player-fold');
-    document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
-    
     const playersLeftAfterFold = checkPlayersRemaining();
+    
     if(playersLeftAfterFold.length == 0) {
       bettingElement.classList.add('game-hide');
       theGameLoop.done = true;
       endGame();
     };
+    
   };
  
   // Player betting slider
