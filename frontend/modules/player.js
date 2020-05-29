@@ -19,7 +19,6 @@ export class playerBox extends HTMLElement {
       <span class="${whichPlayer}-info-rightanswer">Antal rätt svar: 0</span><br>
       <span class="${whichPlayer}-info-ready"></span>
     </div>
-    <div><button class="${whichPlayer}-leave">Lämna</button></div>
     `;
     this.appendChild(templateElement.content.cloneNode(true));
   };

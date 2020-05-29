@@ -41,6 +41,7 @@
           </div>
       </div>
         <player-controls class="player-input-wrapper"></player-controls>
+        <admin-controls class="admin-input-wrapper"></admin-controls>
       </div>
   </main>
 </body>
@@ -52,6 +53,7 @@ import {createQuestionForm} from './modules/createquestionform.js';
 import {countDown} from './modules/countdown.js';
 import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
+import {controlsAdmin} from './modules/controls-admin.js';
 import {animateMarker} from './modules/animations.js';
 
 var currentPlayer = 'player1';
@@ -331,6 +333,8 @@ function askQuestion(nr) {
 function betting(turn) {
   console.log(`%c Betting round ${turn} now running`, 'font-weight: 700');
   document.querySelector('.game-questions').classList.add('game-hide');
+  let inputElement = document.querySelector('.player-bet');
+  inputElement.classList.remove('game-hide');
   let bettingElement = document.querySelector('.game-betting');
   bettingElement.classList.remove('game-hide');
   bettingElement.innerText = 'Dags att betta';
