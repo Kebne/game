@@ -16,8 +16,6 @@ export class playerBox extends HTMLElement {
     <div class="${whichPlayer}-info">
       <span class="${whichPlayer}-info-name"></span><br>
       <span class="${whichPlayer}-info-marks"></span><br>
-      <span class="${whichPlayer}-info-rightanswer">Antal rätt svar: 0</span><br>
-      <span class="${whichPlayer}-info-ready"></span>
     </div>
     `;
     this.appendChild(templateElement.content.cloneNode(true));

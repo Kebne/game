@@ -27,6 +27,15 @@ body {
   width: 100%;
 }
 
+.img-correct-answer{
+max-width: 48px;
+}
+
+.img-wrong-answer{
+  max-width: 48px;
+  filter: grayscale(1);
+}
+
 button:disabled {
   filter: brightness(120%) contrast(80%);
   cursor: not-allowed;
@@ -102,12 +111,13 @@ button:disabled {
   position: relative;
   width: 100%;
   margin-top: 3rem;
+  font-size: 2rem;
   height: calc(100%-3rem);
   text-align: center;
   box-sizing: border-box;
   grid-area: board;
   padding: var(--standard-padding);
-  background-color: rgba(80, 137, 211, 0.9);
+  /*background-color: rgba(80, 137, 211, 0.9);*/
   z-index: 11;
 }
 
@@ -140,6 +150,7 @@ fieldset {
   display: flex;
   justify-content: space-between;
   gap: 10px;
+  min-height: 150px;
   grid-area: controls;
   background-color: var(--grey-400);
 }
@@ -317,7 +328,7 @@ fieldset {
 }
 
 .admin-input-wrapper {
-  color: var(--light-text-color);
+  color: var(--grey-600);
   padding: var(--standard-padding);
   box-sizing: border-box;
   display: flex;

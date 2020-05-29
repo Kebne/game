@@ -6,11 +6,11 @@ export class controls extends HTMLElement {
     let templateElement = document.createElement('template');
     templateElement.innerHTML = `
     
-    <div class="player1-info-rightanswer">Antal rätt svar: 0</span>
+    <div class="player-info-rightanswer"></div>
 
-      <div><button class="player-input-button">Lämna (ej funktionell)</button></div>
+      <div><button class="player-input-button game-hide">Lämna (ej funktionell)</button></div>
 
-      <div class="player-bet game-hide">
+      <div id="player-bet" class="game-hide">
 
         <div class="game-slider">
           <label for="playerslider">Att satsa:</label>

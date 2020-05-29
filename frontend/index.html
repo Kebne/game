@@ -110,6 +110,8 @@ function createPlayer() {
     if (playerNr.localeCompare('player1') == 0) {
       currentPlayerProxy = proxyplayer1;
       proxyplayer1.seated = true;
+      customEvent(`Spelare player1 redo`, '.js-player-ready');
+      theGameLoop.next();
     };
     if (playerNr.localeCompare('player2') == 0) {
       currentPlayerProxy = proxyplayer2;
@@ -279,7 +281,7 @@ function seating() {
     proxyplayer4.ready = true;
     proxyplayer5.ready = true;
     currentPlayerProxy = proxyplayer1; // Make this p1 again so we now its that player that begins
-    customEvent(`Spelare ${ currentPlayerProxy.name} redo`, '.js-player-ready');
+    customEvent(`Spelare ${currentPlayerProxy.name} redo`, '.js-player-ready');
     theGameLoop.next();
   });
 };
@@ -288,17 +290,14 @@ function seating() {
 function firstBet() {
   console.log('%c Firstbet now running', 'font-weight: 700');
   proxyplayer1.marks -= 10;
-  proxyplayer2.marks -= 10;
-  proxyplayer3.marks -= 10;
-  proxyplayer4.marks -= 10;
-  proxyplayer5.marks -= 10;
-  proxyGamePot.pot += 50;
+  proxyGamePot.pot += 10;
   customEvent(`Alla spelare har gjort första bettet`, '.js-player-ready');
   document.querySelector('.js-player-ready-q').addEventListener('click', function () {
     playSoundFx('start');
     theGameLoop.next();
   }); 
-
+  // p1 code
+  setTimeout(function(){  theGameLoop.next(); }, 3000);
 };
 
 
@@ -319,11 +318,23 @@ function askQuestion(nr) {
     let content = event.target.innerHTML;
     let correct = currentQuestion.correctAnswer;
     if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-      console.log('Players answer is correct!');
       currentPlayerProxy.rightAnswerNr++;
-      let correctOutput = document.querySelector(`.${currentPlayer}-info-rightanswer`);
-      correctOutput.innerText = `Antal rätt svar: ${currentPlayerProxy.rightAnswerNr}`;
-    };
+      let correctOutput = document.querySelector(`.player-info-rightanswer`);
+      let starImage = document.createElement('img');
+      starImage.src = 'images/star.png';
+      starImage.className = 'img-correct-answer';
+      starImage.alt = 'star icon'
+      correctOutput.append(starImage);
+      //correctOutput.innerText = `Antal rätt svar: ${currentPlayerProxy.rightAnswerNr}`;
+    }
+    else {
+      let correctOutput = document.querySelector(`.player-info-rightanswer`);
+      let starImage = document.createElement('img');
+      starImage.src = 'images/star.png';
+      starImage.className = 'img-wrong-answer';
+      starImage.alt = 'star icon wrong'
+      correctOutput.append(starImage);
+    }
     customEvent(`Spelare ${currentPlayerProxy.name}  svarade: ${content}`, '#game-question-button1');
   };
 
@@ -333,8 +344,11 @@ function askQuestion(nr) {
 function betting(turn) {
   console.log(`%c Betting round ${turn} now running`, 'font-weight: 700');
   document.querySelector('.game-questions').classList.add('game-hide');
-  let inputElement = document.querySelector('.player-bet');
+  
+  let inputElement = document.querySelector('#player-bet');
+  console.log('inputElement', inputElement);
   inputElement.classList.remove('game-hide');
+  
   let bettingElement = document.querySelector('.game-betting');
   bettingElement.classList.remove('game-hide');
   bettingElement.innerText = 'Dags att betta';

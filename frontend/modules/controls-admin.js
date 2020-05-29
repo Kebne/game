@@ -5,6 +5,8 @@ export class controlsAdmin extends HTMLElement {
    
     let templateElement = document.createElement('template');
     templateElement.innerHTML = `
+    <details>
+    <summary>Admin kontroll-panel</summary>
     <div>
       <div class="player-status"></div>
       <div class="game-progress-buttons">
@@ -29,8 +31,8 @@ export class controlsAdmin extends HTMLElement {
           <button class="question-button player-input-button">Få fråga</button>
         </div>
       </div>
-
-     
+    </div>
+    </details> 
     `;
     this.appendChild(templateElement.content.cloneNode(true));
   };
