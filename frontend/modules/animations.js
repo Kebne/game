@@ -54,7 +54,7 @@
       duration: 700,
       fill: 'forwards',
       easing: 'ease-out',
-    }
+    };
   
   export function animateMarker(currentPlayer) {
     switch (currentPlayer) {
@@ -74,4 +74,33 @@
       console.log('Sorry, no player mark found');
     }
   };
+
+
+  const optionsPot = {
+    iterations: 2,
+    iterationStart: 0,
+    delay: 0,
+    endDelay: 0,
+    duration: 1700,
+    fill: 'forwards',
+    easing: 'ease-out',
+  };
+
+  const animationPot = [
+    { 
+      fontSize: '1rem', 
+    },
+    { 
+      fontSize: '2rem',
+      transformOrigin: 'center',
+      filter: 'drop-shadow(16px 16px 10px rgba(0,0,0,0.9))',
+    },
+    { 
+      fontSize: '1rem',
+    }
+  ];
   
+  export function animateGamePot() {
+    const element  = document.querySelector(`.board-pot`);
+    element.animate(animationPot, optionsPot);
+  };

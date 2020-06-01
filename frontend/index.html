@@ -55,6 +55,7 @@ import {players} from './modules/players.js';
 import {controls} from './modules/controls.js';
 import {controlsAdmin} from './modules/controls-admin.js';
 import {animateMarker} from './modules/animations.js';
+import {animateGamePot} from './modules/animations.js';
 
 var currentPlayer = 'player1';
 var data = Object.values(players); //this should not be needed anymore
@@ -85,6 +86,7 @@ const proxyHandlerGamePot = {
   target[property] = value;
   let outputPot = document.querySelector(`.board-pot`);
   outputPot.innerHTML = `Spelpotten är ${value}`;
+  if( value != 0 ) { animateGamePot() };
   return true;
   }
 };

@@ -27,12 +27,12 @@ body {
   width: 100%;
 }
 
-.img-correct-answer{
+.img-correct-answer, .img-wrong-answer{
 max-width: 48px;
+margin-inline-end: 0.5rem;
 }
 
 .img-wrong-answer{
-  max-width: 48px;
   filter: grayscale(1);
 }
 
