@@ -4,6 +4,7 @@ export let questions = {
     alternative1: 'Vatten',
     alternative2: 'Öl',
     alternative3: 'Vin',
+    alternative4: 'Läsk',
     correctAnswer: 'Öl',
   },
   question2: {
@@ -11,6 +12,7 @@ export let questions = {
     alternative1: 'How I met your mother',
     alternative2: 'Friends',
     alternative3: 'Game of Thrones',
+    alternative4: 'Vilse i pankakan',
     correctAnswer: 'Game of Thrones',
   },
   question3: {
@@ -25,6 +27,7 @@ export let questions = {
     alternative1: 'Tom Baker',
     alternative2: 'Jon Pertwee',
     alternative3: 'Peter Davison',
+    alternative4: 'Sting',
     correctAnswer: 'Tom Baker',
   }
 };

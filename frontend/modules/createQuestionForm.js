@@ -1,5 +1,6 @@
 export function createQuestionForm(currentQuestion) {
     const templateElement = document.createElement('template');
+    //implement a loop belove so we dont need repeating the html code
     templateElement.innerHTML = `
     <div class="game-wait"></div>
       <div class="game-countdown"></div>
@@ -14,6 +15,9 @@ export function createQuestionForm(currentQuestion) {
           <div>
             <button id="game-question-button3" class="game-button">${currentQuestion.alternative3}</button>
           </div>
+          <div>
+          <button id="game-question-button4" class="game-button">${currentQuestion.alternative4}</button>
+        </div>
       </div>
       `;
       

@@ -65,15 +65,23 @@ var seatedPlayers = [];
 // Using proxy for handling events and states
 const proxyHandler = {
   set(target, property, value, receiver) {
+    console.log(`target: ${target}, property: ${property}, value: ${value}, receiver: ${receiver},`);
     target[property] = value;
     if (property.localeCompare('marks') == 0) {
-      // need also to handle target.name here
+      // need also to handle target.name here, also also need refactor so it just makes wich pler does what
       let output = document.querySelector(`.${currentPlayer}-info-marks`);
       output.innerHTML = `Marker: ${value}.`;
     };
     if (property.localeCompare('pass') == 0 || property.localeCompare('fold') == 0) {
       const output = document.querySelector(`.player-status`);
-      output.innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
+      output.innerHTML = `Pass: <i>${proxyPlayer.pass}</i>, Lägga sig <i>${proxyPlayer.fold}</i>`;
+    };
+    if (property.localeCompare('seated') == 0 && value == true) {
+      console.log('Player has been seated');
+      let element1 = document.querySelector(`[player='${target.internalName}']`); 
+      element1.classList.remove('game-hide');
+      let element2 = document.querySelector(`.game-board #${target.internalName}`); 
+      element2.classList.add('game-hide');
     };
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
@@ -86,18 +94,13 @@ const proxyHandlerGamePot = {
   target[property] = value;
   let outputPot = document.querySelector(`.board-pot`);
   outputPot.innerHTML = `Spelpotten är ${value}`;
+  // So we don't animate before players seated
   if( value != 0 ) { animateGamePot() };
   return true;
   }
 };
 
-var proxyplayer1 = new Proxy(players.player1, proxyHandler);
-var proxyplayer2 = new Proxy(players.player2, proxyHandler);
-var proxyplayer3 = new Proxy(players.player3, proxyHandler);
-var proxyplayer4 = new Proxy(players.player4, proxyHandler);
-var proxyplayer5 = new Proxy(players.player5, proxyHandler);
-
-var currentPlayerProxy = proxyplayer1;
+var proxyPlayer = new Proxy(players['player1'], proxyHandler);
 
 var proxyGamePot = new Proxy(gamePot ,proxyHandlerGamePot);
 proxyGamePot.pot = 0;
@@ -107,43 +110,18 @@ function createPlayer() {
     let whichPlayer = event.target.id;
     let playerNr = String(whichPlayer);
     playSoundFx('seated');
-
-    // This switches wich proxy to go to.
-    if (playerNr.localeCompare('player1') == 0) {
-      currentPlayerProxy = proxyplayer1;
-      proxyplayer1.seated = true;
-      customEvent(`Spelare player1 redo`, '.js-player-ready');
-      theGameLoop.next();
-    };
-    if (playerNr.localeCompare('player2') == 0) {
-      currentPlayerProxy = proxyplayer2;
-      proxyplayer2.seated = true;
-    };
-    if (playerNr.localeCompare('player3') == 0) {
-      currentPlayerProxy = proxyplayer3;
-      proxyplayer3.seated = true;
-    };
-    if (playerNr.localeCompare('player4') == 0) {
-      currentPlayerProxy = proxyplayer4;
-      proxyplayer4.seated = true;
-    };
-    if (playerNr.localeCompare('player5') == 0) {
-      currentPlayerProxy = proxyplayer5;
-      proxyplayer5.seated = true;
-    };
-    
-    
-    console.log('%c Player seated: ','color: #156b26', currentPlayerProxy);
+    proxyPlayer.seated = true;
     seatedPlayers.push(playerNr);
     console.log('seatedPlayers', seatedPlayers);
-    let element1 = document.querySelector(`[player='${playerNr}']`); 
+    /*let element1 = document.querySelector(`[player='${playerNr}']`); 
     element1.classList.remove('game-hide');
     let element2 = document.querySelector(`.game-board #${playerNr}`); 
-    element2.classList.add('game-hide');
+    element2.classList.add('game-hide');*/
     
-    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${currentPlayerProxy.name}`;
-    //currentPlayerProxy.marks = currentPlayerProxy.marks; all should be current
-    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${currentPlayerProxy.marks}`;
+    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${proxyPlayer.name}`;
+    //proxyPlayer.marks = proxyPlayer.marks; all should be current
+    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${proxyPlayer.marks}`;
+    theGameLoop.next();
 };
 
 
@@ -156,13 +134,14 @@ function playSoundFx(sound = 'start', volume = 1) {
 
 function* gameLoop() {
   yield seating();
-  yield firstBet(); 
+  yield firstBet(10); 
   yield askQuestion(1);
   yield askQuestion(2);
   yield betting(0);
   yield askQuestion(3);
   yield askQuestion(4);
   yield betting(1);
+  yield endGame();
 };
 var theGameLoop = gameLoop();
 theGameLoop.next();
@@ -173,7 +152,7 @@ document.addEventListener("gameEvent", function(event) {
   let time = new Date(); 
   let timeMin = time.getMinutes();
   let timeSec = time.getSeconds();
-  document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
+  document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br><br>`);
 });
 
 // Helper function for Custom events
@@ -201,7 +180,7 @@ playerLeaveElement.addEventListener('click', function() {
   
 });
 
-document.querySelector('.player-status').innerHTML = `Pass: <i>${currentPlayerProxy.pass}</i>, Lägga sig <i>${currentPlayerProxy.fold}</i>`;
+document.querySelector('.player-status').innerHTML = `Pass: <i>${proxyPlayer.pass}</i>, Lägga sig <i>${proxyPlayer.fold}</i>`;
   
 togglingCurrentPlayer(players);
 
@@ -210,7 +189,7 @@ let highlight = document.querySelector(`.${currentPlayer}`);
 highlight.classList.add('current-player-highlight');
 
 
-// You can remove this function in production, used for testing diffrent players actions.
+// Change player, You can remove this function in production, used for testing diffrent players actions.
 function togglingCurrentPlayer(data) {
   
   var selectElement = document.querySelector('.player-switch-select');
@@ -223,6 +202,7 @@ function togglingCurrentPlayer(data) {
       selectElement.appendChild(optionElement);
   });
   
+  
   selectElement.addEventListener('change', function() {
     let choosenPlayer = selectElement.options[selectElement.selectedIndex].value;
     let highlight = document.querySelector(`.${currentPlayer}`);
@@ -230,26 +210,26 @@ function togglingCurrentPlayer(data) {
     
     // This so we also switch to correct proxy
     if (choosenPlayer.localeCompare('player1') == 0) {
-      currentPlayerProxy = proxyplayer1
+      proxyPlayer = proxyplayer1
     };
     if (choosenPlayer.localeCompare('player2') == 0) {
-      currentPlayerProxy = proxyplayer2
+      proxyPlayer = proxyplayer2
     };
     if (choosenPlayer.localeCompare('player3') == 0) {
-      currentPlayerProxy = proxyplayer3
+      proxyPlayer = proxyplayer3
     };
     if (choosenPlayer.localeCompare('player4') == 0) {
-      currentPlayerProxy = proxyplayer4;
+      proxyPlayer = proxyplayer4;
     };
     if (choosenPlayer.localeCompare('player5') == 0) {
-      currentPlayerProxy = proxyplayer5;
+      proxyPlayer = proxyplayer5;
     };
       
     currentPlayer = choosenPlayer;
     
     let highlight2 = document.querySelector(`.${currentPlayer}`);
     highlight2.classList.add('current-player-highlight');
-    console.log('%c Current proxy player is now: ', 'color: #1a329b', currentPlayerProxy);
+    console.log('%c Current proxy player is now: ', 'color: #1a329b', proxyPlayer);
     console.log('%c CurrentPlayer is now:', 'color: #1a329b', currentPlayer);
   });
   
@@ -277,29 +257,24 @@ function seating() {
   document.querySelector('.js-player-ready').addEventListener('click', function () {
     playSoundFx('start');
     // manually setting all players to ready, we do this later at back-end
-    proxyplayer1.ready = true;
-    proxyplayer2.ready = true;
-    proxyplayer3.ready = true;
-    proxyplayer4.ready = true;
-    proxyplayer5.ready = true;
-    currentPlayerProxy = proxyplayer1; // Make this p1 again so we now its that player that begins
-    customEvent(`Spelare ${currentPlayerProxy.name} redo`, '.js-player-ready');
+    proxyPlayer.ready = true;
+    customEvent(`Spelare ${proxyPlayer.name} redo`, '.js-player-ready');
     theGameLoop.next();
   });
 };
 
 
-function firstBet() {
+function firstBet(autoBetSum = 10) {
   console.log('%c Firstbet now running', 'font-weight: 700');
-  proxyplayer1.marks -= 10;
-  proxyGamePot.pot += 10;
+  proxyPlayer.marks -= autoBetSum;
+  proxyGamePot.pot += autoBetSum;
   customEvent(`Alla spelare har gjort första bettet`, '.js-player-ready');
   document.querySelector('.js-player-ready-q').addEventListener('click', function () {
     playSoundFx('start');
     theGameLoop.next();
   }); 
   // p1 code
-  setTimeout(function(){  theGameLoop.next(); }, 3000);
+  setTimeout(()=>theGameLoop.next(),8000);
 };
 
 
@@ -307,27 +282,27 @@ function askQuestion(nr) {
   console.log(`%c Question ${nr} now running`, 'font-weight: 700');
   let currentQuestion = questions[`question${nr}`];
   document.querySelector('.game-questions').classList.remove('game-hide');
-  countDown(2, currentQuestion, theGameLoop);
+  countDown(5, currentQuestion, theGameLoop);
   playSoundFx('question', 0.1);
   createQuestionForm(currentQuestion);
 
   document.querySelector('#game-question-button1').addEventListener('click', questionAnswerCheck);
   document.querySelector('#game-question-button2').addEventListener('click', questionAnswerCheck);
   document.querySelector('#game-question-button3').addEventListener('click', questionAnswerCheck);
+  document.querySelector('#game-question-button4').addEventListener('click', questionAnswerCheck);
 
   function questionAnswerCheck(event) {
     playSoundFx('start');
     let content = event.target.innerHTML;
     let correct = currentQuestion.correctAnswer;
     if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
-      currentPlayerProxy.rightAnswerNr++;
+      proxyPlayer.rightAnswerNr++;
       let correctOutput = document.querySelector(`.player-info-rightanswer`);
       let starImage = document.createElement('img');
       starImage.src = 'images/star.png';
       starImage.className = 'img-correct-answer';
       starImage.alt = 'star icon'
       correctOutput.append(starImage);
-      //correctOutput.innerText = `Antal rätt svar: ${currentPlayerProxy.rightAnswerNr}`;
     }
     else {
       let correctOutput = document.querySelector(`.player-info-rightanswer`);
@@ -337,7 +312,7 @@ function askQuestion(nr) {
       starImage.alt = 'star icon wrong'
       correctOutput.append(starImage);
     }
-    customEvent(`Spelare ${currentPlayerProxy.name}  svarade: ${content}`, '#game-question-button1');
+    customEvent(`Spelare ${proxyPlayer.name}  svarade: ${content}`, '#game-question-button1');
   };
 
 };
@@ -353,7 +328,11 @@ function betting(turn) {
   
   let bettingElement = document.querySelector('.game-betting');
   bettingElement.classList.remove('game-hide');
-  bettingElement.innerText = 'Dags att betta';
+  bettingElement.innerText = 'Dags att betta!';
+  setTimeout(hideBetting(), 4000);
+  function hideBetting() {
+    document.querySelector('.game-betting').classList.add('game-hide');
+  };
 
   let bet = document.querySelector('.js-player-bet');
   bet.removeAttribute('disabled');
@@ -363,6 +342,17 @@ function betting(turn) {
   
   let fold = document.querySelector('.js-player-fold');
   fold.removeAttribute('disabled');
+
+  // playerSimulateBet, for testing purpose, remove in production
+  function playerSimulateBet() {
+      proxyPlayer = 'proxyplayer2'; //fix this line
+      proxyPlayer.bet.unshift(100);
+      proxyPlayer.marks -= 100; 
+      proxyGamePot.pot += proxyPlayer.bet[0];
+      customEvent(`Spelare ${proxyPlayer.name} bettar 100`, '.js-player-bet');
+      proxyPlayer = proxyplayer1;
+    }
+    //playerSimulateBet();
 
   function checkPlayersRemaining() {
     const result = data.filter(player => player.fold == false);
@@ -407,21 +397,23 @@ function betting(turn) {
     animateMarker(currentPlayer); 
     playSoundFx('betting');
     let sliderValue = Number(slider.value);
-    console.log('slidervalue when betted: ', sliderValue)
-    currentPlayerProxy.bet.unshift(sliderValue);
-    currentPlayerProxy.marks -= slider.value; 
-    proxyGamePot.pot += currentPlayerProxy.bet[0]; 
-    customEvent(`Spelare ${currentPlayerProxy.name} bettar ${sliderValue}`, '.js-player-bet');
+    console.log('slidervalue when betted: ', sliderValue);
+    proxyPlayer.bet.unshift(sliderValue);
+    proxyPlayer.marks -= slider.value; 
+    proxyGamePot.pot += proxyPlayer.bet[0]; 
+    customEvent(`Spelare ${proxyPlayer.name} bettar ${sliderValue}`, '.js-player-bet');
+     // p1 code
+    setTimeout(()=>theGameLoop.next(),6000);
   };
 
   function playerPass() {
     playSoundFx('pass');
-    currentPlayerProxy.pass = true;
-    customEvent(`Spelare ${currentPlayerProxy.name} passar ${currentPlayerProxy.pass}`, '.js-player-pass');
+    proxyPlayer.pass = true;
+    customEvent(`Spelare ${proxyPlayer.name} passar ${proxyPlayer.pass}`, '.js-player-pass');
 
-    if(proxyplayer1.pass == true && proxyplayer2.pass == true) {
+    if(proxyPlayer.pass == true && proxyplayer2.pass == true) {
       console.log('Both players pass, getting new questions');
-      proxyplayer1.pass = false;
+      proxyPlayer.pass = false;
       proxyplayer2.pass = false;
       bettingElement.classList.add('game-hide');
       theGameLoop.next();
@@ -431,8 +423,8 @@ function betting(turn) {
 
   function playerFold() { 
     playSoundFx('fold');
-    currentPlayerProxy.fold = true;
-    customEvent(`Spelare ${currentPlayerProxy.name} lägger sig ${currentPlayerProxy.fold}`, '.js-player-fold');
+    proxyPlayer.fold = true;
+    customEvent(`Spelare ${proxyPlayer.name} lägger sig ${proxyPlayer.fold}`, '.js-player-fold');
     const playersLeftAfterFold = checkPlayersRemaining();
     
     if(playersLeftAfterFold.length == 0) {
@@ -461,6 +453,8 @@ function betting(turn) {
   });
 
 };
+
+
 
 
 function endGame() {
