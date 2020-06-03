@@ -4,7 +4,6 @@ export class playerBox extends HTMLElement {
     super();
 
     let whichPlayer = this.getAttribute('player');
-    
     let templateElement = document.createElement('template');
     templateElement.innerHTML = `
     <div class="${whichPlayer}-avatar">

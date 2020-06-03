@@ -69,8 +69,13 @@ const proxyHandler = {
     target[property] = value;
     if (property.localeCompare('marks') == 0) {
       // need also to handle target.name here, also also need refactor so it just makes wich pler does what
-      let output = document.querySelector(`.${currentPlayer}-info-marks`);
+      let output = document.querySelector(`.${target.internalName}-info-marks`);
       output.innerHTML = `Marker: ${value}.`;
+    };
+    if (property.localeCompare('name') == 0) {
+      // need also to handle target.name here, also also need refactor so it just makes wich pler does what
+      let output = document.querySelector(`.${target.internalName}-info-name`);
+      output.innerHTML = `Namn: ${value}.`;
     };
     if (property.localeCompare('pass') == 0 || property.localeCompare('fold') == 0) {
       const output = document.querySelector(`.player-status`);
@@ -101,16 +106,27 @@ const proxyHandlerGamePot = {
 };
 
 var proxyPlayer = new Proxy(players['player1'], proxyHandler);
+var proxyPlayer2 = new Proxy(players.player2, proxyHandler);
+var proxyPlayer3 = new Proxy(players.player3, proxyHandler);
+var proxyPlayer4 = new Proxy(players.player4, proxyHandler);
+var proxyPlayer5 = new Proxy(players.player5, proxyHandler);
+
+
+
 
 var proxyGamePot = new Proxy(gamePot ,proxyHandlerGamePot);
 proxyGamePot.pot = 0;
 
 // This is a globally function so we can reapply event listner when players left
 function createPlayer() { 
-    let whichPlayer = event.target.id;
+    let whichPlayer = event.target.id; //player1
     let playerNr = String(whichPlayer);
     playSoundFx('seated');
     proxyPlayer.seated = true;
+    proxyPlayer2.seated = true;
+    proxyPlayer3.seated = true;
+    proxyPlayer4.seated = true;
+    proxyPlayer5.seated = true;
     seatedPlayers.push(playerNr);
     console.log('seatedPlayers', seatedPlayers);
     /*let element1 = document.querySelector(`[player='${playerNr}']`); 
@@ -118,9 +134,9 @@ function createPlayer() {
     let element2 = document.querySelector(`.game-board #${playerNr}`); 
     element2.classList.add('game-hide');*/
     
-    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${proxyPlayer.name}`;
+    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${players[playerNr].name}`;
     //proxyPlayer.marks = proxyPlayer.marks; all should be current
-    document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${proxyPlayer.marks}`;
+    //document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${proxyPlayer.marks}`;
     theGameLoop.next();
 };
 
@@ -267,6 +283,17 @@ function seating() {
 function firstBet(autoBetSum = 10) {
   console.log('%c Firstbet now running', 'font-weight: 700');
   proxyPlayer.marks -= autoBetSum;
+  //Testcode for simulationg players
+  proxyPlayer2.marks -= autoBetSum;
+  proxyPlayer3.marks -= autoBetSum;
+  proxyPlayer4.marks -= autoBetSum;
+  proxyPlayer5.marks -= autoBetSum;
+  
+  proxyPlayer2.name = 'test';
+  proxyPlayer3.name = 'test2';
+  proxyPlayer4.name = 'test3';
+  proxyPlayer5.name = 'test5';
+  //
   proxyGamePot.pot += autoBetSum;
   customEvent(`Alla spelare har gjort första bettet`, '.js-player-ready');
   document.querySelector('.js-player-ready-q').addEventListener('click', function () {
@@ -325,7 +352,6 @@ function betting(turn) {
   document.querySelector('.game-questions').classList.add('game-hide');
   
   let inputElement = document.querySelector('#player-bet');
-  console.log('inputElement', inputElement);
   inputElement.classList.remove('game-hide');
   
   let bettingElement = document.querySelector('.game-betting');
@@ -364,9 +390,16 @@ function betting(turn) {
   };
   const playersRemain = checkPlayersRemaining();
 
-  // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
-  let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
-  getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));
+
+  function markIconToggle() {
+    // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
+    let getHiddenClass = document.querySelector(`.${proxyPlayer.internalName} .mark-wrapper-display-none`);
+    getHiddenClass.classList.toggle('mark-wrapper-display-none');
+  /* old code
+    let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
+  getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));*/
+  };
+  
   
   
   document.querySelector('.player-input').addEventListener('click', function (event) {
@@ -376,6 +409,7 @@ function betting(turn) {
       
       case 'js-player-bet':
         console.log('bet');
+        markIconToggle();
         playerBets();
         break;
       
@@ -402,7 +436,10 @@ function betting(turn) {
     console.log('slidervalue when betted: ', sliderValue);
     proxyPlayer.bet.unshift(sliderValue);
     proxyPlayer.marks -= slider.value; 
-    proxyGamePot.pot += proxyPlayer.bet[0]; 
+    proxyGamePot.pot += proxyPlayer.bet[0];
+    // mockup code, player 2 shouldt be hardcoded
+    proxyPlayer2.marks -= 50; 
+    proxyGamePot.pot += 50;
     customEvent(`Spelare ${proxyPlayer.name} bettar ${sliderValue}`, '.js-player-bet');
      // p1 code
     setTimeout(()=>theGameLoop.next(),6000);
@@ -461,11 +498,13 @@ function betting(turn) {
 
 function endGame() {
   console.log(`%c End game now running`, 'font-weight: 700');
+  console.log(`Spelare Har nu ${proxyPlayer.marks}`);
   const sumToWinner = proxyGamePot.pot;
-  proxyPlayer.marks =+ sumToWinner;
+  proxyPlayer.marks += sumToWinner;
   proxyGamePot.pot = 0;
+  animateGamePot();
 
-  console.log(`Spelare ${proxyPlayer.name} vann! Har nu ${proxyPlayer.marks}, proxyGamePot: ${proxyGamePot}, sumToWinner: ${sumToWinner}`);
+  console.log(`Spelare ${proxyPlayer.name} vann! Har nu ${proxyPlayer.marks}, proxyGamePot: ${proxyGamePot.pot}, sumToWinner: ${sumToWinner}`);
   /*let p1 = currentPlayerPath.bet; 
   let p1b = p1.reduce((a,b)=>a+b);
   let p2 = [400, 200];
