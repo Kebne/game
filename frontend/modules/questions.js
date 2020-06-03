@@ -20,6 +20,7 @@ export let questions = {
     alternative1: 'Ris',
     alternative2: 'Olja',
     alternative3: 'Kaffe',
+    alternative4: 'Bilar',
     correctAnswer: 'Kaffe',
   },
   question4: {

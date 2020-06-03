@@ -320,6 +320,8 @@ function askQuestion(nr) {
 
 function betting(turn) {
   console.log(`%c Betting round ${turn} now running`, 'font-weight: 700');
+  // p1 code
+  if(turn==1){setTimeout(()=>theGameLoop.next(),6000);};
   document.querySelector('.game-questions').classList.add('game-hide');
   
   let inputElement = document.querySelector('#player-bet');
@@ -459,6 +461,11 @@ function betting(turn) {
 
 function endGame() {
   console.log(`%c End game now running`, 'font-weight: 700');
+  const sumToWinner = proxyGamePot.pot;
+  proxyPlayer.marks =+ sumToWinner;
+  proxyGamePot.pot = 0;
+
+  console.log(`Spelare ${proxyPlayer.name} vann! Har nu ${proxyPlayer.marks}, proxyGamePot: ${proxyGamePot}, sumToWinner: ${sumToWinner}`);
   /*let p1 = currentPlayerPath.bet; 
   let p1b = p1.reduce((a,b)=>a+b);
   let p2 = [400, 200];

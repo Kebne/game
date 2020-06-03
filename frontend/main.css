@@ -291,6 +291,7 @@ fieldset {
 /* Game board */
 .main-game-grid {
   display: grid;
+  max-width: 1400px;
   grid-template-columns: 4fr 1fr;
   grid-template-rows: auto;
   grid-template-areas: 
@@ -304,14 +305,14 @@ fieldset {
 .game-board-wrapper {
   position: relative;
   grid-area: gameboard;
-  background-color: burlywood;
+  background-color: hsla(101, 59%, 18%, 1);
  }
 
 .game-board {
   display: grid;
   box-sizing: border-box;
-  background-image: url('images/game-table.png');
-  background-size: cover;
+  background-image: url('images/sheriff-game-board.svg');
+  background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
   width: 100%;
