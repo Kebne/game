@@ -61,11 +61,27 @@ var currentPlayer = 'player1';
 var data = Object.values(players); //this should not be needed anymore
 var gamePot = { pot: 0 };
 var seatedPlayers = [];
+var playersInPlay = [];
+var playerProto =  {
+   score: 0,
+   marks: 900,
+   name: 'Han Solo',
+   internalName: 'player1',
+   seat: 1,
+   pass: false,
+   bet: [],
+   fold: false,
+   rightAnswerNr: 0,
+   seated: false,
+   ready: false,
+   playerStatus: 'joining',
+ };
+ var thePlayers = {};
 
 // Using proxy for handling events and states
 const proxyHandler = {
   set(target, property, value, receiver) {
-    console.log(`target: ${target}, property: ${property}, value: ${value}, receiver: ${receiver},`);
+    //console.log(`target: ${target}, property: ${property}, value: ${value}, receiver: ${receiver},`);
     target[property] = value;
     if (property.localeCompare('marks') == 0) {
       // need also to handle target.name here, also also need refactor so it just makes wich pler does what
@@ -264,6 +280,43 @@ getQButton.addEventListener('click', function() {
 
 function seating() {
   console.log(`%c Seating now running`, 'font-weight: 700');
+  
+  function createPlayers(name) {
+   
+    if(playersInPlay.length >= 5) {
+      alert('sorry, board is full');
+    }
+    else {
+      playersInPlay.push(name);
+      let setPlayerNumber = playersInPlay.length;
+      let target = {};
+      const currentPlayerToMake = Object.assign(target, playerProto);
+      //console.log('returnedTarget', returnedTarget);
+      //const currentPlayerToMake = Object.create(playerProto);
+      currentPlayerToMake.playerStatus = 'created';
+      currentPlayerToMake.internalName = `player${setPlayerNumber}`;
+      currentPlayerToMake.name = name;
+      thePlayers[`player${setPlayerNumber}`] = currentPlayerToMake;
+      console.log('the players', thePlayers);
+      return currentPlayerToMake; 
+      };
+     
+    };
+    createPlayers('Mr Bond');
+    createPlayers('Ms Bond');
+
+    /*var test = createPlayerNumber('Testsson');
+    test.playerStatus = 'ready';
+    console.log('playersInPlay', playersInPlay);
+    console.log('test', test);
+    console.log('test marks', test.marks);
+
+    var test2 = createPlayerNumber('Lohan');
+    console.log('playersInPlay', playersInPlay);
+    console.log('test2', test2);
+    console.log('test2 marks', test2.marks);*/
+  
+
   document.querySelector('#player1').addEventListener('click', createPlayer);
   document.querySelector('#player2').addEventListener('click', createPlayer);
   document.querySelector('#player3').addEventListener('click', createPlayer);
@@ -450,10 +503,11 @@ function betting(turn) {
     proxyPlayer.pass = true;
     customEvent(`Spelare ${proxyPlayer.name} passar ${proxyPlayer.pass}`, '.js-player-pass');
 
-    if(proxyPlayer.pass == true && proxyplayer2.pass == true) {
+    proxyPlayer2.pass = true;
+    if(proxyPlayer.pass == true && proxyPlayer2.pass == true) {
       console.log('Both players pass, getting new questions');
       proxyPlayer.pass = false;
-      proxyplayer2.pass = false;
+      proxyPlayer2.pass = false;
       bettingElement.classList.add('game-hide');
       theGameLoop.next();
     };
