@@ -11,6 +11,9 @@
 
 <body id="sheriff-game">
   <main>
+ 
+
+
     <div class="main-game-grid">
         <div class="game-log"></div>
         <div class="game-board-wrapper">
@@ -45,6 +48,8 @@
       </div>
   </main>
 </body>
+
+
 
 <script type="module">
 import {playerBox} from './modules/player.js';
@@ -291,12 +296,13 @@ function seating() {
       let setPlayerNumber = playersInPlay.length;
       let target = {};
       const currentPlayerToMake = Object.assign(target, playerProto);
-      //console.log('returnedTarget', returnedTarget);
-      //const currentPlayerToMake = Object.create(playerProto);
       currentPlayerToMake.playerStatus = 'created';
       currentPlayerToMake.internalName = `player${setPlayerNumber}`;
       currentPlayerToMake.name = name;
       thePlayers[`player${setPlayerNumber}`] = currentPlayerToMake;
+
+      
+
       console.log('the players', thePlayers);
       return currentPlayerToMake; 
       };
@@ -342,10 +348,10 @@ function firstBet(autoBetSum = 10) {
   proxyPlayer4.marks -= autoBetSum;
   proxyPlayer5.marks -= autoBetSum;
   
-  proxyPlayer2.name = 'test';
-  proxyPlayer3.name = 'test2';
-  proxyPlayer4.name = 'test3';
-  proxyPlayer5.name = 'test5';
+  proxyPlayer2.name = proxyPlayer2.name;
+  proxyPlayer3.name = proxyPlayer3.name;
+  proxyPlayer4.name = proxyPlayer4.name;
+  proxyPlayer5.name = proxyPlayer5.name;
   //
   proxyGamePot.pot += autoBetSum;
   customEvent(`Alla spelare har gjort första bettet`, '.js-player-ready');
@@ -451,6 +457,18 @@ function betting(turn) {
   /* old code
     let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
   getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));*/
+  };
+
+  // Game rules logic, work in progress
+  if (playersRemain.legth = 1) {
+    //Player thats in playersRemain winns
+    const sumToWinner = proxyGamePot.pot;
+    proxyPlayer.marks += sumToWinner;
+    proxyGamePot.pot = 0;
+  };
+
+  if ('previous player bets') {
+    //Update gamecontrols to Höja, Syna eller Lägga sig.
   };
   
   
