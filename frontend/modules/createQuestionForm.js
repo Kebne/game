@@ -21,7 +21,7 @@ export function createQuestionForm(currentQuestion) {
       </div>
       `;
       
-    let element = document.querySelector('.game-questions');
+    let element = document.querySelector('.sheriff-questions');
     // This is only for refeshing display of game questions, otherwise we show the question under each other.
     element.innerHTML = "";
     let myTemplate = templateElement.content.cloneNode(true);

@@ -101,6 +101,6 @@
   ];
   
   export function animateGamePot() {
-    const element  = document.querySelector(`.board-pot`);
+    const element  = document.querySelector(`.sheriff-board-pot`);
     element.animate(animationPot, optionsPot);
   };

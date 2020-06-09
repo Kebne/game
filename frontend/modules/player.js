@@ -13,8 +13,8 @@ export class playerBox extends HTMLElement {
       <img class="img-mark-${whichPlayer}" src="images/mark.png" alt="${whichPlayer} mark"></div>
     </div>
     <div class="${whichPlayer}-info">
-      <span class="${whichPlayer}-info-name"></span><br>
-      <span class="${whichPlayer}-info-marks"></span><br>
+      <span class="${whichPlayer}-info-name"></span>
+      <span class="${whichPlayer}-info-marks"></span>
     </div>
     `;
     this.appendChild(templateElement.content.cloneNode(true));

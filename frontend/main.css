@@ -23,6 +23,117 @@ body {
   font-size: 16px;
 }
 
+/* THEW NEW LAYOUT */
+.sheriff-game {
+  display: grid;
+  box-sizing: border-box;
+  padding: var(--standard-padding);
+  max-width: 1400px;
+  grid-template-columns: 5fr;
+  grid-template-rows: auto;
+  grid-template-areas: 
+  "players"
+  "pot"
+  "board"
+  "controls"
+  "gamelog"
+  ;
+  background-color: var(--grey-200);
+}
+
+.sheriff-players-avatars {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  /*gap: 0.2rem;*/
+  grid-area: players;
+  flex-wrap: wrap;
+}
+
+.sheriff-avatar-name {
+  font-weight: bold;
+}
+
+.sheriff-game-board{
+  
+  grid-area: board;
+}
+
+.sheriff-player-box-wrapper {
+  max-width: 130px;
+  box-sizing: border-box;
+}
+
+.sheriff-player-controls {
+  display: flex;
+  gap: 0.4rem;
+  grid-area: controls;
+}
+
+.sheriff-button {
+  box-sizing: border-box;
+  font-style: normal;
+  font-family: 'Comic Neue', sans-serif;
+  font-size: 14px;
+  padding: 1rem;
+  margin-top: 8px;
+  color: var(--light-text-color);
+  background-color: var(--grey-500);
+  border: 1px solid var(--grey-600);
+  border-radius: 4px;
+}
+
+.sheriff-button:hover {
+  cursor: pointer;
+  filter: brightness(150%);
+}
+
+.sheriff-button:active {
+  cursor: pointer;
+  transform: scale(0.9);
+}
+
+.sheriff-game-log {
+  grid-area: gamelog; 
+  box-sizing: border-box;
+  margin-top: var(--standard-padding);
+  padding: var(--standard-padding);
+  color: var(--light-text-color);
+  background-color: var(--grey-500);
+  line-height: 1.6;
+  height: 400px;
+  overflow-y: scroll;
+}
+
+.sheriff-avatar-img {
+  border-radius: 50%;
+}
+
+.sheriff-questions {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  grid-area: board;
+  padding: var(--standard-padding);
+  background-color: rgba(211,174,80,0.9);
+  z-index: 11;
+}
+
+.sheriff-board-pot {
+  background-color: pink;
+  box-sizing: border-box;
+  padding: 0.2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* END NEW LAYOUT */
+
+
+
+
+
+
 .img-full-width {
   width: 100%;
 }
@@ -33,7 +144,7 @@ margin-inline-end: 0.5rem;
 }
 
 .img-wrong-answer{
-  filter: grayscale(1);
+  filter: blur(50%);
 }
 
 button:disabled {
@@ -356,79 +467,7 @@ fieldset {
 }
 
 
-.player1 {
-  grid-area: player1; 
-  display: flex;
-  justify-content: center;
-  place-self: center;
-  /*background-color: #153244;*/
-  box-sizing: border-box; 
-  padding: var(--standard-padding);
-  min-width: 200px;
-}
-
-.player2 {
-  grid-area: player2; 
-  display: flex;
-  justify-content: center;
-  /*background-color: #4D4940;*/
-  box-sizing: border-box;
-  padding: var(--standard-padding);
-  min-width: 200px;
-}
-
-.player3 {
-  grid-area: player3; 
-  display: flex;
-  justify-content: center;
-  /*background-color: #805238;*/
-  box-sizing: border-box;
-  padding: var(--standard-padding);
-  min-width: 200px;
-}
-
-.player4 {
-  grid-area: player4; 
-  display: flex;
-  justify-content: center;
-  /*background-color: #94855A;*/ 
-  box-sizing: border-box;
-  padding: var(--standard-padding);
-  min-width: 200px;
-}
-
-.player5 {
-  grid-area: player5; 
-  place-self: center;
-  display: flex;
-  justify-content: center;
-  /*background-color: #5a8f93;*/  
-  box-sizing: border-box;
-  padding: var(--standard-padding);
-  min-width: 200px;
-  max-width: 200px;
-}
 
 
 
-.game-log {
-  grid-area: gamelog; 
-  box-sizing: border-box;
-  padding: var(--standard-padding);
-  color: var(--light-text-color);
-  background-color: var(--grey-500);
-  line-height: 1.6;
-  overflow-y: scroll;
-}
 
-.img-mark-player1, .img-mark-player2, .img-mark-player3, .img-mark-player4, .img-mark-player5 {
-  width: 100%;
-  display: relative;
-}
-
-.mark-player1, .mark-player2, .mark-player3, .mark-player4, .mark-player5 {
-  width: 60px;
-  height: 60px;
-}
-
-/* */

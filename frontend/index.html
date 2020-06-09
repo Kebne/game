@@ -11,41 +11,36 @@
 
 <body id="sheriff-game">
   <main>
- 
+    <section>
 
-
-    <div class="main-game-grid">
-        <div class="game-log"></div>
-        <div class="game-board-wrapper">
-          <div class="game-board">
-            <div class="player1">
-              <img class="img-full-width" id="player1" src="images/empty-chair.png">
-              <player-box class="game-hide" player="player1"></player-box>
-            </div>
-            <div class="game-questions game-hide"></div>
-            <div class="game-betting game-hide"></div>
-            <div class="board"><span class="board-pot"></span></div>
-            <div class="player4">
-              <img class="img-full-width" id="player4" src="images/empty-chair.png">
-              <player-box class="game-hide" player="player4"></player-box>
-            </div>
-            <div class="player2">
-              <img class="img-full-width" id="player2" src="images/empty-chair.png">
-              <player-box class="game-hide" player="player2"></player-box>
-            </div>
-            <div class="player3">
-              <img class="img-full-width" id="player3" src="images/empty-chair.png">
-              <player-box class="game-hide" player="player3"></player-box>
-            </div>
-            <div class="player5">
-              <img class="img-full-width" id="player5" src="images/empty-chair.png">
-              <player-box class="game-hide" player="player5"></player-box>
-            </div>
+      <div class="sheriff-game">
+        <div class="sheriff-players-avatars"></div>
+        <div class="sheriff-board-pot"></div>
+        <div class="sheriff-game-board">
+          
+          <span class="player-info-rightanswer"></span>
+          <div class="sheriff-questions"></div>
+        </div>
+        
+        <div class="sheriff-player-controls">
+          <button class="js-player-bet sheriff-button">Betta</button>
+          <button class="js-player-pass sheriff-button">Passa</button>
+          <button class="js-player-fold sheriff-button">Lägga sig</button>
+          <div class="game-slider">
+            <label for="playerslider">Att satsa:</label>
+            <input id="playerslider" type="range" min="10" max="100" value="10" step="10" class="sheriff-bet-slider">
+            <output class="sheriff-bet-slider-output"></output>
           </div>
+        </div>
+
+        <div class="sheriff-game-log"></div>
+
       </div>
-        <player-controls class="player-input-wrapper"></player-controls>
-        <admin-controls class="admin-input-wrapper"></admin-controls>
-      </div>
+
+    </section>
+
+
+   
   </main>
 </body>
 
@@ -83,7 +78,7 @@ var playerProto =  {
  };
  var thePlayers = {};
 
-// Using proxy for handling events and states
+ // Using proxy for handling events and states
 const proxyHandler = {
   set(target, property, value, receiver) {
     //console.log(`target: ${target}, property: ${property}, value: ${value}, receiver: ${receiver},`);
@@ -91,34 +86,116 @@ const proxyHandler = {
     if (property.localeCompare('marks') == 0) {
       // need also to handle target.name here, also also need refactor so it just makes wich pler does what
       let output = document.querySelector(`.${target.internalName}-info-marks`);
-      output.innerHTML = `Marker: ${value}.`;
+      output.innerHTML = `${value} kr.`;
     };
     if (property.localeCompare('name') == 0) {
       // need also to handle target.name here, also also need refactor so it just makes wich pler does what
       let output = document.querySelector(`.${target.internalName}-info-name`);
       output.innerHTML = `Namn: ${value}.`;
     };
-    if (property.localeCompare('pass') == 0 || property.localeCompare('fold') == 0) {
-      const output = document.querySelector(`.player-status`);
-      output.innerHTML = `Pass: <i>${proxyPlayer.pass}</i>, Lägga sig <i>${proxyPlayer.fold}</i>`;
-    };
-    if (property.localeCompare('seated') == 0 && value == true) {
-      console.log('Player has been seated');
-      let element1 = document.querySelector(`[player='${target.internalName}']`); 
-      element1.classList.remove('game-hide');
-      let element2 = document.querySelector(`.game-board #${target.internalName}`); 
-      element2.classList.add('game-hide');
-    };
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
   }
 };
 
+var proxyPlayer = new Proxy(players['player1'], proxyHandler);
 
+
+ // for test
+ 
+let targetElement = document.querySelector('.sheriff-players-avatars');
+let testing = Object.keys(players);
+testing.forEach(element => {
+  let playerBoxWrapper = document.createElement('div');
+  playerBoxWrapper.classList.add(element);
+  playerBoxWrapper.classList.add('sheriff-player-box-wrapper');
+  const theName = document.createElement('div');
+  theName.classList.add(`sheriff-avatar-name`);
+  theName.textContent = players[element].name; 
+  const theImage = document.createElement('img');
+  theImage.src= `images/${element}-avatar.png`;
+  theImage.classList.add('img-full-width', 'sheriff-avatar-img');
+  const theMarks = document.createElement('div');
+  theMarks.classList.add(`${element}-info-marks`);
+  theMarks.textContent = `${players[element].marks} kr` ;
+  theImage.src= `images/${element}-avatar.png`;
+  const theStars = document.createElement('div');
+  theStars.classList.add('player-info-rightanswer');
+  
+  playerBoxWrapper.appendChild(theImage);
+  playerBoxWrapper.appendChild(theName);
+  playerBoxWrapper.appendChild(theMarks);
+  playerBoxWrapper.appendChild(theStars);
+  targetElement.appendChild(playerBoxWrapper);
+});
+ //
+
+
+// Betting
+document.querySelector('.sheriff-player-controls').addEventListener('click', function (event) {
+  const whichButton = event.target.classList[0];
+    
+  switch (whichButton) {
+    
+    case 'js-player-bet':
+      console.log('bet');
+      playerBets();
+      break;
+    
+    case 'js-player-pass':
+      console.log('pass');
+      playerPass();
+      break;
+    
+    case 'js-player-fold':
+      console.log('fold');
+      playerFold();
+      break;
+
+    default:
+      console.log(`Event target not found`);
+  };
+
+});
+
+function playerBets() {
+  playSoundFx('betting');
+  let sliderValue = Number(slider.value);
+  proxyPlayer.bet.unshift(sliderValue);
+  proxyPlayer.marks -= slider.value; 
+  proxyGamePot.pot += proxyPlayer.bet[0];
+  customEvent(`Spelare ${proxyPlayer.name} bettar ${sliderValue}.`, '.js-player-bet');
+  theGameLoop.next();
+};
+
+function playerPass() {
+  playSoundFx('pass');
+  customEvent(`Spelare ${proxyPlayer.name} passar.`, '.js-player-pass');
+};
+
+function playerFold() { 
+  playSoundFx('fold');
+  customEvent(`Spelare ${proxyPlayer.name} lägger sig.`, '.js-player-fold');
+};
+ 
+// Player betting slider
+const slider = document.querySelector('.sheriff-bet-slider');
+const output = document.querySelector('.sheriff-bet-slider-output');
+output.innerHTML = slider.value;
+slider.addEventListener('input', sliderOutput);
+
+function sliderOutput() {
+  console.log(`Slider output running ${slider.value}`);
+  output.innerHTML = slider.value;
+};
+//
+
+
+// Game pot function
 const proxyHandlerGamePot = {
   set(target, property, value, receiver) {
   target[property] = value;
-  let outputPot = document.querySelector(`.board-pot`);
+  let outputPot = document.querySelector(`.sheriff-board-pot`);
   outputPot.innerHTML = `Spelpotten är ${value}`;
   // So we don't animate before players seated
   if( value != 0 ) { animateGamePot() };
@@ -126,40 +203,33 @@ const proxyHandlerGamePot = {
   }
 };
 
-var proxyPlayer = new Proxy(players['player1'], proxyHandler);
-var proxyPlayer2 = new Proxy(players.player2, proxyHandler);
-var proxyPlayer3 = new Proxy(players.player3, proxyHandler);
-var proxyPlayer4 = new Proxy(players.player4, proxyHandler);
-var proxyPlayer5 = new Proxy(players.player5, proxyHandler);
-
-
-
-
 var proxyGamePot = new Proxy(gamePot ,proxyHandlerGamePot);
 proxyGamePot.pot = 0;
+//
 
-// This is a globally function so we can reapply event listner when players left
-function createPlayer() { 
-    let whichPlayer = event.target.id; //player1
-    let playerNr = String(whichPlayer);
-    playSoundFx('seated');
-    proxyPlayer.seated = true;
-    proxyPlayer2.seated = true;
-    proxyPlayer3.seated = true;
-    proxyPlayer4.seated = true;
-    proxyPlayer5.seated = true;
-    seatedPlayers.push(playerNr);
-    console.log('seatedPlayers', seatedPlayers);
-    /*let element1 = document.querySelector(`[player='${playerNr}']`); 
-    element1.classList.remove('game-hide');
-    let element2 = document.querySelector(`.game-board #${playerNr}`); 
-    element2.classList.add('game-hide');*/
+function createPlayers(name) {
+   
+   if(playersInPlay.length >= 5) {
+     alert('sorry, board is full');
+   }
+   else {
+     playersInPlay.push(name);
+     let setPlayerNumber = playersInPlay.length;
+     let target = {};
+     const currentPlayerToMake = Object.assign(target, playerProto);
+     currentPlayerToMake.playerStatus = 'created';
+     currentPlayerToMake.internalName = `player${setPlayerNumber}`;
+     currentPlayerToMake.name = name;
+     thePlayers[`player${setPlayerNumber}`] = currentPlayerToMake;
+     console.log('the players', thePlayers);
+     return currentPlayerToMake; 
+     };
     
-    document.querySelector(`.${playerNr}-info-name`).innerHTML = `Namn: ${players[playerNr].name}`;
-    //proxyPlayer.marks = proxyPlayer.marks; all should be current
-    //document.querySelector(`.${playerNr}-info-marks`).innerHTML = `Marker: ${proxyPlayer.marks}`;
-    theGameLoop.next();
-};
+   };
+   createPlayers('Mr Bond');
+   createPlayers('Ms Bond');
+
+// End new code
 
 
 function playSoundFx(sound = 'start', volume = 1) {
@@ -189,7 +259,7 @@ document.addEventListener("gameEvent", function(event) {
   let time = new Date(); 
   let timeMin = time.getMinutes();
   let timeSec = time.getSeconds();
-  document.querySelector('.game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br><br>`);
+  document.querySelector('.sheriff-game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br><br>`);
 });
 
 // Helper function for Custom events
@@ -198,168 +268,26 @@ function customEvent(message, dispatchFrom) {
   document.querySelector(`${dispatchFrom}`).dispatchEvent(custElement);
 };
 
-
-const playerLeaveElement = document.querySelector('.game-board');
-playerLeaveElement.addEventListener('click', function() {
-  let whatElement = event.target;
-  let getString = whatElement.className;
-  let playerToSelectForLeaving = getString.replace('-leave', '');
-  
-  if(whatElement.nodeName == 'BUTTON' && whatElement.innerText == 'Lämna') {
-    const imgElement = document.createElement("img");
-    imgElement.src = 'images/empty-chair.png';
-    imgElement.id = playerToSelectForLeaving;
-    imgElement.className = 'img-full-width';
-    imgElement.addEventListener('click', createPlayer);
-    document.querySelector(`.${playerToSelectForLeaving}`).innerHTML = '';
-    document.querySelector(`.${playerToSelectForLeaving}`).appendChild(imgElement);
-  };
-  
-});
-
-document.querySelector('.player-status').innerHTML = `Pass: <i>${proxyPlayer.pass}</i>, Lägga sig <i>${proxyPlayer.fold}</i>`;
-  
-togglingCurrentPlayer(players);
-
 //To highlight current player 
 let highlight = document.querySelector(`.${currentPlayer}`);
 highlight.classList.add('current-player-highlight');
 
 
-// Change player, You can remove this function in production, used for testing diffrent players actions.
-function togglingCurrentPlayer(data) {
-  
-  var selectElement = document.querySelector('.player-switch-select');
-  const dataToSelect = Object.keys(data);
-  
-  dataToSelect.forEach((item) => {
-      const optionElement = document.createElement('option');
-      optionElement.value = item;
-      optionElement.text = item;
-      selectElement.appendChild(optionElement);
-  });
-  
-  
-  selectElement.addEventListener('change', function() {
-    let choosenPlayer = selectElement.options[selectElement.selectedIndex].value;
-    let highlight = document.querySelector(`.${currentPlayer}`);
-    highlight.classList.remove('current-player-highlight');
-    
-    // This so we also switch to correct proxy
-    if (choosenPlayer.localeCompare('player1') == 0) {
-      proxyPlayer = proxyplayer1
-    };
-    if (choosenPlayer.localeCompare('player2') == 0) {
-      proxyPlayer = proxyplayer2
-    };
-    if (choosenPlayer.localeCompare('player3') == 0) {
-      proxyPlayer = proxyplayer3
-    };
-    if (choosenPlayer.localeCompare('player4') == 0) {
-      proxyPlayer = proxyplayer4;
-    };
-    if (choosenPlayer.localeCompare('player5') == 0) {
-      proxyPlayer = proxyplayer5;
-    };
-      
-    currentPlayer = choosenPlayer;
-    
-    let highlight2 = document.querySelector(`.${currentPlayer}`);
-    highlight2.classList.add('current-player-highlight');
-    console.log('%c Current proxy player is now: ', 'color: #1a329b', proxyPlayer);
-    console.log('%c CurrentPlayer is now:', 'color: #1a329b', currentPlayer);
-  });
-  
-};
-//
 
- 
-// Admin activate question
-const getQButton = document.querySelector('.question-button');
-const getQNr = document.querySelector('#get-question-nr');
-getQButton.addEventListener('click', function() {
-  askQuestion(getQNr.value);
-});
-//
+
+
 
 
 function seating() {
   console.log(`%c Seating now running`, 'font-weight: 700');
-  
-  function createPlayers(name) {
-   
-    if(playersInPlay.length >= 5) {
-      alert('sorry, board is full');
-    }
-    else {
-      playersInPlay.push(name);
-      let setPlayerNumber = playersInPlay.length;
-      let target = {};
-      const currentPlayerToMake = Object.assign(target, playerProto);
-      currentPlayerToMake.playerStatus = 'created';
-      currentPlayerToMake.internalName = `player${setPlayerNumber}`;
-      currentPlayerToMake.name = name;
-      thePlayers[`player${setPlayerNumber}`] = currentPlayerToMake;
-
-      
-
-      console.log('the players', thePlayers);
-      return currentPlayerToMake; 
-      };
-     
-    };
-    createPlayers('Mr Bond');
-    createPlayers('Ms Bond');
-
-    /*var test = createPlayerNumber('Testsson');
-    test.playerStatus = 'ready';
-    console.log('playersInPlay', playersInPlay);
-    console.log('test', test);
-    console.log('test marks', test.marks);
-
-    var test2 = createPlayerNumber('Lohan');
-    console.log('playersInPlay', playersInPlay);
-    console.log('test2', test2);
-    console.log('test2 marks', test2.marks);*/
-  
-
-  document.querySelector('#player1').addEventListener('click', createPlayer);
-  document.querySelector('#player2').addEventListener('click', createPlayer);
-  document.querySelector('#player3').addEventListener('click', createPlayer);
-  document.querySelector('#player4').addEventListener('click', createPlayer);
-  document.querySelector('#player5').addEventListener('click', createPlayer);
-  
-  document.querySelector('.js-player-ready').addEventListener('click', function () {
-    playSoundFx('start');
-    // manually setting all players to ready, we do this later at back-end
-    proxyPlayer.ready = true;
-    customEvent(`Spelare ${proxyPlayer.name} redo`, '.js-player-ready');
-    theGameLoop.next();
-  });
+  setTimeout(()=>theGameLoop.next(),4000);
 };
 
 
 function firstBet(autoBetSum = 10) {
   console.log('%c Firstbet now running', 'font-weight: 700');
   proxyPlayer.marks -= autoBetSum;
-  //Testcode for simulationg players
-  proxyPlayer2.marks -= autoBetSum;
-  proxyPlayer3.marks -= autoBetSum;
-  proxyPlayer4.marks -= autoBetSum;
-  proxyPlayer5.marks -= autoBetSum;
-  
-  proxyPlayer2.name = proxyPlayer2.name;
-  proxyPlayer3.name = proxyPlayer3.name;
-  proxyPlayer4.name = proxyPlayer4.name;
-  proxyPlayer5.name = proxyPlayer5.name;
-  //
   proxyGamePot.pot += autoBetSum;
-  customEvent(`Alla spelare har gjort första bettet`, '.js-player-ready');
-  document.querySelector('.js-player-ready-q').addEventListener('click', function () {
-    playSoundFx('start');
-    theGameLoop.next();
-  }); 
-  // p1 code
   setTimeout(()=>theGameLoop.next(),8000);
 };
 
@@ -367,7 +295,7 @@ function firstBet(autoBetSum = 10) {
 function askQuestion(nr) {
   console.log(`%c Question ${nr} now running`, 'font-weight: 700');
   let currentQuestion = questions[`question${nr}`];
-  document.querySelector('.game-questions').classList.remove('game-hide');
+  document.querySelector('.sheriff-questions').classList.remove('game-hide');
   countDown(5, currentQuestion, theGameLoop);
   playSoundFx('question', 0.1);
   createQuestionForm(currentQuestion);
@@ -381,6 +309,7 @@ function askQuestion(nr) {
     playSoundFx('start');
     let content = event.target.innerHTML;
     let correct = currentQuestion.correctAnswer;
+    console.log(`clicked button text: ${content}, correct answer: ${correct}`);
     if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
       proxyPlayer.rightAnswerNr++;
       let correctOutput = document.querySelector(`.player-info-rightanswer`);
@@ -393,8 +322,8 @@ function askQuestion(nr) {
     else {
       let correctOutput = document.querySelector(`.player-info-rightanswer`);
       let starImage = document.createElement('img');
-      starImage.src = 'images/star.png';
-      starImage.className = 'img-wrong-answer';
+      starImage.src = 'images/star-grey.png';
+      starImage.classList.add('img-wrong-answer');
       starImage.alt = 'star icon wrong'
       correctOutput.append(starImage);
     }
@@ -408,18 +337,9 @@ function betting(turn) {
   console.log(`%c Betting round ${turn} now running`, 'font-weight: 700');
   // p1 code
   if(turn==1){setTimeout(()=>theGameLoop.next(),6000);};
-  document.querySelector('.game-questions').classList.add('game-hide');
+  document.querySelector('.sheriff-questions').classList.add('game-hide');
   
-  let inputElement = document.querySelector('#player-bet');
-  inputElement.classList.remove('game-hide');
   
-  let bettingElement = document.querySelector('.game-betting');
-  bettingElement.classList.remove('game-hide');
-  bettingElement.innerText = 'Dags att betta!';
-  setTimeout(hideBetting(), 4000);
-  function hideBetting() {
-    document.querySelector('.game-betting').classList.add('game-hide');
-  };
 
   let bet = document.querySelector('.js-player-bet');
   bet.removeAttribute('disabled');
@@ -467,39 +387,8 @@ function betting(turn) {
     proxyGamePot.pot = 0;
   };
 
-  if ('previous player bets') {
-    //Update gamecontrols to Höja, Syna eller Lägga sig.
-  };
+ 
   
-  
-  
-  document.querySelector('.player-input').addEventListener('click', function (event) {
-    const whichButton = event.target.classList[0];
-    
-    switch (whichButton) {
-      
-      case 'js-player-bet':
-        console.log('bet');
-        markIconToggle();
-        playerBets();
-        break;
-      
-      case 'js-player-pass':
-        console.log('pass');
-        playerPass();
-        break;
-      
-      case 'js-player-fold':
-        console.log('fold');
-        playerFold();
-        break;
-
-      default:
-        console.log(`Event target not found`);
-    };
-
-  });
-
   function playerBets() {
     animateMarker(currentPlayer); 
     playSoundFx('betting');
@@ -547,8 +436,8 @@ function betting(turn) {
   };
  
   // Player betting slider
-  const slider = document.querySelector('.bet-slider');
-  const output = document.querySelector('.bet-slider-output');
+  const slider = document.querySelector('.sheriff-bet-slider');
+  const output = document.querySelector('.sheriff-bet-slider-output');
   output.innerHTML = slider.value;
   slider.addEventListener('input', sliderOutput);
   
@@ -557,12 +446,6 @@ function betting(turn) {
     output.innerHTML = slider.value;
   };
   //
-
-  document.querySelector('.js-player-ready-betting-done').addEventListener('click', function () {
-    playSoundFx('start');
-    theGameLoop.next();
-  });
-
 };
 
 
