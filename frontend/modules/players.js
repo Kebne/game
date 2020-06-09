@@ -1,7 +1,7 @@
 export var players = {
  player1: {
    score: 0,
-   marks: 900,
+   marks: 1000,
    name: 'Han Solo',
    internalName: 'player1',
    seat: 1,

@@ -28,7 +28,7 @@
           <button class="js-player-fold sheriff-button">Lägga sig</button>
           <div class="game-slider">
             <label for="playerslider">Att satsa:</label>
-            <input id="playerslider" type="range" min="10" max="100" value="10" step="10" class="sheriff-bet-slider">
+            <input id="playerslider" type="range" min="10" max="1000" value="100" step="10" class="sheriff-bet-slider">
             <output class="sheriff-bet-slider-output"></output>
           </div>
         </div>
@@ -99,7 +99,7 @@ const proxyHandler = {
 };
 
 var proxyPlayer = new Proxy(players['player1'], proxyHandler);
-
+var proxyPlayer2 = new Proxy(players['player2'], proxyHandler);
 
  // for test
  
@@ -165,7 +165,14 @@ function playerBets() {
   proxyPlayer.marks -= slider.value; 
   proxyGamePot.pot += proxyPlayer.bet[0];
   customEvent(`Spelare ${proxyPlayer.name} bettar ${sliderValue}.`, '.js-player-bet');
-  theGameLoop.next();
+  // Simulates player2 bets
+  setTimeout(function(){
+    proxyPlayer2.marks -= 50;
+    proxyGamePot.pot += 50;
+    theGameLoop.next();
+  },2000);
+  
+  
 };
 
 function playerPass() {
@@ -287,8 +294,9 @@ function seating() {
 function firstBet(autoBetSum = 10) {
   console.log('%c Firstbet now running', 'font-weight: 700');
   proxyPlayer.marks -= autoBetSum;
-  proxyGamePot.pot += autoBetSum;
-  setTimeout(()=>theGameLoop.next(),8000);
+  proxyPlayer2.marks -= autoBetSum;
+  proxyGamePot.pot += autoBetSum * 2;
+  setTimeout(()=>theGameLoop.next(),6000);
 };
 
 
@@ -350,16 +358,6 @@ function betting(turn) {
   let fold = document.querySelector('.js-player-fold');
   fold.removeAttribute('disabled');
 
-  // playerSimulateBet, for testing purpose, remove in production
-  function playerSimulateBet() {
-      proxyPlayer = 'proxyplayer2'; //fix this line
-      proxyPlayer.bet.unshift(100);
-      proxyPlayer.marks -= 100; 
-      proxyGamePot.pot += proxyPlayer.bet[0];
-      customEvent(`Spelare ${proxyPlayer.name} bettar 100`, '.js-player-bet');
-      proxyPlayer = proxyplayer1;
-    }
-    //playerSimulateBet();
 
   function checkPlayersRemaining() {
     const result = data.filter(player => player.fold == false);
@@ -379,16 +377,8 @@ function betting(turn) {
   getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));*/
   };
 
-  // Game rules logic, work in progress
-  if (playersRemain.legth = 1) {
-    //Player thats in playersRemain winns
-    const sumToWinner = proxyGamePot.pot;
-    proxyPlayer.marks += sumToWinner;
-    proxyGamePot.pot = 0;
-  };
-
  
-  
+
   function playerBets() {
     animateMarker(currentPlayer); 
     playSoundFx('betting');
