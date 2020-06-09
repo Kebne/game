@@ -127,6 +127,21 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.game-countdown, .game-wait {
+  font-family: 'Bungee', sans-serif;
+  min-height: var(--min-height);
+  box-sizing: border-box;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--light-text-color);
+  text-align: center;
+  padding-top: 2px;
+}
+
+.game-hide {
+  display: none;
+}
 /* END NEW LAYOUT */
 
 
@@ -153,9 +168,7 @@ button:disabled {
   pointer-events: none;
 }
 
-.game-hide {
-  display: none;
-}
+
 
 
 .game-button {
@@ -181,17 +194,7 @@ button:disabled {
   transform: scale(0.9);
 }
 
-.game-countdown, .game-wait {
-  font-family: 'Bungee', sans-serif;
-  min-height: var(--min-height);
-  box-sizing: border-box;
-  font-size: 1.2rem;
-  font-weight: 400;
-  letter-spacing: 1px;
-  color: var(--light-text-color);
-  text-align: center;
-  padding-top: 2px;
-}
+
 
 .game-correct-answer {
   padding: 1rem;

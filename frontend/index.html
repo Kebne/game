@@ -19,7 +19,7 @@
         <div class="sheriff-game-board">
           
           <span class="player-info-rightanswer"></span>
-          <div class="sheriff-questions"></div>
+          <div class="sheriff-questions game-hide"></div>
         </div>
         
         <div class="sheriff-player-controls">
@@ -77,6 +77,20 @@ var playerProto =  {
    playerStatus: 'joining',
  };
  var thePlayers = {};
+
+ function* gameLoop() {
+  yield seating();
+  yield firstBet(10); 
+  yield askQuestion(1);
+  yield askQuestion(2);
+  yield betting(0);
+  yield askQuestion(3);
+  yield askQuestion(4);
+  yield betting(1);
+  yield endGame();
+};
+var theGameLoop = gameLoop();
+theGameLoop.next();
 
  // Using proxy for handling events and states
 const proxyHandler = {
@@ -167,8 +181,8 @@ function playerBets() {
   customEvent(`Spelare ${proxyPlayer.name} bettar ${sliderValue}.`, '.js-player-bet');
   // Simulates player2 bets
   setTimeout(function(){
-    proxyPlayer2.marks -= 50;
-    proxyGamePot.pot += 50;
+    proxyPlayer2.marks -= 400;
+    proxyGamePot.pot += 400;
     theGameLoop.next();
   },2000);
   
@@ -246,19 +260,7 @@ function playSoundFx(sound = 'start', volume = 1) {
 };
 
 
-function* gameLoop() {
-  yield seating();
-  yield firstBet(10); 
-  yield askQuestion(1);
-  yield askQuestion(2);
-  yield betting(0);
-  yield askQuestion(3);
-  yield askQuestion(4);
-  yield betting(1);
-  yield endGame();
-};
-var theGameLoop = gameLoop();
-theGameLoop.next();
+
  
 
 // Custom event, logs game events

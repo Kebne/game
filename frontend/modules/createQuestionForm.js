@@ -2,7 +2,6 @@ export function createQuestionForm(currentQuestion) {
     const templateElement = document.createElement('template');
     //implement a loop belove so we dont need repeating the html code
     templateElement.innerHTML = `
-    <div class="game-wait"></div>
       <div class="game-countdown"></div>
       <h2>${currentQuestion.question}</h2>
       <div>
