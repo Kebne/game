@@ -23,9 +23,9 @@
         </div>
         
         <div class="sheriff-player-controls">
-          <button class="js-player-bet sheriff-button">Betta</button>
-          <button class="js-player-pass sheriff-button">Passa</button>
-          <button class="js-player-fold sheriff-button">Lägga sig</button>
+          <button class="js-player-bet sheriff-button-betting">Betta</button>
+          <button class="js-player-pass sheriff-button-betting ">Passa</button>
+          <button class="js-player-fold sheriff-button-betting ">Lägga sig</button>
           <div class="game-slider">
             <label for="playerslider">Att satsa:</label>
             <input id="playerslider" type="range" min="10" max="1000" value="100" step="10" class="sheriff-bet-slider">
@@ -52,7 +52,6 @@ import {questions} from './modules/questions.js';
 import {createQuestionForm} from './modules/createquestionform.js';
 import {countDown} from './modules/countdown.js';
 import {players} from './modules/players.js';
-import {controls} from './modules/controls.js';
 import {controlsAdmin} from './modules/controls-admin.js';
 import {animateMarker} from './modules/animations.js';
 import {animateGamePot} from './modules/animations.js';
@@ -100,12 +99,12 @@ const proxyHandler = {
     if (property.localeCompare('marks') == 0) {
       // need also to handle target.name here, also also need refactor so it just makes wich pler does what
       let output = document.querySelector(`.${target.internalName}-info-marks`);
-      output.innerHTML = `${value} kr.`;
+      output.innerHTML = `${value} kr`;
     };
     if (property.localeCompare('name') == 0) {
       // need also to handle target.name here, also also need refactor so it just makes wich pler does what
       let output = document.querySelector(`.${target.internalName}-info-name`);
-      output.innerHTML = `Namn: ${value}.`;
+      output.innerHTML = `Namn: ${value}`;
     };
     console.log(`%c Proxy change detected, ${property} is now: ${value}`, 'color: #baaa01')
     return true;
@@ -268,7 +267,7 @@ document.addEventListener("gameEvent", function(event) {
   let time = new Date(); 
   let timeMin = time.getMinutes();
   let timeSec = time.getSeconds();
-  document.querySelector('.sheriff-game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br><br>`);
+  document.querySelector('.sheriff-game-log').insertAdjacentHTML('afterbegin', `${timeMin}:${timeSec} - ${event.detail}<br>`);
 });
 
 // Helper function for Custom events
@@ -444,18 +443,17 @@ function betting(turn) {
 
 
 function endGame() {
-  console.log(`%c End game now running`, 'font-weight: 700');
-  console.log(`Spelare Har nu ${proxyPlayer.marks}`);
-  const sumToWinner = proxyGamePot.pot;
-  proxyPlayer.marks += sumToWinner;
-  proxyGamePot.pot = 0;
-  animateGamePot();
-
-  console.log(`Spelare ${proxyPlayer.name} vann! Har nu ${proxyPlayer.marks}, proxyGamePot: ${proxyGamePot.pot}, sumToWinner: ${sumToWinner}`);
-  /*let p1 = currentPlayerPath.bet; 
-  let p1b = p1.reduce((a,b)=>a+b);
-  let p2 = [400, 200];
-  let p2b = p2.reduce((a,b)=>a+b);*/
+  setTimeout(function() {
+    console.log(`%c End game now running`, 'font-weight: 700');
+    console.log(`Spelare Har nu ${proxyPlayer.marks}`);
+    const sumToWinner = proxyGamePot.pot;
+    proxyPlayer.marks += sumToWinner;
+    proxyGamePot.pot = 0;
+    animateGamePot();
+    console.log(`Spelare ${proxyPlayer.name} vann! Har nu ${proxyPlayer.marks}, proxyGamePot: ${proxyGamePot.pot}, sumToWinner: ${sumToWinner}`);
+    console.dir('All player data:', players);
+  },4000);
+  
 };
 
 

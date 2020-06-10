@@ -67,6 +67,8 @@ body {
 .sheriff-player-controls {
   display: flex;
   gap: 0.4rem;
+  box-sizing: border-box;
+  padding-top: var(--standard-padding);
   grid-area: controls;
 }
 
@@ -93,6 +95,29 @@ body {
   transform: scale(0.9);
 }
 
+.sheriff-button-betting {
+  box-sizing: border-box;
+  font-style: normal;
+  font-family: 'Comic Neue', sans-serif;
+  font-size: 14px;
+  padding: 1rem;
+  margin-top: 8px;
+  color: var(--grey-100);
+  background-color: hsla(218, 28%, 50%, 1);
+  border: 1px solid hsla(218, 28%, 40%, 1);
+  border-radius: 4px;
+}
+
+.sheriff-button-betting:hover {
+  cursor: pointer;
+  filter: brightness(150%);
+}
+
+.sheriff-button-betting:active {
+  cursor: pointer;
+  transform: scale(0.9);
+}
+
 .sheriff-game-log {
   grid-area: gamelog; 
   box-sizing: border-box;
@@ -100,8 +125,9 @@ body {
   padding: var(--standard-padding);
   color: var(--light-text-color);
   background-color: var(--grey-500);
-  line-height: 1.6;
-  height: 400px;
+  line-height: 1.8;
+  height: 200px;
+  border-radius: 0.2rem;
   overflow-y: scroll;
 }
 
@@ -120,11 +146,13 @@ body {
 }
 
 .sheriff-board-pot {
-  background-color: pink;
+  background-color: var(--grey-300);
   box-sizing: border-box;
-  padding: 0.2rem;
+  padding: 0.8rem;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+  font-weight: bold;
+  border-radius: 0.2rem;
 }
 
 .game-countdown, .game-wait {
@@ -141,6 +169,11 @@ body {
 
 .game-hide {
   display: none;
+}
+
+.sheriff-question-buttons-wrapper {
+  box-sizing: border-box;
+  margin-bottom: 1rem;
 }
 /* END NEW LAYOUT */
 

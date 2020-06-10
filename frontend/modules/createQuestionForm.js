@@ -4,19 +4,11 @@ export function createQuestionForm(currentQuestion) {
     templateElement.innerHTML = `
       <div class="game-countdown"></div>
       <h2>${currentQuestion.question}</h2>
-      <div>
-          <div>
-            <button id="game-question-button1" class="game-button">${currentQuestion.alternative1}</button>
-          </div>
-          <div>
-            <button id="game-question-button2" class="game-button">${currentQuestion.alternative2}</button>
-          </div>
-          <div>
-            <button id="game-question-button3" class="game-button">${currentQuestion.alternative3}</button>
-          </div>
-          <div>
-          <button id="game-question-button4" class="game-button">${currentQuestion.alternative4}</button>
-        </div>
+      <div class="sheriff-question-buttons-wrapper">
+        <button id="game-question-button1" class="game-button">${currentQuestion.alternative1}</button>
+        <button id="game-question-button2" class="game-button">${currentQuestion.alternative2}</button>
+        <button id="game-question-button3" class="game-button">${currentQuestion.alternative3}</button>
+        <button id="game-question-button4" class="game-button">${currentQuestion.alternative4}</button>
       </div>
       `;
       
