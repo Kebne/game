@@ -172,11 +172,13 @@ function playerBets() {
   proxyGamePot.pot += proxyPlayer.bet[0];
   customEvent(`Spelare ${proxyPlayer.name} bettar ${sliderValue}.`, '.js-player-bet');
   // Simulates player2 bets
-  setTimeout(function(){
+  setTimeout(function() {
     proxyPlayer2.marks -= 400;
     proxyGamePot.pot += 400;
-    theGameLoop.next();
   },2000);
+  setTimeout(function() {
+    theGameLoop.next();
+  },7000);
   
   
 };
@@ -299,7 +301,7 @@ function askQuestion(nr) {
   console.log(`%c Question ${nr} now running`, 'font-weight: 700');
   let currentQuestion = questions[`question${nr}`];
   document.querySelector('.sheriff-questions').classList.remove('game-hide');
-  countDown(15, currentQuestion, theGameLoop);
+  countDown(5, currentQuestion, theGameLoop);
   playSoundFx('question', 0.1);
   createQuestionForm(currentQuestion);
 
@@ -364,20 +366,17 @@ function betting(turn) {
 
 
 
-
 function endGame() {
   document.querySelector('.sheriff-player-controls').classList.add('game-hide');
   setTimeout(function() {
     console.log(`%c End game now running`, 'font-weight: 700');
-    console.log(`Spelare Har nu ${proxyPlayer.marks}`);
     const sumToWinner = proxyGamePot.pot;
     proxyPlayer.marks += sumToWinner;
     proxyGamePot.pot = 0;
     animateGamePot();
-    console.log(`Spelare ${proxyPlayer.name} vann! Har nu ${proxyPlayer.marks}, proxyGamePot: ${proxyGamePot.pot}, sumToWinner: ${sumToWinner}`);
+    customEvent(`Spelare ${proxyPlayer.name} vann!`, '.js-player-bet');
     console.dir('All player data:', players);
   },4000);
-  
 };
 
 
