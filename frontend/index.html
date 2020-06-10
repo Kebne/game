@@ -11,8 +11,6 @@
 
 <body id="sheriff-game">
   <main>
-    <section>
-
       <div class="sheriff-game">
         <div class="sheriff-players-avatars"></div>
         <div class="sheriff-board-pot"></div>
@@ -22,9 +20,9 @@
           <div class="sheriff-questions game-hide"></div>
         </div>
         
-        <div class="sheriff-player-controls">
+        <div class="sheriff-player-controls game-hide">
+          <button class="js-player-pass sheriff-button-betting ">Pass</button>
           <button class="js-player-bet sheriff-button-betting">Betta</button>
-          <button class="js-player-pass sheriff-button-betting ">Passa</button>
           <button class="js-player-fold sheriff-button-betting ">Lägga sig</button>
           <div class="game-slider">
             <label for="playerslider">Att satsa:</label>
@@ -36,11 +34,6 @@
         <div class="sheriff-game-log"></div>
 
       </div>
-
-    </section>
-
-
-   
   </main>
 </body>
 
@@ -302,10 +295,11 @@ function firstBet(autoBetSum = 10) {
 
 
 function askQuestion(nr) {
+  document.querySelector('.sheriff-player-controls').classList.add('game-hide');
   console.log(`%c Question ${nr} now running`, 'font-weight: 700');
   let currentQuestion = questions[`question${nr}`];
   document.querySelector('.sheriff-questions').classList.remove('game-hide');
-  countDown(5, currentQuestion, theGameLoop);
+  countDown(15, currentQuestion, theGameLoop);
   playSoundFx('question', 0.1);
   createQuestionForm(currentQuestion);
 
@@ -318,7 +312,6 @@ function askQuestion(nr) {
     playSoundFx('start');
     let content = event.target.innerHTML;
     let correct = currentQuestion.correctAnswer;
-    console.log(`clicked button text: ${content}, correct answer: ${correct}`);
     if (!content.localeCompare(correct)) {  // localCompare returns 0 if the two strings are equal.
       proxyPlayer.rightAnswerNr++;
       let correctOutput = document.querySelector(`.player-info-rightanswer`);
@@ -347,9 +340,8 @@ function betting(turn) {
   // p1 code
   if(turn==1){setTimeout(()=>theGameLoop.next(),6000);};
   document.querySelector('.sheriff-questions').classList.add('game-hide');
+  document.querySelector('.sheriff-player-controls').classList.remove('game-hide');
   
-  
-
   let bet = document.querySelector('.js-player-bet');
   bet.removeAttribute('disabled');
 
@@ -368,81 +360,13 @@ function betting(turn) {
   };
   const playersRemain = checkPlayersRemaining();
 
-
-  function markIconToggle() {
-    // Maybe not the best way to show the graphical mark but it works, feel free to refactor this
-    let getHiddenClass = document.querySelector(`.${proxyPlayer.internalName} .mark-wrapper-display-none`);
-    getHiddenClass.classList.toggle('mark-wrapper-display-none');
-  /* old code
-    let getHiddenClass = document.querySelectorAll('.mark-wrapper-display-none');
-  getHiddenClass.forEach(item => item.classList.toggle('mark-wrapper-display-none'));*/
-  };
-
- 
-
-  function playerBets() {
-    animateMarker(currentPlayer); 
-    playSoundFx('betting');
-    let sliderValue = Number(slider.value);
-    console.log('slidervalue when betted: ', sliderValue);
-    proxyPlayer.bet.unshift(sliderValue);
-    proxyPlayer.marks -= slider.value; 
-    proxyGamePot.pot += proxyPlayer.bet[0];
-    // mockup code, player 2 shouldt be hardcoded
-    proxyPlayer2.marks -= 50; 
-    proxyGamePot.pot += 50;
-    customEvent(`Spelare ${proxyPlayer.name} bettar ${sliderValue}`, '.js-player-bet');
-     // p1 code
-    setTimeout(()=>theGameLoop.next(),6000);
-  };
-
-  function playerPass() {
-    playSoundFx('pass');
-    proxyPlayer.pass = true;
-    customEvent(`Spelare ${proxyPlayer.name} passar ${proxyPlayer.pass}`, '.js-player-pass');
-
-    proxyPlayer2.pass = true;
-    if(proxyPlayer.pass == true && proxyPlayer2.pass == true) {
-      console.log('Both players pass, getting new questions');
-      proxyPlayer.pass = false;
-      proxyPlayer2.pass = false;
-      bettingElement.classList.add('game-hide');
-      theGameLoop.next();
-    };
-
-  };
-
-  function playerFold() { 
-    playSoundFx('fold');
-    proxyPlayer.fold = true;
-    customEvent(`Spelare ${proxyPlayer.name} lägger sig ${proxyPlayer.fold}`, '.js-player-fold');
-    const playersLeftAfterFold = checkPlayersRemaining();
-    
-    if(playersLeftAfterFold.length == 0) {
-      bettingElement.classList.add('game-hide');
-      theGameLoop.done = true;
-      endGame();
-    };
-
-  };
- 
-  // Player betting slider
-  const slider = document.querySelector('.sheriff-bet-slider');
-  const output = document.querySelector('.sheriff-bet-slider-output');
-  output.innerHTML = slider.value;
-  slider.addEventListener('input', sliderOutput);
-  
-  function sliderOutput() {
-    console.log(`Slider output running ${slider.value}`);
-    output.innerHTML = slider.value;
-  };
-  //
 };
 
 
 
 
 function endGame() {
+  document.querySelector('.sheriff-player-controls').classList.add('game-hide');
   setTimeout(function() {
     console.log(`%c End game now running`, 'font-weight: 700');
     console.log(`Spelare Har nu ${proxyPlayer.marks}`);
